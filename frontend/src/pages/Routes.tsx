@@ -4,6 +4,7 @@ import {
   Route,
   Routes as ReactRouterRoutes
 } from "react-router-dom";
+import Recommend from "./Recommend";
 
 function Header() {
   return <div>header</div>;
@@ -15,6 +16,7 @@ export default function Routes() {
       <Header />
       <ReactRouterRoutes>
         <Route path="/" element={<div>main</div>} />
+        <Route path="/recommend" element={<Recommend />} />
       </ReactRouterRoutes>
     </BrowserRouter>
   );
