@@ -1,16 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 import { Flex, Grid, Text } from "@chakra-ui/react";
-import { Search2Icon, DeleteIcon } from "@chakra-ui/icons";
+import { Search2Icon } from "@chakra-ui/icons";
 
 import StudyLayout from "../../components/layout/StudyLayout";
 import BackButton from "../../components/common/BackButton";
 import ProblemCard from "../../components/common/ProblemCard";
 
-function DeleteButton() {
-  return <DeleteIcon w="6" h="6" cursor="pointer" alignSelf="center" />;
-}
+const dumpProblemList = [
+  {
+    id: 123,
+    title: "징검다리 건너기",
+    difficulty: "골드 3",
+    elapsedTime: "1:10:23",
+    link: "http://asasfasf.com",
+    tags: [{ id: 0, title: "#dfs" }]
+  },
+  {
+    id: 12,
+    title: "징검다리 건너기",
+    difficulty: "골드 3",
+    elapsedTime: "1:10:23",
+    link: "http://asasfasf.com",
+    tags: [{ id: 0, title: "#dfs" }]
+  },
+  {
+    id: 3,
+    title: "징검다리 건너기",
+    difficulty: "골드 3",
+    elapsedTime: "1:10:23",
+    link: "http://asasfasf.com",
+    tags: [{ id: 0, title: "#dfs" }]
+  }
+];
 
 function Collection() {
+  const [problemList, setProblemList] = useState(dumpProblemList);
+
+  const deleteProblem = (problemId: number) => {
+    // todo : 확인하는 로직 추후 구현 필요?
+    setProblemList(prevProblemList =>
+      prevProblemList.filter(problem => problem.id !== problemId)
+    );
+  };
+
   return (
     <StudyLayout
       sideComponent={<BackButton />}
@@ -34,26 +66,14 @@ function Collection() {
         </Text>
       </Flex>
       <Grid templateColumns="repeat(2,1fr)" gap="32px">
-        <ProblemCard
-          problem={{
-            title: "징검다리 건너기",
-            difficulty: "골드 3",
-            elapsedTime: "1:10:23",
-            link: "http://asasfasf.com",
-            tags: [{ id: 0, title: "#dfs" }]
-          }}
-          button={<DeleteButton />}
-        />
-        <ProblemCard
-          problem={{
-            title: "징검다리 건너기",
-            difficulty: "골드 3",
-            elapsedTime: "1:10:23",
-            link: "http://asasfasf.com",
-            tags: [{ id: 0, title: "#dfs" }]
-          }}
-          button={<DeleteButton />}
-        />
+        {problemList.map(problem => (
+          <ProblemCard
+            key={problem.id}
+            problem={problem}
+            btnType="delete"
+            onBtnClick={() => deleteProblem(problem.id)}
+          />
+        ))}
       </Grid>
     </StudyLayout>
   );
