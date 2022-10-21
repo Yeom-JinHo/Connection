@@ -5,10 +5,7 @@ import {
   Routes as ReactRouterRoutes
 } from "react-router-dom";
 import StudyJoin from "./StudyJoin";
-
-function Header() {
-  return <div>header</div>;
-}
+import Header from "./Header";
 
 export default function Routes() {
   return (
