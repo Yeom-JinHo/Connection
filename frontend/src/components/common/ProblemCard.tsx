@@ -1,44 +1,70 @@
-import React from "react";
-import { Box, Flex, Icon, Text } from "@chakra-ui/react";
-import { FiExternalLink } from "react-icons/fi";
-import { AiOutlinePlus } from "react-icons/ai";
+import React, { ReactNode } from "react";
+import { Box, Flex, Link, Text } from "@chakra-ui/react";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 
-// props: problem:{title,tags:[tag],spendTime,difficulty}, button
-function ProblemCard() {
+export interface Tag {
+  id: number;
+  title: string;
+}
+export interface Problem {
+  title: string;
+  link: string;
+  tags: Tag[];
+  elapsedTime: string;
+  difficulty: string;
+}
+
+interface ProblemCardProps {
+  problem: Problem;
+  button?: ReactNode;
+}
+function ProblemCard({ problem, button }: ProblemCardProps) {
+  const { title, link, tags, elapsedTime, difficulty } = problem;
   return (
     <Box
       bg="dep_1"
       borderRadius="20px"
       p="20px"
       boxShadow="0 4px 4px rgba(0,0,0,0.25)"
+      _hover={{
+        transform: "scale(1.03)",
+        transition: "transform ease-out .5s"
+      }}
     >
       <Box borderBottom="1px" borderColor="border_gray" pb="20px" mb="20px">
         <Flex justifyContent="space-between" mt="10px" mb="10px">
           <Flex>
-            <Text fontSize="24px" fontWeight="bold">
-              징검다리 달리기
-            </Text>
-            <Icon as={FiExternalLink} w="7" h="7">
-              아이콘
-            </Icon>
+            <Link href={link} isExternal fontSize="24px" fontWeight="bold">
+              {title}
+              <ExternalLinkIcon mx="2" />
+            </Link>
           </Flex>
-          {/* 컴포넌트 props로 받아서 구현 */}
-          <Icon as={AiOutlinePlus} w="7" h="7" />
+          {button}
         </Flex>
         <Flex gap="8px">
-          <Box bg="gra" w="fit-content" p="4px 16px" borderRadius="15px">
-            #DFS
-          </Box>
-          <Box bg="gra" w="fit-content" p="4px 16px" borderRadius="15px">
-            #그리디
-          </Box>
+          {tags.map(tag => (
+            <Box
+              key={tag.id}
+              bg="gra"
+              w="fit-content"
+              p="4px 16px"
+              borderRadius="15px"
+            >
+              {tag.title}
+            </Box>
+          ))}
         </Flex>
       </Box>
       <Box>
-        <Text mb="10px">소요시간 : 1:10:20</Text>
-        <Text>체감 난이도 : 골드3</Text>
+        <Text mb="10px">소요시간 : {elapsedTime}</Text>
+        <Text>체감 난이도 : {difficulty}</Text>
       </Box>
     </Box>
   );
 }
+
+ProblemCard.defaultProps = {
+  button: null
+};
+
 export default ProblemCard;
