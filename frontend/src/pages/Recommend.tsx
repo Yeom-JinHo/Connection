@@ -55,7 +55,7 @@ function Recommend() {
       }
     >
       <Box mb="40px">
-        <Text fontSize="2xl" fontWeight="bold" mt="20px" mb="20px">
+        <Text fontSize="3xl" fontWeight="bold" mt="20px" mb="20px">
           {TABS[selectedTap].label}
         </Text>
         {TABS[selectedTap].msg.split("/").map(text => (

@@ -34,7 +34,7 @@ function ProblemCard({ problem, button }: ProblemCardProps) {
       <Box borderBottom="1px" borderColor="border_gray" pb="20px" mb="20px">
         <Flex justifyContent="space-between" mt="10px" mb="10px">
           <Flex>
-            <Link href={link} isExternal fontSize="24px" fontWeight="bold">
+            <Link href={link} isExternal fontSize="2xl" fontWeight="bold">
               {title}
               <ExternalLinkIcon mx="2" />
             </Link>
