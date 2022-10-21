@@ -59,7 +59,8 @@ function JoinAccordionItem({
             onChange={onInputChange}
             flex={6}
             m="0 20px"
-            bg="white"
+            bg="dep_2"
+            fontSize="20px"
             borderRadius="12px"
           />
           <Button
