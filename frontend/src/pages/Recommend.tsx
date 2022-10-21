@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { v4 as uuid } from "uuid";
-import { Box, Grid, Icon, Text } from "@chakra-ui/react";
+import { Grid, Icon } from "@chakra-ui/react";
 
 import { AiOutlinePlus } from "react-icons/ai";
 import ProblemCard from "../components/common/ProblemCard";
@@ -53,17 +52,9 @@ function Recommend() {
           onTabClick={onTabClick}
         />
       }
+      title={TABS[selectedTap].label}
+      description={TABS[selectedTap].msg}
     >
-      <Box mb="40px">
-        <Text fontSize="3xl" fontWeight="bold" mt="20px" mb="20px">
-          {TABS[selectedTap].label}
-        </Text>
-        {TABS[selectedTap].msg.split("/").map(text => (
-          <Text key={uuid()} mt="10px" mb="10px">
-            {text}
-          </Text>
-        ))}
-      </Box>
       <Grid templateColumns="repeat(2,1fr)" gap="32px">
         <ProblemCard
           problem={{
