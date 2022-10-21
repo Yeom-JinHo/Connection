@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import StudyJoin from "./StudyJoin";
 import Header from "./Header";
+import StudyWith from "./StudyWith";
 
 export default function Routes() {
   return (
@@ -16,6 +17,7 @@ export default function Routes() {
         <Route path="/study">
           <Route path="join" element={<StudyJoin />} />
         </Route>
+        <Route path="/study-with" element={<StudyWith />} />
       </ReactRouterRoutes>
     </BrowserRouter>
   );
