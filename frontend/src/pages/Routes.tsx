@@ -4,6 +4,7 @@ import {
   Route,
   Routes as ReactRouterRoutes
 } from "react-router-dom";
+import StudyJoin from "./StudyJoin";
 
 function Header() {
   return <div>header</div>;
@@ -15,6 +16,9 @@ export default function Routes() {
       <Header />
       <ReactRouterRoutes>
         <Route path="/" element={<div>main</div>} />
+        <Route path="/study">
+          <Route path="join" element={<StudyJoin />} />
+        </Route>
       </ReactRouterRoutes>
     </BrowserRouter>
   );
