@@ -1,12 +1,13 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import { Box, Flex, Link, Text } from "@chakra-ui/react";
-import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 
 export interface Tag {
   id: number;
   title: string;
 }
 export interface Problem {
+  id: number;
   title: string;
   link: string;
   tags: Tag[];
@@ -14,12 +15,31 @@ export interface Problem {
   difficulty: string;
 }
 
-interface ProblemCardProps {
-  problem: Problem;
-  button?: ReactNode;
+interface CardButtonProps {
+  btnType: "delete" | "add";
+  onBtnClick: React.MouseEventHandler<HTMLDivElement>;
 }
-function ProblemCard({ problem, button }: ProblemCardProps) {
-  const { title, link, tags, elapsedTime, difficulty } = problem;
+interface ProblemCardProps extends CardButtonProps {
+  problem: Problem;
+}
+
+function Button({ btnType, onBtnClick }: CardButtonProps) {
+  if (btnType === "delete") {
+    return (
+      <Box onClick={onBtnClick}>
+        <DeleteIcon w="6" h="6" cursor="pointer" alignSelf="center" />
+      </Box>
+    );
+  }
+  return (
+    <Box onClick={onBtnClick}>
+      <AddIcon w="6" h="6" cursor="pointer" alignSelf="center" />
+    </Box>
+  );
+}
+
+function ProblemCard({ problem, btnType, onBtnClick }: ProblemCardProps) {
+  const { id, title, link, tags, elapsedTime, difficulty } = problem;
   return (
     <Box
       bg="dep_1"
@@ -39,7 +59,7 @@ function ProblemCard({ problem, button }: ProblemCardProps) {
               <ExternalLinkIcon mx="2" />
             </Link>
           </Flex>
-          {button}
+          <Button btnType={btnType} onBtnClick={onBtnClick} />
         </Flex>
         <Flex gap="8px">
           {tags.map(tag => (
@@ -62,9 +82,5 @@ function ProblemCard({ problem, button }: ProblemCardProps) {
     </Box>
   );
 }
-
-ProblemCard.defaultProps = {
-  button: null
-};
 
 export default ProblemCard;
