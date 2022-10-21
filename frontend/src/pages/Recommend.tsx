@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Grid, Icon } from "@chakra-ui/react";
+import { Grid } from "@chakra-ui/react";
+import { AddIcon } from "@chakra-ui/icons";
 
-import { AiOutlinePlus } from "react-icons/ai";
 import ProblemCard from "../components/common/ProblemCard";
 import StudyLayout from "../components/layout/StudyLayout";
 import SideComponent from "../components/recommend/SideComponent";
@@ -30,7 +30,7 @@ export interface Tab {
 }
 
 function PlusButton() {
-  return <Icon as={AiOutlinePlus} w="9" h="9" cursor="pointer" />;
+  return <AddIcon w="6" h="6" cursor="pointer" alignSelf="center" />;
 }
 
 function Recommend() {
