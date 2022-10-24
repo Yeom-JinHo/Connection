@@ -7,6 +7,7 @@ import { HiMinusCircle } from "react-icons/hi";
 import StudyLayout from "../../components/layout/StudyLayout";
 import BackButton from "../../components/common/BackButton";
 import ProblemCard from "../../components/common/ProblemCard";
+import ProblemSelect from "../../components/common/ProblemSelect/ProblemSelect";
 
 const dumpProblemList = [
   {
@@ -57,139 +58,14 @@ function Assignment() {
           <Search2Icon w={6} h={6} />
         </Box>
       </Flex>
-      <Grid templateColumns="repeat(2,1fr)" gap="32px">
-        <Flex direction="column" alignItems="center">
-          <Box
-            p={3}
-            bg="gra"
-            w="full"
-            borderTopRadius="20px"
-            textAlign="center"
-          >
-            선택한 문제
-          </Box>
-          <Flex
-            w="full"
-            bg="dep_2"
-            direction="column"
-            alignItems="center"
-            h="500px"
-            px={8}
-            py={8}
-            gap={4}
-          >
-            <Flex
-              p={4}
-              bg="dep_3"
-              w="full"
-              borderRadius="20px"
-              alignItems="center"
-              justifyContent="space-around"
-            >
-              <Text w="15%" borderRight="1px" borderColor="border_gray">
-                No 1
-              </Text>
-              <Text w="70%" paddingLeft={1}>
-                징검
-              </Text>
-              <Icon
-                w="15%"
-                as={HiMinusCircle}
-                fill="red"
-                cursor="pointer"
-                onClick={() => console.log("삭제")}
-              />
-            </Flex>
-            <Flex
-              p={4}
-              bg="dep_3"
-              w="full"
-              borderRadius="20px"
-              alignItems="center"
-              justifyContent="space-around"
-            >
-              <Text w="15%" borderRight="1px" borderColor="border_gray">
-                No 1
-              </Text>
-              <Text w="70%" paddingLeft={1}>
-                징검
-              </Text>
-              <Icon
-                w="15%"
-                as={HiMinusCircle}
-                fill="red"
-                cursor="pointer"
-                onClick={() => console.log("삭제")}
-              />
-            </Flex>
-            <Flex
-              p={4}
-              bg="dep_3"
-              w="full"
-              borderRadius="20px"
-              alignItems="center"
-              justifyContent="space-around"
-            >
-              <Text w="15%" borderRight="1px" borderColor="border_gray">
-                No 1
-              </Text>
-              <Text w="70%" paddingLeft={1}>
-                징검
-              </Text>
-              <Icon
-                w="15%"
-                as={HiMinusCircle}
-                fill="red"
-                cursor="pointer"
-                onClick={() => console.log("삭제")}
-              />
-            </Flex>
-          </Flex>
-        </Flex>
-        <Flex direction="column" alignItems="center">
-          <Flex w="full">
-            <Box
-              p={3}
-              bg="gra"
-              w="full"
-              borderTopRadius="20px"
-              textAlign="center"
-              cursor="pointer"
-            >
-              추천 문제
-            </Box>{" "}
-            <Box
-              p={3}
-              bg="dep_3"
-              w="full"
-              borderTopRadius="20px"
-              textAlign="center"
-              cursor="pointer"
-            >
-              문제집
-            </Box>
-          </Flex>
-          <Flex
-            w="full"
-            bg="dep_2"
-            h="500px"
-            direction="column"
-            p={8}
-            gap={8}
-            overflowY="scroll"
-          >
-            {problemList.map(problem => (
-              <ProblemCard
-                key={problem.id}
-                bg="dep_3"
-                problem={problem}
-                btnType="delete"
-                onBtnClick={() => console.log(problem.id)}
-              />
-            ))}
-          </Flex>
-        </Flex>
-      </Grid>
+      <ProblemSelect
+        problemList={problemList}
+        selectedProblems={[
+          { no: 1, title: "징검다리 건너기" },
+          { no: 2, title: "징검다리 건너기" },
+          { no: 3, title: "징검다리 건너기" }
+        ]}
+      />
       <Box mt={4} ml="auto" w="fit-content">
         <Button
           bg="gra"
