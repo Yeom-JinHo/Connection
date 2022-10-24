@@ -14,10 +14,9 @@ import {
 } from "@chakra-ui/react";
 import TotalLayout from "../../components/layout/TotalLayout";
 import Homework from "../../components/study/Homework";
+import Ranking from "../../components/study/Ranking";
 
 function StudyTotal() {
-  const Btn = <Button>과제 추가</Button>;
-
   function onCopy() {
     navigator.clipboard.writeText("초대코드");
     alert("스터디 코드가 복사되었습니다!");
@@ -37,7 +36,7 @@ function StudyTotal() {
         borderBottom="1px solid #BFBFBF"
       >
         <Flex direction="column" ml="20px">
-          <Heading fontSize="20px" fontWeight="bold">
+          <Heading fontSize="20px" fontWeight="bold" mb="5px">
             우건이와 아이들
           </Heading>
           <Text fontSize="14px" display="flex" alignItems="center">
@@ -65,17 +64,17 @@ function StudyTotal() {
       <Box p="40px 20px">
         <Flex>
           <TotalLayout title="Challenge" flex="3" height="200px" mr="10px">
-            {Btn}
+            <Text>잔디 심기</Text>
           </TotalLayout>
           <TotalLayout title="Rank" flex="2" height="200px">
-            {Btn}
+            <Ranking />
           </TotalLayout>
         </Flex>
         <TotalLayout title="진행중인 과제" height="300px">
           <Homework />
         </TotalLayout>
         <TotalLayout title="내 풀이 현황" height="300px">
-          {Btn}
+          <Text>차트</Text>
         </TotalLayout>
       </Box>
     </Box>
