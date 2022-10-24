@@ -59,7 +59,8 @@ const semanticTokens = {
       default: "#121212"
     },
     border_gray: {
-      default: "#d1d1d1"
+      _light: "#717171",
+      _dark: "#d1d1d1"
     }
   }
 };
