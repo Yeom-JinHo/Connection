@@ -8,8 +8,10 @@ import {
 import Recommend from "./Recommend";
 import StudyJoin from "./StudyJoin";
 import Header from "./Header";
+import StudyWith from "./StudyWith";
 import Collection from "./study/Collecetion";
 import StudyTotal from "./study/StudyTotal";
+import Assignment from "./study/Assignment";
 
 export default function Routes() {
   return (
@@ -21,7 +23,9 @@ export default function Routes() {
         <Route path="/study" element={<StudyTotal />}>
           <Route path="join" element={<StudyJoin />} />
           <Route path="collection" element={<Collection />} />
+          <Route path="assignment" element={<Assignment />} />
         </Route>
+        <Route path="/study-with" element={<StudyWith />} />
       </ReactRouterRoutes>
     </BrowserRouter>
   );
