@@ -1,19 +1,22 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
-  Box,
   Button,
   Center,
   Flex,
   Image,
   Link,
+  Modal,
+  ModalOverlay,
   Spacer,
-  useColorMode
+  useColorMode,
+  useDisclosure
 } from "@chakra-ui/react";
 import { Link as ReactLink } from "react-router-dom";
 import { v4 } from "uuid";
 import { MoonIcon } from "@chakra-ui/icons";
 import LogoLight from "../asset/img/logo_light.png";
 import LogoDark from "../asset/img/logo_dark.png";
+import JoinModal from "../components/join/JoinModal";
 
 interface menuType {
   title: string;
@@ -22,9 +25,10 @@ interface menuType {
 
 function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const menus: menuType[] = [
-    { title: "문제 추천", link: "/" },
+    { title: "문제 추천", link: "/recommend" },
     { title: "스터디", link: "/" },
     { title: "문제 풀기", link: "/" }
   ];
@@ -32,18 +36,20 @@ function Header() {
   return (
     <Flex boxShadow="lg">
       <Center p="14px">
-        <Image
-          src={colorMode === "light" ? LogoLight : LogoDark}
-          alt="logo"
-          w="180px"
-        />
+        <Link as={ReactLink} to="/">
+          <Image
+            src={colorMode === "light" ? LogoLight : LogoDark}
+            alt="logo"
+            w="180px"
+          />
+        </Link>
       </Center>
       <Spacer />
-      <Center p="14px">
-        {menus.map(memu => {
+      <Center p="14px" w="540px" justifyContent="left">
+        {menus.map(menu => {
           return (
-            <Link as={ReactLink} to="/" mr="50px" key={v4()}>
-              {memu.title}
+            <Link as={ReactLink} to={menu.link} mr="50px" key={v4()}>
+              {menu.title}
             </Link>
           );
         })}
@@ -53,7 +59,11 @@ function Header() {
         <Button mr="14px" onClick={toggleColorMode}>
           <MoonIcon />
         </Button>
-        <Button>회원가입</Button>
+        <Button onClick={onOpen}>회원가입</Button>
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <JoinModal />
+        </Modal>
       </Center>
     </Flex>
   );

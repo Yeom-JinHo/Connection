@@ -1,5 +1,18 @@
 import { extendTheme, type ThemeConfig } from "@chakra-ui/react";
 
+const styles = {
+  global: {
+    body: {
+      _light: {
+        bg: "white"
+      },
+      _dark: {
+        bg: "#121212"
+      }
+    }
+  }
+};
+
 const semanticTokens = {
   colors: {
     light: {
@@ -32,19 +45,24 @@ const semanticTokens = {
       default: "linear-gradient(180deg, #E1EFFF, #BBDBFF)"
     },
     white_lin: {
-      default: "linear-gradient(180deg, #B2D6FF, #F7F8F9)"
+      _light: "linear-gradient(180deg, #B2D6FF, #F7F8F9)",
+      _dark: "linear-gradient(180deg, #88BFFF, #1581FF)"
     },
     main: {
       default: "#1581FF"
     },
     sub: {
-      default: "#B2D6FF"
+      _light: "#B2D6FF",
+      _dark: "linear-gradient(180deg, #88BFFF, #1581FF)"
     },
     dark_bg: {
       default: "#121212"
     },
     red_lin: {
       default: "linear-gradient(180deg, #FF4848 0%, #B93B3B 100%)"
+    },
+    border_gray: {
+      default: "#d1d1d1"
     }
   }
 };
@@ -54,5 +72,5 @@ const config: ThemeConfig = {
   useSystemColorMode: true
 };
 
-const customTheme = extendTheme({ semanticTokens, config });
+const customTheme = extendTheme({ semanticTokens, config, styles });
 export default customTheme;
