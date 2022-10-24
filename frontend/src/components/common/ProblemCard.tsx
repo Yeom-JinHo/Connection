@@ -21,6 +21,7 @@ interface CardButtonProps {
 }
 interface ProblemCardProps extends CardButtonProps {
   problem: Problem;
+  bg?: string;
 }
 
 function Button({ btnType, onBtnClick }: CardButtonProps) {
@@ -38,11 +39,11 @@ function Button({ btnType, onBtnClick }: CardButtonProps) {
   );
 }
 
-function ProblemCard({ problem, btnType, onBtnClick }: ProblemCardProps) {
+function ProblemCard({ problem, btnType, onBtnClick, bg }: ProblemCardProps) {
   const { id, title, link, tags, elapsedTime, difficulty } = problem;
   return (
     <Box
-      bg="dep_1"
+      bg={bg}
       borderRadius="20px"
       p="20px"
       boxShadow="0 4px 4px rgba(0,0,0,0.25)"
@@ -83,4 +84,7 @@ function ProblemCard({ problem, btnType, onBtnClick }: ProblemCardProps) {
   );
 }
 
+ProblemCard.defaultProps = {
+  bg: "dep_1"
+};
 export default ProblemCard;
