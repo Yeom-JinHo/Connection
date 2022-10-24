@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Box, Flex, Grid, Icon, Input, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Grid, Icon, Input, Text } from "@chakra-ui/react";
 import { Search2Icon } from "@chakra-ui/icons";
 import { HiMinusCircle } from "react-icons/hi";
 
@@ -190,6 +190,15 @@ function Assignment() {
           </Flex>
         </Flex>
       </Grid>
+      <Box mt={4} ml="auto" w="fit-content">
+        <Button
+          bg="gra"
+          _hover={{ transform: "scale(1.05)" }}
+          _active={{ transform: "scale(1.05)" }}
+        >
+          등록하기
+        </Button>
+      </Box>
     </StudyLayout>
   );
 }
