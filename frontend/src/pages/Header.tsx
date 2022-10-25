@@ -5,7 +5,6 @@ import {
   Flex,
   Image,
   Link,
-  MenuButton,
   Modal,
   ModalOverlay,
   Spacer,
