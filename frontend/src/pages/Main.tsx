@@ -79,7 +79,7 @@ function Main() {
           })}
         </Center>
       </Center>
-      <Box as="section" bg="dep_1" py="50px">
+      <Box as="section" bg="#fbfbfb" _dark={{ bg: "#1b1b1b" }} py="50px">
         <Center maxW="800px" m="0 auto" flexDir="column">
           <Box w="100%">
             <Box
@@ -129,7 +129,6 @@ function Main() {
       </Box>
       <Box as="section" py="50px">
         <Center maxW="800px" m="0 auto" flexDir="column">
-          {" "}
           <Box w="100%">
             <Box
               bg="gra"
@@ -194,13 +193,7 @@ function Main() {
           </Text>
         </Center>
       </Center>
-      <Box
-        as="footer"
-        h="300px"
-        display="flex"
-        // justifyContent="flex-end"
-        // alignItems="flex-end"
-      >
+      <Box as="footer" h="300px" display="flex">
         <Box maxW="800px" w="100%" m="0 auto">
           <Box
             display="flex"
