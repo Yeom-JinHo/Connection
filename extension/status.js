@@ -19,9 +19,19 @@ function start() {
 			const userId = lastResult.querySelector(':nth-child(2)').innerText;
 			const problemNo = lastResult.querySelector(':nth-child(3)').innerText;
 			const result = lastResult.querySelector(':nth-child(4)').innerText;
-			//맞은 후 로직 구현 필요
 			if (result.indexOf('맞았습니다') >= 0) {
-				console.log({ submitNo, userId, problemNo, result });
+				fetch('https://www.coalla.co.kr/api/problem/submit', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						submitNo,
+						userId,
+						problemNo,
+						result,
+					}),
+				}).then((response) => console.log(response));
 			}
 		}
 	}, 500);
