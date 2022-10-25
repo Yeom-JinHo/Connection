@@ -4,6 +4,7 @@ import { v4 } from "uuid";
 import NumberSetView from "../components/studyWith/NumberSetView";
 import ProblemSetView from "../components/studyWith/ProblemSetView";
 import ResultView from "../components/studyWith/ResultView";
+import ReviewView from "../components/studyWith/ReviewView";
 import SolvingView from "../components/studyWith/SolvingView";
 import TimeSetView from "../components/studyWith/TimeSetView";
 
@@ -17,7 +18,8 @@ function StudyWith() {
     <ProblemSetView key={v4()} onBtnClick={() => setStep(2)} />,
     <TimeSetView key={v4()} onBtnClick={() => setStep(3)} />,
     <SolvingView key={v4()} onBtnClick={() => setStep(4)} />,
-    <ResultView key={v4()} onBtnClick={() => setStep(5)} />
+    <ResultView key={v4()} onBtnClick={() => setStep(5)} />,
+    <ReviewView key={v4()} onBtnClick={() => setStep(0)} />
   ];
 
   return (
