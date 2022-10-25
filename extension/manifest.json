@@ -1,0 +1,17 @@
+{
+	"manifest_version": 3,
+	"name": "Coalla",
+	"description": "Extension for coalla",
+	"version": "1.0",
+	"action": {
+		"default_popup": "popup.html",
+		"default_icon": "hello_extensions.png"
+	},
+	"host_permissions": ["*://*/*"],
+	"content_scripts": [
+		{
+			"js": ["status.js"],
+			"matches": ["https://www.acmicpc.net/status?*"]
+		}
+	]
+}
