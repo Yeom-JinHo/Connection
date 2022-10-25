@@ -17,7 +17,7 @@ pipeline {
                     }
                 }
                 sh 'cd ./backend/connection'
-                sh 'mvn clean package'
+                sh 'mvn clean package -f ./backend/connection/pom.xml'
                 sh 'docker build -t backend-image .'
                 echo 'Build image...'
                 sh 'docker run -d -p 8080:8080 --restart="always" --name backend backend-image'
