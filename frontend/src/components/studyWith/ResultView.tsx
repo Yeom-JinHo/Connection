@@ -2,6 +2,7 @@ import { Box, Button, Center, Flex, Text } from "@chakra-ui/react";
 
 import React from "react";
 import getTime from "../../utils/getTime";
+import ViewTitle from "./ViewTitle";
 
 type ResultBarProps = {
   name: string;
@@ -57,9 +58,7 @@ function ResultView({ onBtnClick }: ResultViewProps) {
 
   return (
     <Center w="1200px" m="auto" flexDir="column">
-      <Text fontSize="48px" fontWeight="700" mt="48px" mb="24px">
-        풀이 결과
-      </Text>
+      <ViewTitle main="풀이 결과" mt={48} mb={0} des="" highLight="" />
       {dummy &&
         dummy.map((d, ind) => (
           <ResultBar

@@ -1,5 +1,6 @@
 import { Button, ButtonGroup, Center, Highlight, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
+import ViewTitle from "./ViewTitle";
 
 type NumberSetViewProps = {
   onBtnClick: () => void;
@@ -9,25 +10,13 @@ function NumberSetView({ onBtnClick }: NumberSetViewProps) {
   const [selectedNum, setSelectedNum] = useState(0);
   return (
     <Center w="1200px" m="auto" flexDir="column">
-      <Text fontSize="48px" fontWeight="700" mt="60px" mb="32px">
-        문제 개수 선택
-      </Text>
-      <Text mb="80px" fontSize="16px">
-        <Highlight
-          query="우건이와 아이들"
-          styles={{
-            px: "2",
-            py: "1",
-            rounded: "full",
-            fontWeight: 600,
-            bg: "gra",
-            color: "chakra-body-text"
-          }}
-        >
-          우건이와 아이들 과 함께 풀 문제 개수를 선택해주세요
-        </Highlight>
-      </Text>
-
+      <ViewTitle
+        mt={60}
+        main="문제 개수 선택"
+        mb={80}
+        des="우건이와 아이들 과 함께 풀 문제 개수를 선택해주세요"
+        highLight="우건이와 아이들"
+      />
       <ButtonGroup spacing="32px" mb="120px">
         {[1, 2, 3].map(num => {
           return (
