@@ -24,7 +24,7 @@ function MainBox({ dir, data }: MainBoxProps) {
         <Text color="main" fontSize="16px" fontWeight="bold">
           {data.category}
         </Text>
-        <Text>
+        <Box>
           {data.title.map(line => {
             return (
               <Text fontSize="24px" fontWeight="bold" key={v4()}>
@@ -32,7 +32,7 @@ function MainBox({ dir, data }: MainBoxProps) {
               </Text>
             );
           })}
-        </Text>
+        </Box>
         <Box>
           {data.content.map(line => {
             return (
