@@ -7,11 +7,16 @@
 		"default_popup": "popup.html",
 		"default_icon": "koalla.png"
 	},
-	"host_permissions": ["*://*/*"],
 	"content_scripts": [
 		{
 			"js": ["status.js"],
 			"matches": ["https://www.acmicpc.net/status*"]
 		}
-	]
+	],
+	"background": {
+		"service_worker": "extension.js"
+	},
+	"externally_connectable": {
+		"matches": ["http://localhost:3000/*", "https://www.coalla.co.kr/*"]
+	}
 }
