@@ -1,6 +1,7 @@
 import { Box, Button, Center, Flex, Select, Text } from "@chakra-ui/react";
 
 import React, { useState } from "react";
+import NextBtn from "./NextBtn";
 import ViewTitle from "./ViewTitle";
 
 type ReviewBarProps = {
@@ -72,19 +73,7 @@ function ReviewView({ onBtnClick }: ReviewViewProps) {
             }
           />
         ))}
-
-      <Button
-        w="160px"
-        h="48px"
-        borderRadius="16px"
-        fontSize="24px"
-        bg="gra"
-        mt="40px"
-        _hover={{ opacity: 0.6 }}
-        onClick={onBtnClick}
-      >
-        다음
-      </Button>
+      <NextBtn text="다음" mt={40} onBtnClick={onBtnClick} />
     </Center>
   );
 }

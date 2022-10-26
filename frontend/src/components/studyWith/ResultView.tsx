@@ -2,6 +2,7 @@ import { Box, Button, Center, Flex, Text } from "@chakra-ui/react";
 
 import React from "react";
 import getTime from "../../utils/getTime";
+import NextBtn from "./NextBtn";
 import ViewTitle from "./ViewTitle";
 
 type ResultBarProps = {
@@ -71,17 +72,7 @@ function ResultView({ onBtnClick }: ResultViewProps) {
           />
         ))}
 
-      <Button
-        w="160px"
-        h="48px"
-        borderRadius="16px"
-        fontSize="24px"
-        bg="gra"
-        _hover={{ opacity: 0.6 }}
-        onClick={onBtnClick}
-      >
-        다음
-      </Button>
+      <NextBtn text="다음" mt={0} onBtnClick={onBtnClick} />
     </Center>
   );
 }

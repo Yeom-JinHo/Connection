@@ -1,6 +1,7 @@
 import { Button, Center, Flex, Text } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import getTime from "../../utils/getTime";
+import NextBtn from "./NextBtn";
 import ViewTitle from "./ViewTitle";
 
 function ProblemBar() {
@@ -105,18 +106,7 @@ function SolvingView({ onBtnClick }: SolvingViewProps) {
       <ProblemBar />
       <ProblemBar />
       <ProblemBar />
-      <Button
-        w="160px"
-        h="48px"
-        borderRadius="16px"
-        fontSize="24px"
-        mt="24px"
-        bg="gra"
-        _hover={{ opacity: 0.6 }}
-        onClick={onBtnClick}
-      >
-        다음
-      </Button>
+      <NextBtn text="다음" mt={20} onBtnClick={onBtnClick} />
     </Center>
   );
 }

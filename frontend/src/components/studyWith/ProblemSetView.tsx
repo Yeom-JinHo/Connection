@@ -2,6 +2,7 @@ import { Search2Icon } from "@chakra-ui/icons";
 import { Box, Button, Center, Highlight, Text } from "@chakra-ui/react";
 import React from "react";
 import ProblemSelect from "../common/ProblemSelect/ProblemSelect";
+import NextBtn from "./NextBtn";
 import ViewTitle from "./ViewTitle";
 
 type ProblemSetViewProps = {
@@ -58,19 +59,7 @@ function ProblemSetView({ onBtnClick }: ProblemSetViewProps) {
           ]}
         />
       </Box>
-      <Button
-        w="160px"
-        h="48px"
-        borderRadius="16px"
-        fontSize="24px"
-        bg="gra"
-        _hover={{ opacity: 0.6 }}
-        _active={{ opacity: 1 }}
-        onClick={onBtnClick}
-        mt="20px"
-      >
-        다음
-      </Button>
+      <NextBtn mt={20} onBtnClick={onBtnClick} text="다음" />
     </Center>
   );
 }

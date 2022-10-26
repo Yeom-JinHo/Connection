@@ -1,5 +1,6 @@
 import { Button, ButtonGroup, Center, Highlight, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
+import NextBtn from "./NextBtn";
 import ViewTitle from "./ViewTitle";
 
 type NumberSetViewProps = {
@@ -37,19 +38,11 @@ function NumberSetView({ onBtnClick }: NumberSetViewProps) {
           );
         })}
       </ButtonGroup>
-      <Button
-        w="160px"
-        h="48px"
-        borderRadius="16px"
-        fontSize="24px"
-        bg="gra"
-        _hover={{ opacity: 0.6 }}
-        _active={{ opacity: 1 }}
-        onClick={onBtnClick}
+      <NextBtn
+        text="다음"
+        onBtnClick={onBtnClick}
         disabled={selectedNum === 0}
-      >
-        다음
-      </Button>
+      />
     </Center>
   );
 }

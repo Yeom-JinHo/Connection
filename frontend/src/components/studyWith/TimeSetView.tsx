@@ -14,6 +14,7 @@ import { v4 } from "uuid";
 import React, { useEffect, useMemo, useState } from "react";
 import getTime from "../../utils/getTime";
 import ViewTitle from "./ViewTitle";
+import NextBtn from "./NextBtn";
 
 type ProblemContainerProps = {
   id: number;
@@ -144,17 +145,7 @@ function TimeSetView({ onBtnClick }: TimeSetViewProps) {
       <Text fontSize="60px" mb="12px">
         {totalTime}
       </Text>
-      <Button
-        w="160px"
-        h="48px"
-        borderRadius="16px"
-        fontSize="24px"
-        bg="gra"
-        _hover={{ opacity: 0.6 }}
-        onClick={onBtnClick}
-      >
-        다음
-      </Button>
+      <NextBtn text="다음" mt={0} onBtnClick={onBtnClick} />
     </Center>
   );
 }
