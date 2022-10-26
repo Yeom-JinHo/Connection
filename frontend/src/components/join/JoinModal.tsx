@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -13,8 +13,22 @@ import {
   ModalHeader,
   Text
 } from "@chakra-ui/react";
+import axios from "axios";
 
 function JoinModal() {
+  useEffect(() => {
+    axios
+      .get(
+        "https://solved.ac/api/v3/search/problem?query=solved_by%3Akian9712&page=1"
+      )
+      .then(date => {
+        console.log(date);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }, []);
+
   return (
     <ModalContent bg="dep_1" maxW={650}>
       <ModalHeader />
