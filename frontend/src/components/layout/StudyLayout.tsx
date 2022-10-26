@@ -25,7 +25,7 @@ function StudyLayout({
           top="40px"
           position="relative"
           direction="column"
-          gap="5px"
+          gap={4}
         >
           {sideComponent}
         </Flex>
