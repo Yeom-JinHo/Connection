@@ -179,15 +179,13 @@ function Main() {
           h="100%"
           justifyContent="space-evenly"
         >
-          <Text>
-            더 이상 혼자가 아닌 스터디원들과 같이 알고리즘 문제를 푸세요
-          </Text>
+          <Text>더 이상 혼자가 아닌 스터디원들과 같이 알고리즘 공부하세요</Text>
           <Text display="flex" alignItems="center">
             <Image
               src={colorMode === "light" ? LogoLight : LogoDark}
               alt="logo"
               w="150px"
-              mx="10px"
+              mr="5px"
             />
             와 함께라면 더 높은 곳 까지 갈 수 있어요
           </Text>
@@ -203,7 +201,7 @@ function Main() {
             mr="20px"
             h="100%"
           >
-            <Text>Coalla by 우건이와 아이들</Text>
+            <Text>connection by 우건공주와 다섯난쟁이</Text>
             <Text color="dep_3" mb="60px">
               김우건 김윤민 김준우 염진호 이기영 최진합
             </Text>

@@ -63,6 +63,7 @@ function Header() {
                 key={v4()}
                 color={location.pathname === menu.link ? "main" : ""}
                 _hover={{}}
+                fontWeight="bold"
               >
                 {menu.title}
               </Link>
