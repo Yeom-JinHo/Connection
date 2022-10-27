@@ -1,4 +1,5 @@
 import {
+  Box,
   Center,
   Flex,
   Highlight,
@@ -10,6 +11,7 @@ import {
   Text
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 import getTime from "../../utils/getTime";
 import ViewTitle from "./ViewTitle";
 import NextBtn from "./NextBtn";
@@ -22,7 +24,9 @@ type ProblemContainerProps = {
 };
 type TimeSetViewProps = {
   onBtnClick: () => void;
+  onPrevBtnClick: () => void;
 };
+
 function ProblemContainer({
   id,
   title,
@@ -90,7 +94,7 @@ function ProblemContainer({
 }
 const MemoProblemContainer = React.memo(ProblemContainer);
 
-function TimeSetView({ onBtnClick }: TimeSetViewProps) {
+function TimeSetView({ onBtnClick, onPrevBtnClick }: TimeSetViewProps) {
   const problemDummy = [
     { id: 1, title: "징검다리 달리기", recommendTime: 60 },
     { id: 2, title: "징검다리 달리기", recommendTime: 60 },
@@ -126,6 +130,15 @@ function TimeSetView({ onBtnClick }: TimeSetViewProps) {
 
   return (
     <Center w="1200px" m="auto" flexDir="column">
+      <Box w="800px" pos="absolute" top="108px">
+        <ArrowBackIcon
+          w="32px"
+          h="32px"
+          cursor="pointer"
+          onClick={onPrevBtnClick}
+        />
+      </Box>
+
       <ViewTitle
         main="문제 풀이 시간"
         mt={60}
