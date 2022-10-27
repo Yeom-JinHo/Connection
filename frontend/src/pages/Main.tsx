@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Link as ReactLink, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -6,7 +6,6 @@ import {
   Center,
   Flex,
   Image,
-  Link,
   Text,
   useColorMode
 } from "@chakra-ui/react";
@@ -33,7 +32,12 @@ function Main() {
   const { colorMode } = useColorMode();
 
   const navigate = useNavigate();
+  const mainRef = useRef<HTMLDivElement>(null);
   const imgs = [C, Java, JS, Python, Kotlin];
+
+  function onDown() {
+    mainRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   const squares = [
     {
@@ -101,9 +105,15 @@ function Main() {
               );
             })}
           </Center>
-          <Link href="#main" mt="20px">
+          <Button
+            mt="20px"
+            onClick={() => onDown()}
+            bg=""
+            _hover={{}}
+            _active={{}}
+          >
             <Image src={DownArrow} w="50px" />
-          </Link>
+          </Button>
         </Center>
         <Image
           src={Wave}
@@ -115,8 +125,8 @@ function Main() {
           h="40%"
         />
       </Center>
-      <Box h="68px" id="main" bg="#fbfbfb" />
-      <Box as="section" bg="#fbfbfb" _dark={{ bg: "#1b1b1b" }} py="50px">
+      <Box h="68px" id="main" bg="#fbfbfb" ref={mainRef} />
+      <Box as="section" bg="#fbfbfb" _dark={{ bg: "#1b1b1b" }} p="100px 0 0">
         <Center maxW="800px" m="0 auto" flexDir="column">
           <Box w="100%" display="flex" alignItems="center">
             <Box
@@ -165,7 +175,7 @@ function Main() {
           })}
         </Center>
       </Box>
-      <Box as="section" py="50px">
+      <Box as="section" p="100px 0 0">
         <Center maxW="800px" m="0 auto" flexDir="column">
           <Box
             w="100%"
@@ -208,7 +218,7 @@ function Main() {
       </Box>
       <Center
         as="section"
-        py="50px"
+        p="100px 0 0"
         h="250px"
         bg={
           colorMode === "light"
