@@ -15,7 +15,7 @@ import {
 import TotalLayout from "../../components/layout/TotalLayout";
 import Homework from "../../components/study/Homework";
 import Ranking from "../../components/study/Ranking";
-import Github from "../../asset/img/github.svg";
+import { ReactComponent as Github } from "../../asset/img/github.svg";
 
 function StudyTotal() {
   const { onCopy } = useClipboard("스터디코드");
@@ -39,10 +39,14 @@ function StudyTotal() {
         borderBottom="1px solid #BFBFBF"
       >
         <Flex direction="column" ml="20px">
-          <Heading fontSize="20px" fontWeight="bold" mb="5px">
-            우건이와 아이들
-            <Image src={Github} alt="github" />
-          </Heading>
+          <Center mb="5px">
+            <Heading fontSize="20px" fontWeight="bold" mr="5px">
+              우건이와 아이들
+            </Heading>
+            <Box>
+              <Github width="20px" />
+            </Box>
+          </Center>
           <Text fontSize="14px" display="flex" alignItems="center">
             스터디 코드 : SDFWVS
             <CopyIcon mx="3px" onClick={() => onCopyEvent()} cursor="pointer" />
