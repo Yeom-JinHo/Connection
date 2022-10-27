@@ -14,6 +14,7 @@ function Tap({ id, label, isSelected, onTabClick }: TapProps) {
       bg={isSelected ? "sub" : "dep_1"}
       height="48px"
       borderRadius="15px 0 0 15px"
+      fontWeight="bold"
       boxShadow="0 4px 4px rgba(0,0,0,0.25)"
       onClick={onTabClick}
       data-id={id}
