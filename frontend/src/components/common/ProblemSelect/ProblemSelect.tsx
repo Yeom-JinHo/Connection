@@ -1,5 +1,5 @@
-import React from "react";
-import { Box, chakra, Flex, Grid } from "@chakra-ui/react";
+import React, { ReactNode, useState } from "react";
+import { Box, Flex, Grid } from "@chakra-ui/react";
 import ProblemCard, { Problem } from "../ProblemCard";
 import SelectedProblem from "./SelectedProblem";
 
@@ -13,18 +13,33 @@ interface ProblemSelectProps {
   problemList: Problem[];
 }
 
-const Tab = chakra(Box, {
-  baseStyle: {
-    p: 3,
-    bg: "gra",
-    w: "full",
-    borderTopRadius: "20px",
-    textAlign: "center",
-    cursor: "pointer"
-  }
-});
+interface TabProps {
+  selected?: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}
+
+function Tab({ selected, onClick, children }: TabProps) {
+  return (
+    <Box
+      p={3}
+      w="full"
+      borderTopRadius="20px"
+      textAlign="center"
+      cursor="pointer"
+      bg={`${selected ? "gra" : "dep_3"}`}
+      onClick={onClick}
+    >
+      {children}
+    </Box>
+  );
+}
+Tab.defaultProps = {
+  selected: false
+};
 
 function ProblemSelect({ selectedProblems, problemList }: ProblemSelectProps) {
+  const [selectedTab, setSelectedTap] = useState(1);
   return (
     <Grid templateColumns="repeat(2,1fr)" gap="32px">
       <Flex direction="column" alignItems="center">
@@ -55,7 +70,12 @@ function ProblemSelect({ selectedProblems, problemList }: ProblemSelectProps) {
       </Flex>
       <Flex direction="column" alignItems="center">
         <Flex w="full">
-          <Tab>추천 문제</Tab> <Tab>문제집</Tab>
+          <Tab selected={selectedTab === 0} onClick={() => setSelectedTap(0)}>
+            추천 문제
+          </Tab>
+          <Tab selected={selectedTab === 1} onClick={() => setSelectedTap(1)}>
+            문제집
+          </Tab>
         </Flex>
         <Flex
           w="full"

@@ -25,11 +25,12 @@ function SelectedProblem({ no, title, onDeleteHandler }: SelectedProblemProps) {
       <Text w="15%" borderRight="1px" borderColor="border_gray">
         No {no}
       </Text>
-      <Text w="70%" paddingLeft={1}>
+      <Text w="70%" paddingLeft={2}>
         {title}
       </Text>
       <Icon
         w="15%"
+        h="24px"
         as={HiMinusCircle}
         fill="red"
         cursor="pointer"
