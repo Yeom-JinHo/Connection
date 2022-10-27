@@ -27,7 +27,7 @@ function Tab({ selected, onClick, children }: TabProps) {
       borderTopRadius="20px"
       textAlign="center"
       cursor="pointer"
-      bg={`${selected ? "gra" : "dep_3"}`}
+      bg={`${selected ? "gra" : "dep_2"}`}
       onClick={onClick}
     >
       {children}
@@ -43,18 +43,26 @@ function ProblemSelect({ selectedProblems, problemList }: ProblemSelectProps) {
   return (
     <Grid templateColumns="repeat(2,1fr)" gap="32px">
       <Flex direction="column" alignItems="center">
-        <Box p={3} bg="gra" w="full" borderTopRadius="20px" textAlign="center">
+        <Box
+          p={3}
+          bg="gra"
+          w="full"
+          borderTopRadius="20px"
+          textAlign="center"
+          fontWeight="bold"
+        >
           선택한 문제
         </Box>
         <Flex
           w="full"
-          bg="dep_2"
+          bg="dep_1"
           direction="column"
           alignItems="center"
           h="500px"
           px={8}
           py={8}
           gap={4}
+          borderBottomRadius="20px"
         >
           {selectedProblems?.map(problem => (
             <SelectedProblem
@@ -69,7 +77,7 @@ function ProblemSelect({ selectedProblems, problemList }: ProblemSelectProps) {
         </Flex>
       </Flex>
       <Flex direction="column" alignItems="center">
-        <Flex w="full">
+        <Flex w="full" fontWeight="bold">
           <Tab selected={selectedTab === 0} onClick={() => setSelectedTap(0)}>
             추천 문제
           </Tab>
@@ -79,19 +87,20 @@ function ProblemSelect({ selectedProblems, problemList }: ProblemSelectProps) {
         </Flex>
         <Flex
           w="full"
-          bg="dep_2"
+          bg="dep_1"
           h="500px"
           direction="column"
           p={8}
           gap={8}
           overflowY="scroll"
+          borderBottomRadius="20px"
         >
           {problemList.map(problem => (
             <ProblemCard
               key={problem.id}
-              bg="dep_3"
+              bg="dep_2"
               problem={problem}
-              btnType="delete"
+              btnType="add"
               onBtnClick={() => console.log(problem.id)}
             />
           ))}

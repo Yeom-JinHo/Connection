@@ -1,11 +1,6 @@
 import React from "react";
 import { Box, Flex, Link, Text } from "@chakra-ui/react";
-import {
-  AddIcon,
-  DeleteIcon,
-  ExternalLinkIcon,
-  LinkIcon
-} from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon, LinkIcon } from "@chakra-ui/icons";
 
 export interface Tag {
   id: number;
@@ -58,7 +53,12 @@ function ProblemCard({ problem, btnType, onBtnClick, bg }: ProblemCardProps) {
       }}
     >
       <Box borderBottom="1px" borderColor="border_gray" pb="20px" mb="20px">
-        <Flex justifyContent="space-between" mt="10px" mb="10px">
+        <Flex
+          justifyContent="space-between"
+          mt="10px"
+          mb="10px"
+          alignItems="center"
+        >
           <Flex>
             <Link href={link} isExternal fontSize="2xl" fontWeight="bold">
               {title}
