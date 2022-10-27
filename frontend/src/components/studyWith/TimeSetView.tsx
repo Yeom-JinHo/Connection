@@ -54,7 +54,6 @@ function ProblemContainer({
         h="72px"
         borderRadius="16px"
         shadow="2px 4px 4px rgba(0, 0, 0, 0.25)"
-        _hover={{ background: "gra" }}
       >
         <Center borderRight="1px solid #b8b8b8" h="40px">
           <Text p="16px">{id}</Text>
@@ -73,25 +72,28 @@ function ProblemContainer({
         h="72px"
         borderRadius="20px"
         shadow="2px 4px 4px rgba(0, 0, 0, 0.25)"
-        _hover={{ background: "gra", border: "transport" }}
       >
-        {times.get(id) === recommendTime && (
-          <Text
-            pos="absolute"
-            right="32px"
-            zIndex="1"
-            color="main"
-            fontWeight="700"
-          >
-            추천
-          </Text>
-        )}
         <NumberInputField h="72px" />
         <NumberInputStepper>
-          <NumberIncrementStepper />
-          <NumberDecrementStepper />
+          <NumberIncrementStepper _hover={{ background: "gra" }} />
+          <NumberDecrementStepper _hover={{ background: "gra" }} />
         </NumberInputStepper>
       </NumberInput>
+      <Text ml="12px">
+        <Highlight
+          query={`${recommendTime}분 추천`}
+          styles={{
+            px: "4",
+            py: "1",
+            rounded: "full",
+            fontWeight: 500,
+            bg: "gra",
+            color: "chakra-body-text"
+          }}
+        >
+          {`${recommendTime}분 추천`}
+        </Highlight>
+      </Text>
     </Center>
   );
 }
