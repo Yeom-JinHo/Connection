@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Grid } from "@chakra-ui/react";
 
 import ProblemCard from "../components/common/ProblemCard";
 import StudyLayout from "../components/layout/StudyLayout";
 import SideComponent from "../components/recommend/SideComponent";
+import { getRecommend } from "../api/problem";
 
 const TABS = [
   {
@@ -18,39 +19,59 @@ const TABS = [
   }
 ];
 
-const dumpProblemList = [
-  {
-    id: 123,
-    title: "징검다리 건너기",
-    difficulty: "골드 3",
-    elapsedTime: "1:10:23",
-    link: "http://asasfasf.com",
-    tags: [{ id: 0, title: "#dfs" }]
-  },
-  {
-    id: 12,
-    title: "징검다리 건너기",
-    difficulty: "골드 3",
-    elapsedTime: "1:10:23",
-    link: "http://asasfasf.com",
-    tags: [{ id: 0, title: "#dfs" }]
-  },
-  {
-    id: 3,
-    title: "징검다리 건너기",
-    difficulty: "골드 3",
-    elapsedTime: "1:10:23",
-    link: "http://asasfasf.com",
-    tags: [{ id: 0, title: "#dfs" }]
-  }
-];
 export interface Tab {
   id: number;
   label: string;
 }
+interface Tag {
+  tagId: string;
+  en: string;
+  ko: string;
+}
+
+interface ProblemInfo {
+  problemId: number;
+  title: string;
+  solvable: true;
+  accepted: number;
+  level: number;
+  tries: string;
+}
+export interface Problem {
+  problemInfo: ProblemInfo;
+  tagList: Tag[];
+  difficulty: number;
+}
+
+interface RecommendsType {
+  popular: Problem[];
+  workbook: Problem[];
+}
+
+interface ProblemListProps {
+  problemList: Problem[];
+}
+
+function ProblemList({ problemList }: ProblemListProps) {
+  return (
+    <Grid templateColumns="repeat(2,1fr)" gap="32px">
+      {problemList.map(problem => (
+        <ProblemCard
+          key={problem.problemInfo.problemId}
+          problem={problem}
+          btnType="add"
+          onBtnClick={() => {
+            // 문제집에 문제 추가하기 API 요청
+            // addProblem(problem.id);
+          }}
+        />
+      ))}
+    </Grid>
+  );
+}
 
 function Recommend() {
-  const [problemList, setProblemList] = useState(dumpProblemList);
+  const [recommends, setRecommends] = useState<null | RecommendsType>(null);
   const [selectedTap, setSelectedTap] = useState(0);
 
   const addProblem = (problemId: number) => {
@@ -65,6 +86,15 @@ function Recommend() {
     }
   };
 
+  useEffect(() => {
+    const fetch = async () => {
+      const res = await getRecommend();
+      setRecommends(res.data);
+      console.log(res);
+    };
+    fetch();
+  }, []);
+
   return (
     <StudyLayout
       sideComponent={
@@ -77,18 +107,13 @@ function Recommend() {
       title={TABS[selectedTap].label}
       description={TABS[selectedTap].msg}
     >
-      <Grid templateColumns="repeat(2,1fr)" gap="32px">
-        {problemList.map(problem => (
-          <ProblemCard
-            key={problem.id}
-            problem={problem}
-            btnType="add"
-            onBtnClick={() => {
-              addProblem(problem.id);
-            }}
-          />
-        ))}
-      </Grid>
+      {recommends && (
+        <ProblemList
+          problemList={
+            selectedTap === 0 ? recommends?.popular : recommends?.workbook
+          }
+        />
+      )}
     </StudyLayout>
   );
 }
