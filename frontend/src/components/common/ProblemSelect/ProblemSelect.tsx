@@ -1,8 +1,10 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { Box, Flex, Grid } from "@chakra-ui/react";
 import ProblemCard from "../ProblemCard";
 import SelectedProblem from "./SelectedProblem";
 import { Problem } from "../../../pages/Recommend";
+import { getRecommend } from "../../../api/problem";
+import { getWorkbook } from "../../../api/workbook";
 
 export interface selectedProblem {
   no: number;
@@ -11,7 +13,6 @@ export interface selectedProblem {
 
 interface ProblemSelectProps {
   selectedProblems?: selectedProblem[];
-  problemList: Problem[];
 }
 
 interface TabProps {
@@ -39,8 +40,24 @@ Tab.defaultProps = {
   selected: false
 };
 
-function ProblemSelect({ selectedProblems, problemList }: ProblemSelectProps) {
-  const [selectedTab, setSelectedTap] = useState(1);
+function ProblemSelect({ selectedProblems }: ProblemSelectProps) {
+  const [selectedTab, setSelectedTap] = useState(0);
+  const [recommends, setRecommends] = useState<Problem[]>([]);
+  const [myWorkbook, setMyWorkbook] = useState<Problem[]>([]);
+  useEffect(() => {
+    const fetch = async () => {
+      const res = await getRecommend();
+      setRecommends([...res.data.popular, ...res.data.workbook]);
+    };
+    fetch();
+  }, []);
+  useEffect(() => {
+    const fetch = async () => {
+      const res = await getWorkbook();
+      setMyWorkbook(res.data);
+    };
+    fetch();
+  }, []);
   return (
     <Grid templateColumns="repeat(2,1fr)" gap="32px">
       <Flex direction="column" alignItems="center">
@@ -96,15 +113,25 @@ function ProblemSelect({ selectedProblems, problemList }: ProblemSelectProps) {
           overflowY="scroll"
           borderBottomRadius="20px"
         >
-          {problemList.map(problem => (
-            <ProblemCard
-              key={problem.problemInfo.problemId}
-              bg="dep_2"
-              problem={problem}
-              btnType="add"
-              onBtnClick={() => console.log(problem.problemInfo.problemId)}
-            />
-          ))}
+          {selectedTab === 0
+            ? recommends.map(problem => (
+                <ProblemCard
+                  key={problem.problemInfo.problemId}
+                  bg="dep_2"
+                  problem={problem}
+                  btnType="add"
+                  onBtnClick={() => console.log(problem.problemInfo.problemId)}
+                />
+              ))
+            : myWorkbook.map(problem => (
+                <ProblemCard
+                  key={problem.problemInfo.problemId}
+                  bg="dep_2"
+                  problem={problem}
+                  btnType="add"
+                  onBtnClick={() => console.log(problem.problemInfo.problemId)}
+                />
+              ))}
         </Flex>
       </Flex>
     </Grid>

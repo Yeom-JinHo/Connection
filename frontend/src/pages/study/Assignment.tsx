@@ -14,13 +14,10 @@ import StudyLayout from "../../components/layout/StudyLayout";
 import BackButton from "../../components/common/BackButton";
 import ProblemSelect from "../../components/common/ProblemSelect/ProblemSelect";
 import SearchModal from "../../components/common/SearchModal";
-import { Problem } from "../Recommend";
-
-const dumpProblemList: Problem[] = [];
 
 function Assignment() {
-  const [problemList, setProblemList] = useState(dumpProblemList);
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <>
       <StudyLayout
@@ -49,7 +46,6 @@ function Assignment() {
           </Box>
         </Flex>
         <ProblemSelect
-          problemList={problemList}
           selectedProblems={[
             { no: 1, title: "징검다리 건너기" },
             { no: 2, title: "징검다리 건너기" },
