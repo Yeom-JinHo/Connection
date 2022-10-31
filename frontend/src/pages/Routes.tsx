@@ -14,6 +14,7 @@ import StudyTotal from "./study/StudyTotal";
 import Assignment from "./study/Assignment";
 import Management from "./study/Management";
 import Main from "./Main";
+import Callback from "./Callback";
 
 export default function Routes() {
   return (
@@ -30,6 +31,7 @@ export default function Routes() {
           <Route path="management" element={<Management />} />
         </Route>
         <Route path="/study-with" element={<StudyWith />} />
+        <Route path="/oauth2/redirect" element={<Callback />} />
       </ReactRouterRoutes>
     </BrowserRouter>
   );

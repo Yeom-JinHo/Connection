@@ -1,10 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  Box,
   Button,
   Center,
+  Circle,
   Flex,
   Image,
   Link,
+  Menu,
+  MenuButton,
+  MenuGroup,
+  MenuItem,
+  MenuList,
   Modal,
   ModalOverlay,
   Spacer,
@@ -14,10 +21,11 @@ import {
 import { Link as ReactLink, useLocation } from "react-router-dom";
 import { v4 } from "uuid";
 import { MoonIcon } from "@chakra-ui/icons";
-import axios from "axios";
 import JoinModal from "../components/join/JoinModal";
 import LogoLight from "../asset/img/logo_light.svg";
 import LogoDark from "../asset/img/logo_dark.svg";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { resetUserInfo } from "../store/ducks/auth/authSlice";
 
 interface menuType {
   title: string;
@@ -27,26 +35,25 @@ interface menuType {
 function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const location = useLocation();
+  const [check, setCheck] = useState(false);
 
-  function getAPI(e: any) {
-    e.preventDefault();
-    // 깃허브 로그인
-    axios
-      .get("https://www.coalla.co.kr/api/auth")
-      .then(data => {
-        console.log(data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
+  const location = useLocation();
+  const auth = useAppSelector(state => state.auth);
+  const dispatch = useAppDispatch();
 
   const menus: menuType[] = [
     { title: "문제 추천", link: "/recommend" },
     { title: "스터디", link: "/study" },
     { title: "문제 풀기", link: "/study-with" }
   ];
+
+  useEffect(() => {
+    setCheck(auth.check);
+  }, [auth]);
+
+  function logout() {
+    dispatch(resetUserInfo());
+  }
 
   return (
     <Flex
@@ -85,17 +92,34 @@ function Header() {
           })}
         </Center>
         <Spacer />
-        <Center p="14px">
+        <Center p="14px" flex={1}>
           <Button mr="14px" onClick={toggleColorMode}>
             <MoonIcon />
           </Button>
-          <Link
-            href={`${process.env.REACT_APP_API_BASE_URL}/oauth2/authorize/github?redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URL}`}
-            _hover={{}}
-          >
-            <Button>로그인</Button>
-            <Button onClick={e => getAPI(e)}>test</Button>
-          </Link>
+
+          {check ? (
+            <Menu>
+              <MenuButton>
+                <Image
+                  src={auth.information?.imageUrl}
+                  borderRadius="20px"
+                  w="35px"
+                />
+              </MenuButton>
+              <MenuList _dark={{ bg: "#121212" }}>
+                <MenuGroup title={`${auth.information?.name}님 반가워요😀`}>
+                  <MenuItem onClick={() => logout()}>로그아웃</MenuItem>
+                </MenuGroup>
+              </MenuList>
+            </Menu>
+          ) : (
+            <Link
+              href={`${process.env.REACT_APP_API_BASE_URL}/oauth2/authorize/github?redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URL}`}
+              _hover={{}}
+            >
+              <Button>로그인</Button>
+            </Link>
+          )}
           <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
             <JoinModal />
