@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
-  Box,
   Button,
   Center,
-  Circle,
   Flex,
   Image,
   Link,
@@ -35,7 +33,8 @@ interface menuType {
 function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [check, setCheck] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
+  const [isBJ, setIsBJ] = useState(false);
 
   const location = useLocation();
   const auth = useAppSelector(state => state.auth);
@@ -48,8 +47,19 @@ function Header() {
   ];
 
   useEffect(() => {
-    setCheck(auth.check);
+    setIsLogin(auth.check);
+    if (auth.check) {
+      if (auth.information?.backjoonId) {
+        setIsBJ(true);
+      }
+    }
   }, [auth]);
+
+  useEffect(() => {
+    if (!isBJ && isLogin) {
+      onOpen();
+    }
+  }, [isBJ, isLogin]);
 
   function logout() {
     dispatch(resetUserInfo());
@@ -63,7 +73,7 @@ function Header() {
       bg={colorMode === "light" ? "white" : "#121212"}
       zIndex="5"
     >
-      <Center maxW="1200px" m="0 auto" w="100%">
+      <Center maxW="1200px" m="0 auto" w="100%" flex={1}>
         <Center p="14px">
           <Link as={ReactLink} to="/">
             <Image
@@ -74,7 +84,7 @@ function Header() {
           </Link>
         </Center>
         <Spacer />
-        <Center p="14px" w="540px" justifyContent="left">
+        <Center p="14px" w="540px" justifyContent="left" flex={6}>
           {menus.map(menu => {
             return (
               <Link
@@ -92,17 +102,18 @@ function Header() {
           })}
         </Center>
         <Spacer />
-        <Center p="14px" flex={1}>
+        <Center p="14px" flex={1} minW="170px">
           <Button mr="14px" onClick={toggleColorMode}>
             <MoonIcon />
           </Button>
 
-          {check ? (
+          {isLogin ? (
             <Menu>
               <MenuButton>
                 <Image
                   src={auth.information?.imageUrl}
-                  borderRadius="20px"
+                  borderRadius="50px"
+                  minW="35px"
                   w="35px"
                 />
               </MenuButton>
@@ -120,9 +131,10 @@ function Header() {
               <Button>로그인</Button>
             </Link>
           )}
-          <Modal isOpen={isOpen} onClose={onClose}>
+          <Button onClick={onOpen}>백준</Button>
+          <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
             <ModalOverlay />
-            <JoinModal />
+            <JoinModal onClose={onClose} />
           </Modal>
         </Center>
       </Center>

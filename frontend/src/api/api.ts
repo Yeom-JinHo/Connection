@@ -1,10 +1,5 @@
 import axios, { AxiosInstance } from "axios";
-// import { getToken } from "../components/common/functions/function";
 
-export const getToken = () => {
-  console.log(localStorage.getItem("access-token"));
-  return localStorage.getItem("access-token");
-};
 const url = process.env.REACT_APP_API_BASE_URL;
 
 export const api: AxiosInstance = axios.create({

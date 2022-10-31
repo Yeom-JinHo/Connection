@@ -18,7 +18,6 @@ export const authSlice = createSlice({
     resetUserInfo: state => {
       state.check = false;
       state.information = null;
-      localStorage.removeItem("access-token");
     }
     // setMoreInfo: (state, action) => {
     //   if (state.information) {
