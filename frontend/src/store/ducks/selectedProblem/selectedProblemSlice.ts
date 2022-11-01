@@ -16,7 +16,9 @@ export const selectedProblemSlice = createSlice({
     addProblem: (state, action) => {
       if (
         state.selectedProblemList.findIndex(
-          problem => problem.problemInfo.problemId === action.payload.problemId
+          problem =>
+            problem.problemInfo.problemId ===
+            action.payload.problemInfo.problemId
         ) >= 0
       )
         return;
@@ -28,7 +30,9 @@ export const selectedProblemSlice = createSlice({
     removeProblem: (state, action) => {
       state.selectedProblemList = [
         ...state.selectedProblemList.filter(
-          problem => problem.problemInfo.problemId !== action.payload.problemId
+          problem =>
+            problem.problemInfo.problemId !==
+            action.payload.problemInfo.problemId
         )
       ];
     },

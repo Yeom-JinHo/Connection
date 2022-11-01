@@ -93,7 +93,7 @@ function ProblemSelect() {
               no={problem.problemInfo.problemId}
               title={problem.problemInfo.title}
               onDeleteHandler={() => {
-                dispatch(removeProblem(problem.problemInfo.problemId));
+                dispatch(removeProblem(problem));
               }}
             />
           ))}
