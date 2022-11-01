@@ -73,12 +73,8 @@ function SearchModal({ isOpen, onClose }: SearchModalTypes) {
               problem={problem}
               btnType="add"
               onBtnClick={() => {
-                dispatch(
-                  addProblem({
-                    no: problem.problemInfo.problemId,
-                    title: problem.problemInfo.title
-                  })
-                );
+                dispatch(addProblem(problem));
+                onClose();
               }}
             />
           ))}

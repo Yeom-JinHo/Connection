@@ -12,15 +12,6 @@ import {
   resetSelectedProblem
 } from "../../../store/ducks/selectedProblem/selectedProblemSlice";
 
-export interface selectedProblem {
-  no: number;
-  title: string;
-}
-
-interface ProblemSelectProps {
-  selectedProblems?: selectedProblem[];
-}
-
 interface TabProps {
   selected?: boolean;
   onClick: () => void;
@@ -46,7 +37,7 @@ Tab.defaultProps = {
   selected: false
 };
 
-function ProblemSelect({ selectedProblems }: ProblemSelectProps) {
+function ProblemSelect() {
   const [selectedTab, setSelectedTap] = useState(0);
   const [recommends, setRecommends] = useState<Problem[]>([]);
   const [myWorkbook, setMyWorkbook] = useState<Problem[]>([]);
@@ -94,14 +85,15 @@ function ProblemSelect({ selectedProblems }: ProblemSelectProps) {
           py={8}
           gap={4}
           borderBottomRadius="20px"
+          overflowY="scroll"
         >
           {appSelector.selectedProblemList?.map(problem => (
             <SelectedProblem
-              key={problem.no}
-              no={problem.no}
-              title={problem.title}
+              key={problem.problemInfo.problemId}
+              no={problem.problemInfo.problemId}
+              title={problem.problemInfo.title}
               onDeleteHandler={() => {
-                dispatch(removeProblem(problem.no));
+                dispatch(removeProblem(problem.problemInfo.problemId));
               }}
             />
           ))}
@@ -133,14 +125,7 @@ function ProblemSelect({ selectedProblems }: ProblemSelectProps) {
                   bg="dep_2"
                   problem={problem}
                   btnType="add"
-                  onBtnClick={() =>
-                    dispatch(
-                      addProblem({
-                        no: problem.problemInfo.problemId,
-                        title: problem.problemInfo.title
-                      })
-                    )
-                  }
+                  onBtnClick={() => dispatch(addProblem(problem))}
                 />
               ))
             : myWorkbook.map(problem => (
@@ -149,14 +134,7 @@ function ProblemSelect({ selectedProblems }: ProblemSelectProps) {
                   bg="dep_2"
                   problem={problem}
                   btnType="add"
-                  onBtnClick={() =>
-                    dispatch(
-                      addProblem({
-                        no: problem.problemInfo.problemId,
-                        title: problem.problemInfo.title
-                      })
-                    )
-                  }
+                  onBtnClick={() => dispatch(addProblem(problem))}
                 />
               ))}
         </Flex>

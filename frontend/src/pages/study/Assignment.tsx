@@ -80,13 +80,7 @@ function Assignment() {
             <Search2Icon w={6} h={6} />
           </Box>
         </Flex>
-        <ProblemSelect
-          selectedProblems={[
-            { no: 1, title: "징검다리 건너기" },
-            { no: 2, title: "징검다리 건너기" },
-            { no: 3, title: "징검다리 건너기" }
-          ]}
-        />
+        <ProblemSelect />
         <Box mt={4} ml="auto" w="fit-content">
           <Button
             bg="gra"
