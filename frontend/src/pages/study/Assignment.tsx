@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 import {
   Box,
@@ -14,10 +14,33 @@ import StudyLayout from "../../components/layout/StudyLayout";
 import BackButton from "../../components/common/BackButton";
 import ProblemSelect from "../../components/common/ProblemSelect/ProblemSelect";
 import SearchModal from "../../components/common/SearchModal";
+import getDate from "../../utils/getDate";
 
 function Assignment() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const [startDate, setStartDate] = useState(getDate(new Date()));
+  const [endDate, setEndDate] = useState(getDate(new Date()));
+  const startDateRef = useRef<HTMLInputElement>(null);
+  const checkDate = (start: string, end: string) => {
+    if (new Date(start) > new Date(end)) {
+      alert("날짜를 똑바로 선택해주세요");
+      return false;
+    }
+    return true;
+  };
+  const onStartDateChange = (date: string) => {
+    if (!checkDate(date, endDate)) {
+      startDateRef?.current?.focus();
+      return;
+    }
+    setStartDate(date);
+  };
+  const onEndDateChange = (date: string) => {
+    if (!checkDate(startDate, date)) {
+      return;
+    }
+    setEndDate(date);
+  };
   return (
     <>
       <StudyLayout
@@ -31,9 +54,21 @@ function Assignment() {
             <Text fontSize="lg" fontWeight="bold" flexShrink={0}>
               과제 기간
             </Text>
-            <Input type="date" bg="dep_1" cursor="pointer" />
+            <Input
+              type="date"
+              bg="dep_1"
+              cursor="pointer"
+              value={startDate}
+              onChange={e => onStartDateChange(e.target.value)}
+            />
             <Text fontWeight="bold">~</Text>
-            <Input type="date" bg="dep_1" cursor="pointer" />
+            <Input
+              type="date"
+              bg="dep_1"
+              cursor="pointer"
+              value={endDate}
+              onChange={e => onEndDateChange(e.target.value)}
+            />
           </Flex>
           <Box
             bg="dep_1"
