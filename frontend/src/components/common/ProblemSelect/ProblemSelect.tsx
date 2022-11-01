@@ -2,15 +2,16 @@ import React, { ReactNode, useEffect, useState } from "react";
 import { Box, Flex, Grid, useToast } from "@chakra-ui/react";
 import ProblemCard from "../ProblemCard";
 import SelectedProblem from "./SelectedProblem";
-import { Problem } from "../../../pages/Recommend";
-import { getRecommend } from "../../../api/problem";
-import { getWorkbook } from "../../../api/workbook";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import {
   addProblem,
   removeProblem,
   resetSelectedProblem
 } from "../../../store/ducks/selectedProblem/selectedProblemSlice";
+import {
+  getMyWorkbook,
+  getRecommends
+} from "../../../store/ducks/selectedProblem/selectedProblemThunk";
 
 interface TabProps {
   selected?: boolean;
@@ -42,30 +43,21 @@ interface ProblemSelectProps {
 }
 function ProblemSelect({ maxCnt }: ProblemSelectProps) {
   const [selectedTab, setSelectedTap] = useState(0);
-  const [recommends, setRecommends] = useState<Problem[]>([]);
-  const [myWorkbook, setMyWorkbook] = useState<Problem[]>([]);
   const appSelector = useAppSelector(state => state.selectedProblem);
   const dispatch = useAppDispatch();
   const toast = useToast();
+
   useEffect(() => {
     const fetch = async () => {
-      const res = await getRecommend();
-      setRecommends([...res.data.popular, ...res.data.workbook]);
+      dispatch(getRecommends());
+      dispatch(getMyWorkbook());
     };
     fetch();
-  }, []);
-  useEffect(() => {
-    const fetch = async () => {
-      const res = await getWorkbook();
-      setMyWorkbook(res.data);
-    };
-    fetch();
-  }, []);
-  useEffect(() => {
     return () => {
       dispatch(resetSelectedProblem());
     };
   }, []);
+
   return (
     <Grid templateColumns="repeat(2,1fr)" gap="32px">
       <Flex direction="column" alignItems="center">
@@ -123,7 +115,7 @@ function ProblemSelect({ maxCnt }: ProblemSelectProps) {
           borderBottomRadius="20px"
         >
           {selectedTab === 0
-            ? recommends.map(problem => (
+            ? appSelector.showedRecommends.map(problem => (
                 <ProblemCard
                   key={problem.problemInfo.problemId}
                   bg="dep_2"
@@ -138,11 +130,18 @@ function ProblemSelect({ maxCnt }: ProblemSelectProps) {
                       });
                       return;
                     }
+                    // setRecommends(prev => [
+                    //   ...prev.filter(
+                    //     p =>
+                    //       p.problemInfo.problemId !==
+                    //       problem.problemInfo.problemId
+                    //   )
+                    // ]);
                     dispatch(addProblem(problem));
                   }}
                 />
               ))
-            : myWorkbook.map(problem => (
+            : appSelector.showedMyWorkbook.map(problem => (
                 <ProblemCard
                   key={problem.problemInfo.problemId}
                   bg="dep_2"
@@ -157,6 +156,13 @@ function ProblemSelect({ maxCnt }: ProblemSelectProps) {
                       });
                       return;
                     }
+                    // setMyWorkbook(prev => [
+                    //   ...prev.filter(
+                    //     p =>
+                    //       p.problemInfo.problemId !==
+                    //       problem.problemInfo.problemId
+                    //   )
+                    // ]);
                     dispatch(addProblem(problem));
                   }}
                 />
