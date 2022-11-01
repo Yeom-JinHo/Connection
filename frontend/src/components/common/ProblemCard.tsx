@@ -60,6 +60,7 @@ function ProblemCard({ problem, btnType, onBtnClick, bg }: ProblemCardProps) {
               isExternal
               fontSize="2xl"
               fontWeight="bold"
+              noOfLines={3}
             >
               {title}
               <LinkIcon w="18px" h="18px" mx="2" marginBottom={2} />
