@@ -18,6 +18,7 @@ import Homework from "../../components/study/Homework";
 import Ranking from "../../components/study/Ranking";
 import GithubL from "../../asset/img/githubL.svg";
 import GithubD from "../../asset/img/githubD.svg";
+import MyActivity from "../../components/study/MyActivity";
 
 function StudyTotal() {
   const { colorMode } = useColorMode();
@@ -81,7 +82,7 @@ function StudyTotal() {
           <Homework />
         </TotalLayout>
         <TotalLayout title="내 풀이 현황" height="300px">
-          <Text>차트</Text>
+          <MyActivity />
         </TotalLayout>
       </Box>
     </Box>

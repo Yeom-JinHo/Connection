@@ -1,11 +1,13 @@
-import { Box, Button, Text } from "@chakra-ui/react";
+import { Box, Button, Center, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 
 function MyActivity() {
-  const [isBoss, setIsBoss] = useState(false);
-  const [isHomwork, setIshomwork] = useState(false);
-
-  return <Box>내 풀이 현황</Box>;
+  return (
+    <Box>
+      <Center>과제</Center>
+      <Center>문제</Center>
+    </Box>
+  );
 }
 
 export default MyActivity;
