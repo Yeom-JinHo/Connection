@@ -5,6 +5,12 @@ import SelectedProblem from "./SelectedProblem";
 import { Problem } from "../../../pages/Recommend";
 import { getRecommend } from "../../../api/problem";
 import { getWorkbook } from "../../../api/workbook";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import {
+  addProblem,
+  removeProblem,
+  resetSelectedProblem
+} from "../../../store/ducks/selectedProblem/selectedProblemSlice";
 
 export interface selectedProblem {
   no: number;
@@ -44,6 +50,8 @@ function ProblemSelect({ selectedProblems }: ProblemSelectProps) {
   const [selectedTab, setSelectedTap] = useState(0);
   const [recommends, setRecommends] = useState<Problem[]>([]);
   const [myWorkbook, setMyWorkbook] = useState<Problem[]>([]);
+  const appSelector = useAppSelector(state => state.selectedProblem);
+  const dispatch = useAppDispatch();
   useEffect(() => {
     const fetch = async () => {
       const res = await getRecommend();
@@ -57,6 +65,11 @@ function ProblemSelect({ selectedProblems }: ProblemSelectProps) {
       setMyWorkbook(res.data);
     };
     fetch();
+  }, []);
+  useEffect(() => {
+    return () => {
+      dispatch(resetSelectedProblem());
+    };
   }, []);
   return (
     <Grid templateColumns="repeat(2,1fr)" gap="32px">
@@ -82,13 +95,13 @@ function ProblemSelect({ selectedProblems }: ProblemSelectProps) {
           gap={4}
           borderBottomRadius="20px"
         >
-          {selectedProblems?.map(problem => (
+          {appSelector.selectedProblemList?.map(problem => (
             <SelectedProblem
               key={problem.no}
               no={problem.no}
               title={problem.title}
               onDeleteHandler={() => {
-                console.log(`${problem.no} 삭제`);
+                dispatch(removeProblem(problem.no));
               }}
             />
           ))}
@@ -120,7 +133,14 @@ function ProblemSelect({ selectedProblems }: ProblemSelectProps) {
                   bg="dep_2"
                   problem={problem}
                   btnType="add"
-                  onBtnClick={() => console.log(problem.problemInfo.problemId)}
+                  onBtnClick={() =>
+                    dispatch(
+                      addProblem({
+                        no: problem.problemInfo.problemId,
+                        title: problem.problemInfo.title
+                      })
+                    )
+                  }
                 />
               ))
             : myWorkbook.map(problem => (
@@ -129,7 +149,14 @@ function ProblemSelect({ selectedProblems }: ProblemSelectProps) {
                   bg="dep_2"
                   problem={problem}
                   btnType="add"
-                  onBtnClick={() => console.log(problem.problemInfo.problemId)}
+                  onBtnClick={() =>
+                    dispatch(
+                      addProblem({
+                        no: problem.problemInfo.problemId,
+                        title: problem.problemInfo.title
+                      })
+                    )
+                  }
                 />
               ))}
         </Flex>

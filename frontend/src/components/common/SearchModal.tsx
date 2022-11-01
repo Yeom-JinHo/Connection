@@ -16,6 +16,8 @@ import ProblemCard from "./ProblemCard";
 import useDebounce from "../../hooks/useDebounce";
 import { searchProblem } from "../../api/problem";
 import { Problem } from "../../pages/Recommend";
+import { addProblem } from "../../store/ducks/selectedProblem/selectedProblemSlice";
+import { useAppDispatch } from "../../store/hooks";
 
 interface SearchModalTypes {
   isOpen: boolean;
@@ -26,6 +28,7 @@ function SearchModal({ isOpen, onClose }: SearchModalTypes) {
   const [problemList, setProblemList] = useState<Problem[]>([]);
   const [keyword, setKeyword] = useState("");
   const debouncedKeyword = useDebounce(keyword, 200);
+  const dispatch = useAppDispatch();
   useEffect(() => {
     const fetch = async () => {
       const res = await searchProblem(debouncedKeyword);
@@ -70,7 +73,12 @@ function SearchModal({ isOpen, onClose }: SearchModalTypes) {
               problem={problem}
               btnType="add"
               onBtnClick={() => {
-                console.log("as");
+                dispatch(
+                  addProblem({
+                    no: problem.problemInfo.problemId,
+                    title: problem.problemInfo.title
+                  })
+                );
               }}
             />
           ))}
