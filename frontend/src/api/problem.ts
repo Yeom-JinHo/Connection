@@ -1,11 +1,11 @@
-import API from "./index";
+import { api } from "./api";
 
 export const getRecommend = async () => {
-  const res = await API.get("/problem/recommend");
+  const res = await api.get("/problem/recommend");
   return res;
 };
 
-export const test = async () => {
-  const res = await API.get("/problem/recommend");
+export const searchProblem = async (keyword: string) => {
+  const res = await api.get(`/problem/search?keyword=${keyword}`);
   return res;
 };

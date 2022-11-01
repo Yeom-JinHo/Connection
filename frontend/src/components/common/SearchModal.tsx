@@ -12,13 +12,10 @@ import {
 import { Search2Icon } from "@chakra-ui/icons";
 import React, { useEffect, useState } from "react";
 
-import axios from "axios";
 import ProblemCard from "./ProblemCard";
-import { Problem } from "../../pages/Recommend";
-import API from "../../api";
 import useDebounce from "../../hooks/useDebounce";
-
-const dumpProblemList: Problem[] = [];
+import { searchProblem } from "../../api/problem";
+import { Problem } from "../../pages/Recommend";
 
 interface SearchModalTypes {
   isOpen: boolean;
@@ -26,12 +23,12 @@ interface SearchModalTypes {
 }
 
 function SearchModal({ isOpen, onClose }: SearchModalTypes) {
-  const [problemList, setProblemList] = useState(dumpProblemList);
+  const [problemList, setProblemList] = useState<Problem[]>([]);
   const [keyword, setKeyword] = useState("");
   const debouncedKeyword = useDebounce(keyword, 200);
   useEffect(() => {
     const fetch = async () => {
-      const res = await API.get(`/problem/search?keyword=${debouncedKeyword}`);
+      const res = await searchProblem(debouncedKeyword);
       console.log(res);
       setProblemList(res.data);
     };
