@@ -17,7 +17,10 @@ import ProblemCard from "./ProblemCard";
 import useDebounce from "../../hooks/useDebounce";
 import { searchProblem } from "../../api/problem";
 import { Problem } from "../../pages/Recommend";
-import { addProblem } from "../../store/ducks/selectedProblem/selectedProblemSlice";
+import {
+  addProblem,
+  removeProblem
+} from "../../store/ducks/selectedProblem/selectedProblemSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
 interface SearchModalTypes {
@@ -75,19 +78,32 @@ function SearchModal({ isOpen, onClose, maxCnt = 0 }: SearchModalTypes) {
               bg="dep_2"
               key={problem.problemInfo.problemId}
               problem={problem}
-              btnType="add"
-              onBtnClick={() => {
-                if (appSelector.cnt >= maxCnt) {
-                  toast({
-                    title: `선택할 수 있는 최대 갯수는 ${maxCnt}개 입니다!`,
-                    position: "top",
-                    isClosable: true
-                  });
-                  return;
-                }
-                dispatch(addProblem(problem));
-                onClose();
-              }}
+              btnType={
+                appSelector.selectedProblemList.findIndex(
+                  p => p.problemInfo.problemId === problem.problemInfo.problemId
+                ) >= 0
+                  ? "delete"
+                  : "add"
+              }
+              onBtnClick={
+                appSelector.selectedProblemList.findIndex(
+                  p => p.problemInfo.problemId === problem.problemInfo.problemId
+                ) >= 0
+                  ? () => {
+                      dispatch(removeProblem(problem));
+                    }
+                  : () => {
+                      if (appSelector.cnt >= maxCnt) {
+                        toast({
+                          title: `선택할 수 있는 최대 갯수는 ${maxCnt}개 입니다!`,
+                          position: "top",
+                          isClosable: true
+                        });
+                        return;
+                      }
+                      dispatch(addProblem(problem));
+                    }
+              }
             />
           ))}
         </Grid>
