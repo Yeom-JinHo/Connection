@@ -16,6 +16,7 @@ import axios from "axios";
 import ProblemCard from "./ProblemCard";
 import { Problem } from "../../pages/Recommend";
 import API from "../../api";
+import useDebounce from "../../hooks/useDebounce";
 
 const dumpProblemList: Problem[] = [];
 
@@ -27,14 +28,15 @@ interface SearchModalTypes {
 function SearchModal({ isOpen, onClose }: SearchModalTypes) {
   const [problemList, setProblemList] = useState(dumpProblemList);
   const [keyword, setKeyword] = useState("");
+  const debouncedKeyword = useDebounce(keyword, 200);
   useEffect(() => {
     const fetch = async () => {
-      const res = await API.get(`/problem/search?keyword=${keyword}`);
+      const res = await API.get(`/problem/search?keyword=${debouncedKeyword}`);
       console.log(res);
       setProblemList(res.data);
     };
     fetch();
-  }, [keyword]);
+  }, [debouncedKeyword]);
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="5xl">
       <ModalOverlay />
@@ -56,29 +58,6 @@ function SearchModal({ isOpen, onClose }: SearchModalTypes) {
             value={keyword}
             onChange={e => setKeyword(e.target.value)}
           />
-          {/* <Flex
-            direction="column"
-            position="absolute"
-            bg="dep_1"
-            w="full"
-            zIndex={10}
-            border="1px"
-            borderColor="border_gray"
-            borderRadius="20px"
-            borderTopRadius={0}
-            py={2}
-            borderTop={0}
-          >
-            <Box px={4} _hover={{ background: "dep_2" }}>
-              <Text fontSize="xl">asd</Text>
-            </Box>
-            <Box px={4} _hover={{ background: "dep_2" }}>
-              <Text fontSize="xl">asd</Text>
-            </Box>
-            <Box px={4} _hover={{ background: "dep_2" }}>
-              <Text fontSize="xl">asd</Text>
-            </Box>
-          </Flex> */}
         </Box>
         <Grid
           templateColumns="repeat(2,1fr)"
