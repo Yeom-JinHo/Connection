@@ -59,7 +59,7 @@ function Header() {
     if (!isBJ && isLogin) {
       onOpen();
     }
-  }, [isBJ, isLogin]);
+  }, [isBJ, isLogin, location]);
 
   function logout() {
     dispatch(resetUserInfo());
@@ -125,7 +125,7 @@ function Header() {
             </Menu>
           ) : (
             <Link
-              href={`${process.env.REACT_APP_API_BASE_URL}/oauth2/authorize/github?redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URL}`}
+              href={`${process.env.REACT_APP_API_URL}/oauth2/authorize/github?redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URL}`}
               _hover={{}}
             >
               <Button>로그인</Button>
