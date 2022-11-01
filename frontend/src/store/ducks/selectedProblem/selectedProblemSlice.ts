@@ -42,6 +42,7 @@ export const selectedProblemSlice = createSlice({
     },
     resetSelectedProblem: state => {
       state.selectedProblemList = [];
+      state.cnt = 0;
     }
   }
 });
