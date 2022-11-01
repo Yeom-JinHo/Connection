@@ -45,6 +45,7 @@ function ProblemCard({ problem, btnType, onBtnClick, bg }: ProblemCardProps) {
         transform: "scale(1.03)",
         transition: "transform ease-out .5s"
       }}
+      maxH="250px"
     >
       <Box borderBottom="1px" borderColor="border_gray" pb="20px" mb="20px">
         <Flex
@@ -70,7 +71,7 @@ function ProblemCard({ problem, btnType, onBtnClick, bg }: ProblemCardProps) {
           {tagList.map(tag => (
             <Box
               key={tag.tagId}
-              bg="dep_2"
+              bg="dep_3"
               w="fit-content"
               p="4px 16px"
               borderRadius="15px"

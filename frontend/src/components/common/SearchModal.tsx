@@ -10,10 +10,12 @@ import {
   Text
 } from "@chakra-ui/react";
 import { Search2Icon } from "@chakra-ui/icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
+import axios from "axios";
 import ProblemCard from "./ProblemCard";
 import { Problem } from "../../pages/Recommend";
+import API from "../../api";
 
 const dumpProblemList: Problem[] = [];
 
@@ -24,6 +26,15 @@ interface SearchModalTypes {
 
 function SearchModal({ isOpen, onClose }: SearchModalTypes) {
   const [problemList, setProblemList] = useState(dumpProblemList);
+  const [keyword, setKeyword] = useState("");
+  useEffect(() => {
+    const fetch = async () => {
+      const res = await API.get(`/problem/search?keyword=${keyword}`);
+      console.log(res);
+      setProblemList(res.data);
+    };
+    fetch();
+  }, [keyword]);
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="5xl">
       <ModalOverlay />
@@ -42,8 +53,10 @@ function SearchModal({ isOpen, onClose }: SearchModalTypes) {
             fontSize="xl"
             placeholder="검색어를 입력하세요"
             paddingLeft={10}
+            value={keyword}
+            onChange={e => setKeyword(e.target.value)}
           />
-          <Flex
+          {/* <Flex
             direction="column"
             position="absolute"
             bg="dep_1"
@@ -65,15 +78,21 @@ function SearchModal({ isOpen, onClose }: SearchModalTypes) {
             <Box px={4} _hover={{ background: "dep_2" }}>
               <Text fontSize="xl">asd</Text>
             </Box>
-          </Flex>
+          </Flex> */}
         </Box>
-        <Grid templateColumns="repeat(2,1fr)" gap="32px">
+        <Grid
+          templateColumns="repeat(2,1fr)"
+          gap="32px"
+          height="500px"
+          overflowY="scroll"
+          p={4}
+        >
           {problemList.map(problem => (
             <ProblemCard
               bg="dep_2"
               key={problem.problemInfo.problemId}
               problem={problem}
-              btnType="delete"
+              btnType="add"
               onBtnClick={() => {
                 console.log("as");
               }}
