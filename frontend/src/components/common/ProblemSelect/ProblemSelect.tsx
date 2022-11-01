@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useState } from "react";
-import { Box, Flex, Grid } from "@chakra-ui/react";
+import { Box, Flex, Grid, useToast } from "@chakra-ui/react";
 import ProblemCard from "../ProblemCard";
 import SelectedProblem from "./SelectedProblem";
 import { Problem } from "../../../pages/Recommend";
@@ -46,6 +46,7 @@ function ProblemSelect({ maxCnt }: ProblemSelectProps) {
   const [myWorkbook, setMyWorkbook] = useState<Problem[]>([]);
   const appSelector = useAppSelector(state => state.selectedProblem);
   const dispatch = useAppDispatch();
+  const toast = useToast();
   useEffect(() => {
     const fetch = async () => {
       const res = await getRecommend();
@@ -129,7 +130,14 @@ function ProblemSelect({ maxCnt }: ProblemSelectProps) {
                   problem={problem}
                   btnType="add"
                   onBtnClick={() => {
-                    if (appSelector.cnt >= maxCnt) return;
+                    if (appSelector.cnt >= maxCnt) {
+                      toast({
+                        title: `선택할 수 있는 최대 갯수는 ${maxCnt}개 입니다!`,
+                        position: "top",
+                        isClosable: true
+                      });
+                      return;
+                    }
                     dispatch(addProblem(problem));
                   }}
                 />
@@ -141,7 +149,14 @@ function ProblemSelect({ maxCnt }: ProblemSelectProps) {
                   problem={problem}
                   btnType="add"
                   onBtnClick={() => {
-                    if (appSelector.cnt >= maxCnt) return;
+                    if (appSelector.cnt >= maxCnt) {
+                      toast({
+                        title: `선택할 수 있는 최대 갯수는 ${maxCnt}개 입니다!`,
+                        position: "top",
+                        isClosable: true
+                      });
+                      return;
+                    }
                     dispatch(addProblem(problem));
                   }}
                 />

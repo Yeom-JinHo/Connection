@@ -91,7 +91,7 @@ function Assignment() {
           </Button>
         </Box>
       </StudyLayout>
-      <SearchModal isOpen={isOpen} onClose={onClose} />
+      <SearchModal isOpen={isOpen} onClose={onClose} maxCnt={5} />
     </>
   );
 }

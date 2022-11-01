@@ -7,7 +7,8 @@ import {
   ModalBody,
   ModalContent,
   ModalOverlay,
-  Text
+  Text,
+  useToast
 } from "@chakra-ui/react";
 import { Search2Icon } from "@chakra-ui/icons";
 import React, { useEffect, useState } from "react";
@@ -17,18 +18,21 @@ import useDebounce from "../../hooks/useDebounce";
 import { searchProblem } from "../../api/problem";
 import { Problem } from "../../pages/Recommend";
 import { addProblem } from "../../store/ducks/selectedProblem/selectedProblemSlice";
-import { useAppDispatch } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
 interface SearchModalTypes {
   isOpen: boolean;
   onClose: () => void;
+  maxCnt: number;
 }
 
-function SearchModal({ isOpen, onClose }: SearchModalTypes) {
+function SearchModal({ isOpen, onClose, maxCnt = 0 }: SearchModalTypes) {
   const [problemList, setProblemList] = useState<Problem[]>([]);
   const [keyword, setKeyword] = useState("");
   const debouncedKeyword = useDebounce(keyword, 200);
+  const appSelector = useAppSelector(state => state.selectedProblem);
   const dispatch = useAppDispatch();
+  const toast = useToast();
   useEffect(() => {
     const fetch = async () => {
       const res = await searchProblem(debouncedKeyword);
@@ -73,6 +77,14 @@ function SearchModal({ isOpen, onClose }: SearchModalTypes) {
               problem={problem}
               btnType="add"
               onBtnClick={() => {
+                if (appSelector.cnt >= maxCnt) {
+                  toast({
+                    title: `선택할 수 있는 최대 갯수는 ${maxCnt}개 입니다!`,
+                    position: "top",
+                    isClosable: true
+                  });
+                  return;
+                }
                 dispatch(addProblem(problem));
                 onClose();
               }}
