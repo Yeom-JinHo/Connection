@@ -1,5 +1,7 @@
 package com.ssafy.connection.securityOauth.service.auth;
 
+import com.ssafy.connection.entity.ConnStudy;
+import com.ssafy.connection.repository.ConnStudyRepository;
 import com.ssafy.connection.securityOauth.advice.assertThat.DefaultAssert;
 import com.ssafy.connection.securityOauth.config.security.token.UserPrincipal;
 import com.ssafy.connection.securityOauth.domain.entity.user.*;
@@ -37,11 +39,22 @@ public class AuthService {
     
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
+    private final ConnStudyRepository connStudyRepository;
     
 
     public ResponseEntity<?> whoAmI(UserPrincipal userPrincipal){
         Optional<User> user = userRepository.findById(userPrincipal.getId());
         UserDto userDto = ModelMapperUtils.getModelMapper().map(user.get(), UserDto.class);
+
+        ConnStudy connStudy = connStudyRepository.findByUser(user.get());
+        if(connStudy == null){
+            userDto.setStudyId2(0);
+        }
+        else {
+            userDto.setStudyId2(connStudy.getStudy().getStudyId());
+            userDto.setStudyRole(connStudy.getRole());
+        }
+
         DefaultAssert.isOptionalPresent(user);
         ApiResponse apiResponse = ApiResponse.builder().check(true).information(userDto).build();
 
@@ -119,19 +132,19 @@ public class AuthService {
         return ResponseEntity.created(location).body(apiResponse);
     }
 
-    public ResponseEntity<?> refresh(RefreshTokenRequest tokenRefreshRequest){
+    public ResponseEntity<?> refresh(String refreshToken){
         //1차 검증
-        boolean checkValid = valid(tokenRefreshRequest.getRefreshToken());
+        boolean checkValid = valid(refreshToken);
         DefaultAssert.isAuthentication(checkValid);
 
-        Optional<Token> token = tokenRepository.findByRefreshToken(tokenRefreshRequest.getRefreshToken());
+        Optional<Token> token = tokenRepository.findByRefreshToken(refreshToken);
         Authentication authentication = customTokenProviderService.getAuthenticationByGithubId(token.get().getGithubId());
 
         //4. refresh token 정보 값을 업데이트 한다.
         //시간 유효성 확인
         TokenMapping tokenMapping;
 
-        Long expirationTime = customTokenProviderService.getExpiration(tokenRefreshRequest.getRefreshToken());
+        Long expirationTime = customTokenProviderService.getExpiration(refreshToken);
         if(expirationTime > 0){
             tokenMapping = customTokenProviderService.refreshToken(authentication, token.get().getRefreshToken());
         }else{

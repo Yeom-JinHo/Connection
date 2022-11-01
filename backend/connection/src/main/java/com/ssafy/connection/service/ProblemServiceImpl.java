@@ -2,10 +2,15 @@ package com.ssafy.connection.service;
 
 import com.ssafy.connection.dto.ProblemDto;
 import com.ssafy.connection.dto.ProblemReturnDto;
+import com.ssafy.connection.dto.TagDto;
+import com.ssafy.connection.dto.WorkbookCountInterface;
 import com.ssafy.connection.entity.Problem;
 import com.ssafy.connection.entity.Tag;
+import com.ssafy.connection.repository.ConnStudyRepository;
+import com.ssafy.connection.repository.ConnWorkbookRepository;
 import com.ssafy.connection.repository.ProblemRepository;
 import com.ssafy.connection.repository.TagRepository;
+import com.ssafy.connection.securityOauth.config.security.token.UserPrincipal;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -16,8 +21,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -27,29 +31,199 @@ public class ProblemServiceImpl implements ProblemService{
 
     private final ProblemRepository problemRepository;
     private final TagRepository tagRepository;
+    private final ConnWorkbookRepository connWorkbookRepository;
+    private final ConnStudyRepository connStudyRepository;
+    private final StudyService studyService;
 
-    public ProblemServiceImpl(ProblemRepository problemRepository, TagRepository tagRepository){
+    public ProblemServiceImpl(ProblemRepository problemRepository, TagRepository tagRepository, ConnWorkbookRepository connWorkbookRepository,
+                              ConnStudyRepository connStudyRepository, StudyService studyService){
         this.problemRepository = problemRepository;
         this.tagRepository = tagRepository;
+        this.connWorkbookRepository = connWorkbookRepository;
+        this.connStudyRepository = connStudyRepository;
+        this.studyService = studyService;
     }
 
-    @Transactional
-    public ProblemDto getProblem(long problemId) {
-        return ProblemDto.of(problemRepository.getById(problemId));
+    private static int recommendSize = 4;   // 문제 추천에서 반환할 문제 수
+    private static int recommendWorkbookCount = 2;  // 문제 추천에서 스터디 문제집에 많이 담긴 기준 값
+
+    @Override
+    public Object getPopularProblemList(String tag) {
+        List<ProblemDto> problemDtoList = problemRepository.findPopularProblemList().stream().map(entity -> ProblemDto.of(entity)).collect(Collectors.toList());
+        List<ProblemReturnDto> returnList = new ArrayList<>();
+
+        Collections.shuffle(problemDtoList);
+        for(ProblemDto problemDto : problemDtoList){
+            ArrayList<TagDto> tagList = (ArrayList<TagDto>) tagRepository.findAllByProblem(Problem.of(problemDto));
+            for(TagDto tagDto : tagList){
+                if(tagDto.getKo().equals(tag)){
+                    returnList.add(new ProblemReturnDto(problemDto, tagList));
+                    break;
+                }
+            }
+            if(returnList.size() == recommendSize){
+                break;
+            }
+        }
+        return returnList;
+    }
+
+    @Override
+    public Object getPopularProblemList(long level, String tag) {
+        List<ProblemDto> problemDtoList = problemRepository.findPopularProblemList().stream().map(entity -> ProblemDto.of(entity)).collect(Collectors.toList());
+        List<ProblemReturnDto> returnList = new ArrayList<>();
+
+        Collections.shuffle(problemDtoList);
+        for(ProblemDto problemDto : problemDtoList){
+            if(problemDto.getLevel() == level){
+                ArrayList<TagDto> tagList = tagRepository.findAllByProblem(Problem.of(problemDto));
+                for(TagDto tagDto : tagList){
+                    if(tagDto.getKo().equals(tag)){
+                        returnList.add(new ProblemReturnDto(problemDto, tagList));
+                        break;
+                    }
+                }
+            }
+            if(returnList.size() == recommendSize){
+                break;
+            }
+        }
+        return returnList;
+    }
+
+    @Override
+    public Object getPopularProblemList(Long level) {
+        List<ProblemDto> problemDtoList = problemRepository.findPopularProblemList().stream().map(entity -> ProblemDto.of(entity)).collect(Collectors.toList());
+        List<ProblemReturnDto> returnList = new ArrayList<>();
+
+        Collections.shuffle(problemDtoList);
+        for(ProblemDto problemDto : problemDtoList){
+            if(problemDto.getLevel() == level){
+                returnList.add(new ProblemReturnDto(problemDto, tagRepository.findAllByProblem(Problem.of(problemDto))));
+            }
+            if(returnList.size() == recommendSize){
+                break;
+            }
+        }
+        return returnList;
+    }
+
+    @Override
+    public Object getPopularProblemList() {
+        List<ProblemDto> problemDtoList = problemRepository.findPopularProblemList().stream().map(entity -> ProblemDto.of(entity)).collect(Collectors.toList());
+        List<ProblemReturnDto> returnList = new ArrayList<>();
+
+        Collections.shuffle(problemDtoList);
+        for(ProblemDto problemDto : problemDtoList){
+            returnList.add(new ProblemReturnDto(problemDto, tagRepository.findAllByProblem(Problem.of(problemDto))));
+            if(returnList.size() == recommendSize){
+                break;
+            }
+        }
+        return returnList;
     }
 
     @Override
     @Transactional
-    public List<ProblemReturnDto> getProblemList() {
-        List<Problem> problemEntityList = problemRepository.findAll();
-        List<ProblemDto> problemDtoList = problemEntityList.stream().map(entity -> ProblemDto.of(entity)).collect(Collectors.toList());
+    public List<ProblemReturnDto> getProblem(long problemId) {
         List<ProblemReturnDto> returnList = new ArrayList<>();
+        Optional<Problem> problem = problemRepository.findById(problemId);
+        ProblemDto problemDto = new ProblemDto();
+        if(problem.isPresent()){
+            problemDto = ProblemDto.of(problem.get());
+        }
+        returnList.add(new ProblemReturnDto(problemDto, tagRepository.findAllByProblem(Problem.of(problemDto))));
+        return returnList;
+    }
+
+    @Override
+    @Transactional
+    public List<ProblemReturnDto> getProblem(String title) {
+        List<ProblemReturnDto> returnList = new ArrayList<>();
+        List<ProblemDto> problemDtoList = problemRepository.findAllByTitle(title).stream().map(entity -> ProblemDto.of(entity)).collect(Collectors.toList());
 
         for(ProblemDto problemDto : problemDtoList){
             returnList.add(new ProblemReturnDto(problemDto, tagRepository.findAllByProblem(Problem.of(problemDto))));
         }
+        return returnList;
+    }
+
+    @Override
+    @Transactional
+    public List<ProblemReturnDto> getProblemByTag(String ko) {
+        List<ProblemReturnDto> returnList = new ArrayList<>();
+        List<ProblemDto> problemDtoList = problemRepository.findAllByTag(ko).stream().map(entity -> ProblemDto.of(entity)).collect(Collectors.toList());
+
+        for(ProblemDto problemDto : problemDtoList){
+            returnList.add(new ProblemReturnDto(problemDto, tagRepository.findAllByProblem(Problem.of(problemDto))));
+        }
+        return returnList;
+    }
+
+    @Override
+    public List<ProblemReturnDto> searchProblem(String keyword, UserPrincipal userPrincipal) {
+        if(keyword == null || keyword.isEmpty()){
+            return new ArrayList<>();
+        }
+        // 우선 제목으로 검색
+        List<ProblemReturnDto> returnList = this.getProblem(keyword);
+
+        // 검색어에 숫자만 있는지 검증
+        final String REGEX = "[0-9]+";
+        if(keyword.matches(REGEX)) {
+            // 숫자만 있으면 문제 ID로 검색
+            List<ProblemReturnDto> temp = this.getProblem(Long.parseLong(keyword));
+            for(ProblemReturnDto dto : temp){
+                if(dto.getProblemInfo().getProblemId() != 0){
+                    returnList.add(dto);
+                }
+            }
+        }
+        // 태그로 검색 제외
+//        else {
+//            for(ProblemReturnDto dto : this.getProblemByTag(keyword)){
+//                returnList.add(dto);
+//            }
+//        }
+
+        // int avgTier = studyService.getStudyTier(userPrincipal.getId());
+        return returnList;
+    }
+
+
+    @Override
+    @Transactional
+    public List<ProblemReturnDto> getProblemList() {
+        List<ProblemDto> problemDtoList = problemRepository.findAll().stream().map(entity -> ProblemDto.of(entity)).collect(Collectors.toList());
+        List<ProblemReturnDto> returnList = new ArrayList<>();
+
+        for(int i = 0; i < recommendSize; i++){
+            returnList.add(new ProblemReturnDto(problemDtoList.get(i), tagRepository.findAllByProblem(Problem.of(problemDtoList.get(i)))));
+        }
 
         return returnList;
+    }
+
+    @Override
+    public Object getWorkBookProblemList() {
+        List<ProblemReturnDto> returnList = new ArrayList<>();
+        List<WorkbookCountInterface> countList = connWorkbookRepository.findGroupByProblem();
+        Collections.shuffle(countList);
+
+        for(WorkbookCountInterface object : countList){
+            if(object.getCount() >= recommendWorkbookCount){
+                returnList.add(this.getProblem(object.getProblemId()).get(0));
+            }
+            if(returnList.size() == recommendSize){
+                break;
+            }
+        }
+        return returnList;
+    }
+
+    @Override
+    public List<ProblemReturnDto> getSolvedProblemList(String baekjoonId) {
+        return null;
     }
 
     @Override
@@ -87,8 +261,8 @@ public class ProblemServiceImpl implements ProblemService{
                 jsonObject = (JSONObject) jsonArray.get(0);
 
                 // 이모티콘 검사
-                Pattern rex = Pattern.compile("[\\x{10000}-\\x{10ffff}\ud800-\udfff]");
-                Matcher rexMatcher = rex.matcher((String) jsonObject.get("titleKo"));
+                Matcher rexMatcher = Pattern.compile("[\\x{10000}-\\x{10ffff}\ud800-\udfff]")
+                                                .matcher((String) jsonObject.get("titleKo"));
                 if(rexMatcher.find()){
                     continue;
                 }
