@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -18,6 +18,9 @@ type JoinModalProps = {
 };
 
 function JoinModal({ onClose }: JoinModalProps) {
+  const [id, setId] = useState("yoon828990");
+
+  // 백준에서 푼 문제 가져오기
   const confirmBJ = async () => {
     onClose();
     const data = await getUserProblems("yoon828990", 1);
@@ -35,7 +38,7 @@ function JoinModal({ onClose }: JoinModalProps) {
               백준ID
             </Flex>
             <Flex direction="column">
-              <Input type="text" />
+              <Input type="text" value={id} placeholder="백준 아이디" />
               <Text fontSize={12} mt="5px">
                 인증하는데 문제가 발생했습니다
               </Text>
@@ -61,7 +64,7 @@ function JoinModal({ onClose }: JoinModalProps) {
                 SD2SF4
               </Flex>
               <Text fontSize={12} mt="5px">
-                백준 설정 {">"} 정보 수정 {">"} 상태메시지를
+                Solved.ac 프로필 편집 {">"} 상태메시지를
                 <br /> Code로 변경한 뒤,{" "}
                 <Text as="span" color="main" display="inline" fontWeight="bold">
                   인증
@@ -69,7 +72,7 @@ function JoinModal({ onClose }: JoinModalProps) {
                 버튼을 눌러주세요
               </Text>
               <Link
-                href="https://www.acmicpc.net/"
+                href={`https://solved.ac/profile/${id}`}
                 isExternal
                 fontSize={12}
                 display="flex"
@@ -77,7 +80,7 @@ function JoinModal({ onClose }: JoinModalProps) {
                 mt="10px"
                 textDecorationLine="underline"
               >
-                백준으로 이동하기
+                Solved.ac로 이동하기
                 <ExternalLinkIcon mx="2px" />
               </Link>
             </Flex>
