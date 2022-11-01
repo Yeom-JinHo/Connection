@@ -77,8 +77,13 @@ export const selectedProblemSlice = createSlice({
         state.showedMyWorkbook = [myWorkbookItem, ...state.showedMyWorkbook];
       state.cnt = state.selectedProblemList.length;
     },
-    resetSelectedProblem: state => {
+    reset: state => {
       state.selectedProblemList = [];
+      state.recommends = [];
+      state.showedRecommends = [];
+      state.myWorkbook = [];
+      state.showedMyWorkbook = [];
+      state.selectedTab = 0;
       state.cnt = 0;
     }
   },
@@ -98,7 +103,7 @@ export const selectedProblemSlice = createSlice({
   }
 });
 
-export const { addProblem, removeProblem, resetSelectedProblem } =
+export const { addProblem, removeProblem, reset } =
   selectedProblemSlice.actions;
 
 export default selectedProblemSlice.reducer;

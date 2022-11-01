@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import {
   addProblem,
   removeProblem,
-  resetSelectedProblem
+  reset
 } from "../../../store/ducks/selectedProblem/selectedProblemSlice";
 import {
   getMyWorkbook,
@@ -54,7 +54,7 @@ function ProblemSelect({ maxCnt }: ProblemSelectProps) {
     };
     fetch();
     return () => {
-      dispatch(resetSelectedProblem());
+      dispatch(reset());
     };
   }, []);
 
