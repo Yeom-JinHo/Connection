@@ -3,10 +3,12 @@ import { Problem } from "../../../pages/Recommend";
 
 interface InitialStateType {
   selectedProblemList: Problem[];
+  cnt: number;
 }
 
 const initialState: InitialStateType = {
-  selectedProblemList: []
+  selectedProblemList: [],
+  cnt: 0
 };
 
 export const selectedProblemSlice = createSlice({
@@ -26,6 +28,7 @@ export const selectedProblemSlice = createSlice({
         ...state.selectedProblemList,
         action.payload
       ];
+      state.cnt = state.selectedProblemList.length;
     },
     removeProblem: (state, action) => {
       state.selectedProblemList = [
@@ -35,6 +38,7 @@ export const selectedProblemSlice = createSlice({
             action.payload.problemInfo.problemId
         )
       ];
+      state.cnt = state.selectedProblemList.length;
     },
     resetSelectedProblem: state => {
       state.selectedProblemList = [];

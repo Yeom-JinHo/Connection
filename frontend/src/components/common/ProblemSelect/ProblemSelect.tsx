@@ -37,7 +37,10 @@ Tab.defaultProps = {
   selected: false
 };
 
-function ProblemSelect() {
+interface ProblemSelectProps {
+  maxCnt: number;
+}
+function ProblemSelect({ maxCnt }: ProblemSelectProps) {
   const [selectedTab, setSelectedTap] = useState(0);
   const [recommends, setRecommends] = useState<Problem[]>([]);
   const [myWorkbook, setMyWorkbook] = useState<Problem[]>([]);
@@ -125,7 +128,10 @@ function ProblemSelect() {
                   bg="dep_2"
                   problem={problem}
                   btnType="add"
-                  onBtnClick={() => dispatch(addProblem(problem))}
+                  onBtnClick={() => {
+                    if (appSelector.cnt >= maxCnt) return;
+                    dispatch(addProblem(problem));
+                  }}
                 />
               ))
             : myWorkbook.map(problem => (
@@ -134,7 +140,10 @@ function ProblemSelect() {
                   bg="dep_2"
                   problem={problem}
                   btnType="add"
-                  onBtnClick={() => dispatch(addProblem(problem))}
+                  onBtnClick={() => {
+                    if (appSelector.cnt >= maxCnt) return;
+                    dispatch(addProblem(problem));
+                  }}
                 />
               ))}
         </Flex>
@@ -142,9 +151,5 @@ function ProblemSelect() {
     </Grid>
   );
 }
-
-ProblemSelect.defaultProps = {
-  selectedProblems: []
-};
 
 export default ProblemSelect;

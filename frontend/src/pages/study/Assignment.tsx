@@ -80,7 +80,7 @@ function Assignment() {
             <Search2Icon w={6} h={6} />
           </Box>
         </Flex>
-        <ProblemSelect />
+        <ProblemSelect maxCnt={5} />
         <Box mt={4} ml="auto" w="fit-content">
           <Button
             bg="gra"
