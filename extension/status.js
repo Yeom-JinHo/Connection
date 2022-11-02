@@ -11,6 +11,9 @@ function checkSubmitDone() {
 let loader;
 
 function start() {
+	if (checkSubmitDone()) {
+		return;
+	}
 	loader = setInterval(() => {
 		if (checkSubmitDone()) {
 			stop();
@@ -19,8 +22,9 @@ function start() {
 			const userId = lastResult.querySelector(':nth-child(2)').innerText;
 			const problemNo = lastResult.querySelector(':nth-child(3)').innerText;
 			const result = lastResult.querySelector(':nth-child(4)').innerText;
+
 			if (result.indexOf('맞았습니다') >= 0) {
-				fetch('https://www.coalla.co.kr/api/problem/submit', {
+				fetch('https://k7c202.p.ssafy.io/api/problem/submit', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
@@ -29,9 +33,24 @@ function start() {
 						submitNo,
 						userId,
 						problemNo,
-						result,
 					}),
-				}).then((response) => console.log(response));
+				})
+					.then((data) => data.json())
+					.then((data) => console.log(data));
+
+				fetch('https://k7c202.p.ssafy.io/node/problem/submit', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						submitNo,
+						userId,
+						problemNo,
+					}),
+				})
+					.then((data) => data.json())
+					.then((data) => console.log(data));
 			}
 		}
 	}, 500);
