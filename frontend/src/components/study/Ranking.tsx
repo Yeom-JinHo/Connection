@@ -2,6 +2,7 @@ import { Box, Center, Flex, Text, Tooltip } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import { v4 } from "uuid";
 import { getRank } from "../../api/study";
+import { useAppSelector } from "../../store/hooks";
 
 type RankingProps = {
   homeworkScore: number;
@@ -35,7 +36,7 @@ const datas = [
   { studyId: 20, studyName: "스터디명", ranking: 20 }
 ];
 function Ranking() {
-  const [id, setId] = useState(103); // 내 스터디 아이디
+  const id = useAppSelector(state => state.auth.information.studyId);
   const [ranks, setRanks] = useState<RankingProps[]>([]);
   const myStudyRef = useRef<null | HTMLDivElement>(null);
   const parentRef = useRef<null | HTMLDivElement>(null);

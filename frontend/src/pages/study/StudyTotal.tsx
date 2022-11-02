@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link as ReactLink } from "react-router-dom";
 import { CopyIcon } from "@chakra-ui/icons";
 import {
@@ -20,10 +20,13 @@ import GithubL from "../../asset/img/githubL.svg";
 import GithubD from "../../asset/img/githubD.svg";
 import MyActivity from "../../components/study/MyActivity";
 import Challenge from "../../components/study/Challenge";
+import { useAppSelector } from "../../store/hooks";
+import { UserInfoType } from "../../store/ducks/auth/auth.type";
 
 function StudyTotal() {
   const { colorMode } = useColorMode();
-  const { onCopy } = useClipboard("스터디코드");
+  const info: UserInfoType = useAppSelector(state => state.auth.information);
+  const { onCopy } = useClipboard(info.studyCode);
 
   function onCopyEvent() {
     onCopy();
@@ -44,16 +47,16 @@ function StudyTotal() {
         borderBottom="1px solid #BFBFBF"
       >
         <Flex direction="column" ml="20px">
-          <Center mb="5px">
+          <Flex mb="5px">
             <Heading fontSize="20px" fontWeight="bold" mr="5px">
-              우건이와 아이들
+              {info.studyName}
             </Heading>
-            <Box>
+            <Link href={info.studyRepository} isExternal>
               <Image src={colorMode === "light" ? GithubL : GithubD} w="20px" />
-            </Box>
-          </Center>
+            </Link>
+          </Flex>
           <Text fontSize="14px" display="flex" alignItems="center">
-            스터디 코드 : SDFWVS
+            스터디 코드 : {info.studyCode}
             <CopyIcon mx="3px" onClick={() => onCopyEvent()} cursor="pointer" />
           </Text>
         </Flex>
