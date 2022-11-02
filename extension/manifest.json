@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
-	"name": "Coalla",
-	"description": "Extension for coalla",
+	"name": "Connection",
+	"description": "Extension for connection",
 	"version": "1.0",
 	"action": {
 		"default_popup": "popup.html",
@@ -17,6 +17,6 @@
 		"service_worker": "extension.js"
 	},
 	"externally_connectable": {
-		"matches": ["http://localhost:3000/*", "https://www.coalla.co.kr/*"]
+		"matches": ["http://localhost:3000/*", "https://k7c202.p.ssafy.io/*"]
 	}
 }
