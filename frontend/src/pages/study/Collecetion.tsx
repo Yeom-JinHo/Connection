@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Flex, Grid, Text, useDisclosure } from "@chakra-ui/react";
 import { Search2Icon } from "@chakra-ui/icons";
 
@@ -7,14 +7,14 @@ import BackButton from "../../components/common/BackButton";
 import ProblemCard from "../../components/common/ProblemCard";
 import SearchModal from "../../components/common/SearchModal";
 import { Problem } from "../Recommend";
-
-const dumpProblemList: Problem[] = [];
+import { deleteWorkbook, getWorkbook } from "../../api/workbook";
 
 function Collection() {
-  const [problemList, setProblemList] = useState(dumpProblemList);
+  const [problemList, setProblemList] = useState<Problem[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const deleteProblem = (problemId: number) => {
+  const deleteProblem = async (problemId: number) => {
     // todo : 확인하는 로직 추후 구현 필요?
+    const res = await deleteWorkbook(problemId);
     setProblemList(prevProblemList =>
       prevProblemList.filter(
         problem => problem.problemInfo.problemId !== problemId
@@ -22,6 +22,13 @@ function Collection() {
     );
   };
 
+  useEffect(() => {
+    const fetch = async () => {
+      const res = await getWorkbook();
+      setProblemList(res.data);
+    };
+    fetch();
+  });
   return (
     <>
       <StudyLayout
