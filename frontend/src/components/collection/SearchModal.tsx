@@ -1,14 +1,11 @@
 import {
   Box,
-  Flex,
   Grid,
   Input,
   Modal,
   ModalBody,
   ModalContent,
-  ModalOverlay,
-  Text,
-  useToast
+  ModalOverlay
 } from "@chakra-ui/react";
 import { Search2Icon } from "@chakra-ui/icons";
 import React, { useEffect, useState } from "react";
@@ -38,7 +35,6 @@ function SearchModal({
   const [problemList, setProblemList] = useState<Problem[]>([]);
   const [keyword, setKeyword] = useState("");
   const debouncedKeyword = useDebounce(keyword, 200);
-  const toast = useToast();
 
   useEffect(() => {
     const fetch = async () => {

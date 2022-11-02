@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Flex, Grid, Text, useDisclosure } from "@chakra-ui/react";
+import { Flex, Grid, Text, useDisclosure, useToast } from "@chakra-ui/react";
 import { Search2Icon } from "@chakra-ui/icons";
 
 import StudyLayout from "../../components/layout/StudyLayout";
@@ -12,17 +12,28 @@ import { addWorkbook, deleteWorkbook, getWorkbook } from "../../api/workbook";
 function Collection() {
   const [workbook, setWorkbook] = useState<Problem[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
   const deleteProblem = async (problemId: number) => {
-    // const res = await deleteWorkbook(problemId);
+    const res = await deleteWorkbook(problemId);
     setWorkbook(prevWorkbook =>
       prevWorkbook.filter(
         problem => problem.problemInfo.problemId !== problemId
       )
     );
+    toast({
+      title: `${problemId}번 문제를 삭제했습니다`,
+      position: "top",
+      isClosable: true
+    });
   };
   const addProblem = async (problem: Problem) => {
-    // const res = await addWorkbook(problem.problemInfo.problemId);
+    const res = await addWorkbook(problem.problemInfo.problemId);
     setWorkbook(prevWorkbook => [...prevWorkbook, problem]);
+    toast({
+      title: `${problem.problemInfo.problemId}번 문제를 추가했습니다.`,
+      position: "top",
+      isClosable: true
+    });
   };
 
   useEffect(() => {
