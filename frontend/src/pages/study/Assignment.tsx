@@ -19,9 +19,8 @@ import getDate from "../../utils/getDate";
 
 function Assignment() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [startDate, setStartDate] = useState(getDate(new Date()));
+  const startDate = getDate(new Date());
   const [endDate, setEndDate] = useState(getDate(new Date()));
-  const startDateRef = useRef<HTMLInputElement>(null);
   const endDateRef = useRef<HTMLInputElement>(null);
   const toast = useToast();
   const checkDate = (start: string, end: string) => {
@@ -38,13 +37,6 @@ function Assignment() {
       return false;
     }
     return true;
-  };
-  const onStartDateChange = (date: string) => {
-    if (!checkDate(date, endDate)) {
-      startDateRef?.current?.focus();
-      return;
-    }
-    setStartDate(date);
   };
   const onEndDateChange = (date: string) => {
     if (!checkDate(startDate, date)) {
@@ -74,8 +66,7 @@ function Assignment() {
               bg="dep_1"
               cursor="pointer"
               value={startDate}
-              onChange={e => onStartDateChange(e.target.value)}
-              ref={startDateRef}
+              readOnly
             />
             <Text fontWeight="bold">~</Text>
             <Input
