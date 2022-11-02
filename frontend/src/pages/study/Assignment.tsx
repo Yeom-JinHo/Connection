@@ -6,7 +6,8 @@ import {
   Flex,
   Input,
   Text,
-  useDisclosure
+  useDisclosure,
+  useToast
 } from "@chakra-ui/react";
 import { Search2Icon } from "@chakra-ui/icons";
 
@@ -21,9 +22,19 @@ function Assignment() {
   const [startDate, setStartDate] = useState(getDate(new Date()));
   const [endDate, setEndDate] = useState(getDate(new Date()));
   const startDateRef = useRef<HTMLInputElement>(null);
+  const endDateRef = useRef<HTMLInputElement>(null);
+  const toast = useToast();
   const checkDate = (start: string, end: string) => {
-    if (new Date(start) > new Date(end)) {
-      alert("날짜를 똑바로 선택해주세요");
+    if (
+      new Date(start) > new Date(end) ||
+      new Date(start).getTime() / 1000 / 60 / 60 / 24 <
+        Math.floor(new Date().getTime() / 1000 / 60 / 60 / 24)
+    ) {
+      toast({
+        title: `날짜를 똑바로 선택해주세요`,
+        position: "top",
+        isClosable: true
+      });
       return false;
     }
     return true;
@@ -37,9 +48,13 @@ function Assignment() {
   };
   const onEndDateChange = (date: string) => {
     if (!checkDate(startDate, date)) {
+      endDateRef?.current?.focus();
       return;
     }
     setEndDate(date);
+  };
+  const submit = () => {
+    console.log("submit");
   };
   return (
     <>
@@ -60,6 +75,7 @@ function Assignment() {
               cursor="pointer"
               value={startDate}
               onChange={e => onStartDateChange(e.target.value)}
+              ref={startDateRef}
             />
             <Text fontWeight="bold">~</Text>
             <Input
@@ -68,6 +84,7 @@ function Assignment() {
               cursor="pointer"
               value={endDate}
               onChange={e => onEndDateChange(e.target.value)}
+              ref={endDateRef}
             />
           </Flex>
           <Box
@@ -86,6 +103,7 @@ function Assignment() {
             bg="gra"
             _hover={{ transform: "scale(1.05)" }}
             _active={{ transform: "scale(1.05)" }}
+            onClick={submit}
           >
             등록하기
           </Button>
