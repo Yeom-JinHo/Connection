@@ -1,5 +1,5 @@
-import { Box, Button, Center, Flex, Text } from "@chakra-ui/react";
-import React, { useRef, useState } from "react";
+import { Center, Flex, Text } from "@chakra-ui/react";
+import React, { useEffect, useRef, useState } from "react";
 import { v4 } from "uuid";
 
 const datas = [
@@ -16,7 +16,13 @@ const datas = [
 ];
 function Ranking() {
   const [id, setId] = useState(5);
-  const ref = useRef();
+  const myStudyRef = useRef<null | HTMLDivElement>(null);
+  useEffect(() => {
+    if (myStudyRef.current) {
+      console.log(myStudyRef.current);
+      myStudyRef!.current!.scrollIntoView();
+    }
+  }, []);
 
   return (
     <Center h="100%" w="100%" overflowY="auto" flexDir="column">
@@ -31,6 +37,7 @@ function Ranking() {
             m="3px 0"
             w="200px"
             _dark={id === data.id ? {} : { bg: "dep_3" }}
+            ref={id === data.id ? myStudyRef : null}
           >
             <Text w="40px">{data.rank}</Text>
             <Text>{data.name}</Text>
