@@ -24,7 +24,7 @@ function Challenge() {
     data.map(day => {
       // const percent = (day.count / data.studyPersonnel) * 100;
       const percent = Math.ceil((2 / 3) * 100);
-      console.log(percent);
+      // console.log(percent);
       return tmp.push({ ...day, count: percent, cnt: day.count }); // count에는 퍼센트 cnt에 해당 날짜에 몇 명이 제출했는지
     });
     setStreak(tmp);
@@ -42,7 +42,7 @@ function Challenge() {
     { date: "2022/10/11", count: 2 },
     { date: "2022/10/01", count: 5 },
     { date: "2022/10/02", count: 5 },
-    { date: "2022/10/04", count: 3, cnt: 1 }
+    { date: "2022/10/04", count: 3 }
   ];
 
   useEffect(() => {
@@ -55,9 +55,24 @@ function Challenge() {
       width={400}
       height={170}
       style={{ color: colorMode === "light" ? "black" : "white" }}
-      startDate={new Date(info?.startDate)}
+      startDate={new Date("2022/06/01")}
       endDate={new Date(info?.endDate)}
       legendCellSize={12}
+      monthLabels={[
+        "1월",
+        "2월",
+        "3월",
+        "4월",
+        "5월",
+        "6월",
+        "7월",
+        "8월",
+        "9월",
+        "10월",
+        "11월",
+        "12월"
+      ]}
+      weekLabels={["일", "월", "화", "수", "목", "금", "토"]}
       panelColors={{
         0: colorMode === "light" ? "#C5C8CD" : "rgb(255 255 255 / 25%)",
         2: "#CFE5FE",
