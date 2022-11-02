@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.util.*;
 
 @Service
@@ -69,6 +68,57 @@ public class SubjectServiceImpl implements SubjectService{
         }
 
         return new ResponseEntity<>(new ResponseDto("success"), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity getTeamStatus(Long userId) {
+        Optional<ConnStudy> connStudy = connStudyRepository.findByUser_UserId(userId);
+        if(!connStudy.isPresent()) return new ResponseEntity<>(new ResponseDto("empty"), HttpStatus.CONFLICT);
+
+        long studyId = connStudy.get().getStudy().getStudyId();
+        List<Object[]> result = subjectRepository.getTeamStatus(studyId);   //쿼리
+
+
+        Object first_val = result.get(0)[0];
+        int cnt_user = 1;
+        for (int i = 1; i < result.size(); i++) {
+            if(first_val == result.get(i)[0]) break;
+            cnt_user ++;
+        }
+        int cnt_subject = result.size() / cnt_user;
+
+//        List<Map<String, Object>> users = new ArrayList<>();
+//        List<Map<String, Object>> problems = new ArrayList<>();
+
+        Object[] names = new Object[cnt_user];
+        Object[] titles = new Object[cnt_subject];
+        Object[] userIds = new Object[cnt_user];
+        Object[] problemIds = new Object[cnt_subject];
+        Object[][] solveds = new Object[cnt_subject][cnt_user];
+
+        for (int i = 0; i < cnt_user; i++) {
+            userIds[i] = result.get(i)[0];
+            names[i] = result.get(i)[1];
+        }
+        for (int i = 0; i < cnt_subject; i++) {
+            problemIds[i] = result.get(i*cnt_user)[2];
+            titles[i] = result.get(i*cnt_user)[3];
+            for (int j = 0; j < cnt_user; j++) {
+                if(!result.get(i*cnt_user + j)[4].toString().equals("0"))
+                    solveds[i][j] = 1;
+                else solveds[i][j] = 0;
+            }
+        }
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("name", names);
+        map.put("UserId", userIds);
+        map.put("problemId", problemIds);
+        map.put("title", titles);
+        map.put("solved", solveds);
+
+        return new ResponseEntity<>(map, HttpStatus.OK);
+//        return new ResponseEntity<>(new ResponseDto("success"), HttpStatus.OK);
     }
 
     @Override

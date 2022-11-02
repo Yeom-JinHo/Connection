@@ -64,9 +64,23 @@ public class SubjectController {
         return result;
     }
 
+    @ApiOperation(value = "팀 과제 현황개발중", notes = "개발중")
+    @GetMapping("/team")
+    public ResponseEntity getTeamStatus(@Parameter(description = "Accesstoken", required = true) @CurrentUser UserPrincipal userPrincipal){
+//        Map<String, Object> returnMap = new HashMap<>();
+//
+//        List<Subject> totalSubjectList = subjectService.getTotalSubjectList(userPrincipal.getId());
+//        Map<String, Object> myMap = subjectService.getMyStatus(userPrincipal.getId(), totalSubjectList);
+//
+//        returnMap.put("msg", "success");
+//        returnMap.put("data", myMap);
+
+        return subjectService.getTeamStatus(userPrincipal.getId());
+    }
+
     @ApiOperation(value = "내 과제 현황", notes = "유저가 푼 과제 개수, 스터디문제(같이 푼) 개수와 전체 과제개수, 전체 스터디문제 개수를 반환")
     @GetMapping("/")
-    public ResponseEntity<Map<String, Object>> getTeamStatus(@Parameter(description = "Accesstoken", required = true) @CurrentUser UserPrincipal userPrincipal){
+    public ResponseEntity<Map<String, Object>> getMyStatus(@Parameter(description = "Accesstoken", required = true) @CurrentUser UserPrincipal userPrincipal){
         Map<String, Object> returnMap = new HashMap<>();
 
         List<Subject> totalSubjectList = subjectService.getTotalSubjectList(userPrincipal.getId());
