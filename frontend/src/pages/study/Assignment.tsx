@@ -11,11 +11,14 @@ import {
 } from "@chakra-ui/react";
 import { Search2Icon } from "@chakra-ui/icons";
 
+import { useNavigate } from "react-router-dom";
 import StudyLayout from "../../components/layout/StudyLayout";
 import BackButton from "../../components/common/BackButton";
 import ProblemSelect from "../../components/common/ProblemSelect/ProblemSelect";
 import SearchModal from "../../components/common/SearchModal";
 import getDate from "../../utils/getDate";
+import { useAppSelector } from "../../store/hooks";
+import { postSubject } from "../../api/subject";
 
 function Assignment() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -23,6 +26,8 @@ function Assignment() {
   const [endDate, setEndDate] = useState(getDate(new Date()));
   const endDateRef = useRef<HTMLInputElement>(null);
   const toast = useToast();
+  const appSelector = useAppSelector(state => state.selectedProblem);
+  const navigate = useNavigate();
   const checkDate = (start: string, end: string) => {
     if (
       new Date(start) > new Date(end) ||
@@ -30,7 +35,7 @@ function Assignment() {
         Math.floor(new Date().getTime() / 1000 / 60 / 60 / 24)
     ) {
       toast({
-        title: `날짜를 똑바로 선택해주세요`,
+        title: `날짜를 똑바로 선택해주세요!`,
         position: "top",
         isClosable: true
       });
@@ -45,8 +50,30 @@ function Assignment() {
     }
     setEndDate(date);
   };
-  const submit = () => {
-    console.log("submit");
+  const submit = async () => {
+    if (appSelector.selectedProblemList.length === 0) {
+      toast({
+        title: `문제를 선택해주세요!`,
+        position: "top",
+        isClosable: true
+      });
+      return;
+    }
+
+    const body = {
+      deadline: endDate,
+      problemList: [
+        ...appSelector.selectedProblemList.map(
+          problem => problem.problemInfo.problemId
+        )
+      ]
+    };
+    const res = await postSubject(body);
+    if (res.data.statusCode === "ACCEPTED") {
+      navigate("/study");
+    } else {
+      alert("에러가 발생했습니다. 다시 시도해주세요.");
+    }
   };
   return (
     <>
