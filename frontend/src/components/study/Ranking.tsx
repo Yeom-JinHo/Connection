@@ -1,50 +1,112 @@
-import { Center, Flex, Text } from "@chakra-ui/react";
+import { Box, Center, Flex, Text, Tooltip } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import { v4 } from "uuid";
+import { getRank } from "../../api/study";
+
+type RankingProps = {
+  homeworkScore: number;
+  ranking: number;
+  studyId: number;
+  studyName: string;
+  studyScore: number;
+  totalScore: number;
+};
 
 const datas = [
-  { id: 1, name: "스터디명", rank: 1 },
-  { id: 2, name: "스터디명", rank: 2 },
-  { id: 3, name: "스터디명", rank: 3 },
-  { id: 4, name: "스터디명", rank: 4 },
-  { id: 5, name: "스터디명", rank: 5 },
-  { id: 6, name: "스터디명", rank: 6 },
-  { id: 7, name: "스터디명", rank: 7 },
-  { id: 8, name: "스터디명", rank: 8 },
-  { id: 9, name: "스터디명", rank: 9 },
-  { id: 10, name: "스터디명", rank: 10 }
+  { studyId: 1, studyName: "스터디명", ranking: 1 },
+  { studyId: 2, studyName: "스터디명", ranking: 2 },
+  { studyId: 3, studyName: "스터디명", ranking: 3 },
+  { studyId: 4, studyName: "스터디명", ranking: 4 },
+  { studyId: 5, studyName: "스터디명", ranking: 5 },
+  { studyId: 6, studyName: "스터디명", ranking: 6 },
+  { studyId: 7, studyName: "스터디명", ranking: 7 },
+  { studyId: 8, studyName: "스터디명", ranking: 8 },
+  { studyId: 9, studyName: "스터디명", ranking: 9 },
+  { studyId: 10, studyName: "스터디명", ranking: 10 },
+  { studyId: 11, studyName: "스터디명", ranking: 11 },
+  { studyId: 12, studyName: "스터디명", ranking: 12 },
+  { studyId: 13, studyName: "스터디명", ranking: 13 },
+  { studyId: 14, studyName: "스터디명", ranking: 14 },
+  { studyId: 15, studyName: "스터디명", ranking: 15 },
+  { studyId: 16, studyName: "스터디명", ranking: 16 },
+  { studyId: 17, studyName: "스터디명", ranking: 17 },
+  { studyId: 18, studyName: "스터디명", ranking: 18 },
+  { studyId: 19, studyName: "스터디명", ranking: 19 },
+  { studyId: 20, studyName: "스터디명", ranking: 20 }
 ];
 function Ranking() {
-  const [id, setId] = useState(5);
+  const [id, setId] = useState(103); // 내 스터디 아이디
+  const [ranks, setRanks] = useState<RankingProps[]>([]);
   const myStudyRef = useRef<null | HTMLDivElement>(null);
+  const parentRef = useRef<null | HTMLDivElement>(null);
+
+  const getRanking = async () => {
+    const {
+      data: { data }
+    } = await getRank();
+    // console.log(data);
+    setRanks(data);
+  };
+
   useEffect(() => {
-    if (myStudyRef.current) {
-      console.log(myStudyRef.current);
-      myStudyRef!.current!.scrollIntoView();
+    getRanking();
+    console.log(myStudyRef);
+    console.log(parentRef);
+    if (myStudyRef.current && parentRef.current) {
+      const test = myStudyRef.current.offsetTop;
+      // 가운데로 포커싱하기 위해 빼주는 값
+      const centerHeight =
+        parentRef.current.clientHeight / 2 -
+        myStudyRef.current.clientHeight / 2;
+      console.log(test);
+      console.log(centerHeight);
+      parentRef.current.scrollTo({
+        top: test - centerHeight,
+        behavior: "smooth"
+      });
     }
-  }, []);
+  }, [parentRef.current]);
 
   return (
-    <Center h="100%" w="100%" overflowY="auto" flexDir="column">
-      {datas.map(data => {
+    <Box
+      h="100%"
+      w="100%"
+      overflowY="auto"
+      display="flex"
+      flexDir="column"
+      alignItems="center"
+      p="26px 0 10px"
+      ref={parentRef}
+    >
+      {ranks.map(study => {
         return (
-          <Flex
+          <Tooltip
+            label={
+              <div>
+                과제 점수 : {study.homeworkScore} <br />
+                문제 풀이 점수 : {study.studyScore} <br /> 총 점수 :{" "}
+                {study.totalScore}
+              </div>
+            }
             key={v4()}
-            bg={id === data.id ? "gra" : "white"}
-            borderRadius="15px"
-            boxShadow="md"
-            p="8px 16px"
-            m="3px 0"
-            w="200px"
-            _dark={id === data.id ? {} : { bg: "dep_3" }}
-            ref={id === data.id ? myStudyRef : null}
           >
-            <Text w="40px">{data.rank}</Text>
-            <Text>{data.name}</Text>
-          </Flex>
+            <Flex
+              bg={id === study.studyId ? "gra" : "white"}
+              borderRadius="15px"
+              boxShadow="md"
+              p="8px 16px"
+              m="3px 0"
+              w="200px"
+              _dark={id === study.studyId ? {} : { bg: "dep_3" }}
+              ref={id === study.studyId ? myStudyRef : null}
+            >
+              <Text w="40px">{study.ranking}</Text>
+              <Text>{study.studyName}</Text>
+            </Flex>
+          </Tooltip>
         );
       })}
-    </Center>
+    </Box>
   );
 }
 
