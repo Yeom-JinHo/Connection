@@ -41,7 +41,7 @@ function TotalLayout({ title, children, flex, height, mr }: TotalLayoutProps) {
       >
         {title}
       </Text>
-      <Center h="100%" alignItems="flex-end">
+      <Center h="100%" w="100%">
         {children}
       </Center>
     </Box>

@@ -1,86 +1,129 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, Center, Text } from "@chakra-ui/react";
+import { Box, Center, Text, useColorMode } from "@chakra-ui/react";
+import ReactApexChart from "react-apexcharts";
+import { ApexOptions } from "apexcharts";
 import { getMyActivity } from "../../api/study";
-import { GaugeChart } from "@toast-ui/chart";
+
+type ContentProps = {
+  my: number;
+  total: number;
+};
+
+type PercentChartProps = {
+  title: string;
+  content: ContentProps | null;
+};
+
+const init: ContentProps = {
+  my: 0,
+  total: 0
+};
+
+function PercentChart({ title, content }: PercentChartProps) {
+  const { colorMode } = useColorMode();
+
+  const options: ApexOptions = {
+    chart: {
+      height: 100,
+      type: "radialBar"
+    },
+    colors: ["#88BFFF"],
+    plotOptions: {
+      radialBar: {
+        hollow: {
+          margin: 0,
+          size: "65%"
+        },
+        track: {
+          dropShadow: {
+            enabled: true,
+            top: 2,
+            left: 0,
+            blur: 4,
+            opacity: 0.15
+          }
+        },
+        dataLabels: {
+          name: {
+            offsetY: -10,
+            color: "#1581FF",
+            fontSize: "20px"
+          },
+          value: {
+            color: colorMode === "light" ? "#000" : "#fff",
+            fontSize: "30px",
+            show: true
+          }
+        }
+      }
+    },
+    fill: {
+      type: "gradient",
+      gradient: {
+        shade: "dark",
+        type: "vertical",
+        gradientToColors: ["#1581FF"],
+        stops: [0, 100]
+      }
+    },
+    stroke: {
+      lineCap: "round"
+    },
+    labels: ["풀이율"]
+  };
+  if (content && content.total !== 0) {
+    const series = [(content.my / content.total) * 100];
+    return (
+      <Center>
+        <ReactApexChart
+          series={series}
+          type="radialBar"
+          height={220}
+          width={220}
+          options={options}
+        />
+        <Box flexDir="column" mr="20px">
+          <Text>
+            내가 푼 {title} 수 :{content.my}
+          </Text>
+          <Text>
+            총 {title} 수 : {content.total}
+          </Text>
+        </Box>
+      </Center>
+    );
+  }
+  return null;
+}
 
 function MyActivity() {
-  const [mySubject, setMySubject] = useState(0); // 과제
-  const [myProblems, setmMyProblems] = useState(0); // 스터디 전체 문제
+  const [subject, setSubject] = useState<ContentProps>(init); // 과제
+  const [problems, setProblems] = useState<ContentProps>(init); // 스터디 전체 문제
 
   const getMyActivityApi = async () => {
     const {
       data: {
-        solvedStudyProblem,
-        totalStudyProblem,
-        solvedSubject,
-        totalSubject
+        data: {
+          solvedSubject,
+          totalSubject,
+          solvedStudyProblem,
+          totalStudyProblem
+        }
       }
     } = await getMyActivity();
-    setMySubject((solvedSubject / totalSubject) * 100);
-    setmMyProblems((solvedStudyProblem / totalStudyProblem) * 100);
+    setSubject({ my: solvedSubject, total: totalSubject });
+    setProblems({ my: solvedStudyProblem, total: totalStudyProblem });
   };
 
   useEffect(() => {
     getMyActivityApi();
   }, []);
 
-  useEffect(() => {
-    console.log(mySubject);
-    console.log(myProblems);
-  }, [mySubject, myProblems]);
-
-  const data = {
-    series: [
-      {
-        name: "Speed",
-        data: [80]
-      }
-    ]
-  };
-  const options = {
-    chart: { title: "Speedometer", width: 550, height: 500 },
-    series: {
-      solid: true,
-      dataLabels: {
-        visible: true,
-        offsetY: -30,
-        formatter: (value: number) => `${value}%`
-      }
-    },
-    theme: {
-      circularAxis: {
-        lineWidth: 0,
-        strokeStyle: "rgba(0, 0, 0, 0)",
-        tick: {
-          lineWidth: 0,
-          strokeStyle: "rgba(0, 0, 0, 0)"
-        },
-        label: {
-          color: "rgba(0, 0, 0, 0)"
-        }
-      },
-      series: {
-        dataLabels: {
-          fontSize: 40,
-          fontFamily: "Impact",
-          fontWeight: 600,
-          color: "#00a9ff",
-          textBubble: {
-            visible: false
-          }
-        }
-      }
-    }
-  };
-
   return (
-    <Box>
-      <Center>
-        과제
-        {/* <GaugeChart data={data} options={options} /> */}
-      </Center>
-      <Center>문제</Center>
-    </Box>
+    <Center w="100%">
+      <PercentChart title="과제" content={subject} />
+      <PercentChart title="문제" content={problems} />
+    </Center>
   );
 }
 
