@@ -5,30 +5,33 @@ import { Search2Icon } from "@chakra-ui/icons";
 import StudyLayout from "../../components/layout/StudyLayout";
 import BackButton from "../../components/common/BackButton";
 import ProblemCard from "../../components/common/ProblemCard";
-import SearchModal from "../../components/common/SearchModal";
+import SearchModal from "../../components/collection/SearchModal";
 import { Problem } from "../Recommend";
-import { deleteWorkbook, getWorkbook } from "../../api/workbook";
+import { addWorkbook, deleteWorkbook, getWorkbook } from "../../api/workbook";
 
 function Collection() {
-  const [problemList, setProblemList] = useState<Problem[]>([]);
+  const [workbook, setWorkbook] = useState<Problem[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const deleteProblem = async (problemId: number) => {
-    // todo : 확인하는 로직 추후 구현 필요?
-    const res = await deleteWorkbook(problemId);
-    setProblemList(prevProblemList =>
-      prevProblemList.filter(
+    // const res = await deleteWorkbook(problemId);
+    setWorkbook(prevWorkbook =>
+      prevWorkbook.filter(
         problem => problem.problemInfo.problemId !== problemId
       )
     );
+  };
+  const addProblem = async (problem: Problem) => {
+    // const res = await addWorkbook(problem.problemInfo.problemId);
+    setWorkbook(prevWorkbook => [...prevWorkbook, problem]);
   };
 
   useEffect(() => {
     const fetch = async () => {
       const res = await getWorkbook();
-      setProblemList(res.data);
+      setWorkbook(res.data);
     };
     fetch();
-  });
+  }, []);
   return (
     <>
       <StudyLayout
@@ -54,7 +57,7 @@ function Collection() {
           </Text>
         </Flex>
         <Grid templateColumns="repeat(2,1fr)" gap="32px">
-          {problemList.map(problem => (
+          {workbook.map(problem => (
             <ProblemCard
               key={problem.problemInfo.problemId}
               problem={problem}
@@ -64,7 +67,14 @@ function Collection() {
           ))}
         </Grid>
       </StudyLayout>
-      <SearchModal isOpen={isOpen} onClose={onClose} maxCnt={0} />
+      <SearchModal
+        isOpen={isOpen}
+        onClose={onClose}
+        maxCnt={10}
+        workbook={workbook}
+        deleteProblem={deleteProblem}
+        addProblem={addProblem}
+      />
     </>
   );
 }
