@@ -51,11 +51,11 @@ function StudyInfoModal({ isOpen, onClose, studyInfo }: StudyInfoModalProps) {
           position: "top",
           isClosable: true
         });
-        navigator("/study");
+        navigator("/study", { replace: true });
       }
     } else {
       // 여기서 리덕스에 studyCode 추가--!
-      navigator("/study");
+      navigator("/study", { replace: true });
     }
   };
 

@@ -16,7 +16,7 @@ export interface GetStudyInfoRes {
 
 export const createStudy = async (
   name: string
-): Promise<AxiosResponse<any, any> | AxiosError<any, any>> => {
+): Promise<AxiosResponse<string, null> | AxiosError<ErrMsgTpye, null>> => {
   try {
     const res = await api.post(`/study?study_name=${name}`);
     return res;
