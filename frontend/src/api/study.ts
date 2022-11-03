@@ -11,3 +11,15 @@ export const getMyActivity = async () => {
   const res = await api.get("/subject/");
   return res;
 };
+
+// 스터디 탈퇴/추방
+export const quitStudy = async (userId: number) => {
+  const res = await api.delete(`/study/quit?user_id=${userId}`);
+  return res;
+};
+
+// 스터디 해체
+export const deleteStudy = async () => {
+  const res = await api.delete(`/study`);
+  return res;
+};
