@@ -95,10 +95,14 @@ function Management() {
       msg: `정말 ${isBoss ? "해체" : "탈퇴"}하시겠습니까?`,
       async onConfirmHandler() {
         if (isBoss) {
-          await deleteStudy();
+          const res = await deleteStudy();
+          console.log(res);
           return;
         }
-        if (auth.information?.userId) await quitStudy(auth.information?.userId);
+        if (auth.information?.userId) {
+          const res = await quitStudy(auth.information?.userId);
+          console.log(res);
+        }
       }
     });
     onOpen();
@@ -107,7 +111,8 @@ function Management() {
     setConfirmState({
       msg: `정말 ${name}님을 추방하시겠습니까?`,
       async onConfirmHandler() {
-        await quitStudy(id);
+        const res = await quitStudy(id);
+        console.log(res);
       }
     });
     onOpen();

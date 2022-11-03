@@ -21,6 +21,7 @@ export const quitStudy = async (userId: number) => {
 // 스터디 해체
 export const deleteStudy = async () => {
   const res = await api.delete(`/study`);
+  return res;
 };
 
 // 스터디 랭킹
