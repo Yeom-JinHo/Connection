@@ -14,6 +14,7 @@ import {
   ServerToClientEvents
 } from "../asset/data/socket.type";
 import { useAppSelector } from "../store/hooks";
+import { UserInfoType } from "../store/ducks/auth/auth.type";
 
 function StudyWith() {
   const socket: Socket<ServerToClientEvents, ClientToServerEvents> =
@@ -33,15 +34,17 @@ function StudyWith() {
           reconnectionAttempts: 3,
           transports: ["websocket"]
         });
+  const { studyId, name, imageUrl } = useAppSelector(
+    ({ auth: { information } }) => information
+  );
 
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isBoss, setIsBoss] = useState(false);
-  const [participants, setPartcipants] = useState<string[]>([]);
+  const [participants, setPartcipants] = useState<
+    Pick<UserInfoType, "name" | "imageUrl">[]
+  >([{ name, imageUrl }]);
 
-  const { studyId, name } = useAppSelector(
-    ({ auth: { information } }) => information
-  );
   const bossView: React.FunctionComponentElement<undefined>[] = [
     <NumberSetView
       key={v4()}
@@ -50,11 +53,13 @@ function StudyWith() {
     <ProblemSetView
       key={v4()}
       onBtnClick={() => setStep(PageViewState.TimeSet)}
+      participants={participants}
     />,
     <TimeSetView
       key={v4()}
       onBtnClick={() => setStep(PageViewState.Solving)}
       onPrevBtnClick={() => setStep(PageViewState.ProblemSet)}
+      participants={participants}
     />,
     <SolvingView key={v4()} onBtnClick={() => setStep(PageViewState.Result)} />,
     <ResultView key={v4()} onBtnClick={() => setStep(PageViewState.Review)} />,
@@ -63,7 +68,18 @@ function StudyWith() {
 
   useEffect(() => {
     socket.connect();
-    socket.emit("enter", studyId, name);
+    socket.emit("enter", studyId, name, imageUrl);
+
+    socket.on("addParticipant", (newName, newImageUrl) => {
+      setPartcipants(prev => [
+        ...prev,
+        { name: newName, imageUrl: newImageUrl }
+      ]);
+    });
+
+    socket.on("removeParticipant", targetName => {
+      setPartcipants(prev => prev.filter(user => user.name !== targetName));
+    });
 
     return () => {
       socket.disconnect();

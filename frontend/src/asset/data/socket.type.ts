@@ -1,16 +1,27 @@
+import { UserInfoType } from "../../store/ducks/auth/auth.type";
 /* eslint-disable no-shadow */
 export interface ServerToClientEvents {
-  newParticipant: (name: string) => void;
+  addParticipant: (
+    newName: UserInfoType["name"],
+    newImageUrl: UserInfoType["imageUrl"]
+  ) => void;
+  removeParticipant: (targetName: UserInfoType["name"]) => void;
 }
 
 export interface ClientToServerEvents {
   chat: (msg: string) => void;
-  enter: (studyId: number, name: string) => void;
+  enter: (
+    studyId: UserInfoType["studyId"],
+    name: UserInfoType["name"],
+    imageUrl: UserInfoType["imageUrl"]
+  ) => void;
 }
 
 export interface InterServerEvents {}
 
-export interface SocketData {}
+export interface SocketData {
+  name: UserInfoType["name"];
+}
 
 export enum PageViewState {
   NumberSet,
