@@ -108,6 +108,7 @@ function Management() {
                   columnWidth: "60%"
                 }
               },
+
               dataLabels: {
                 enabled: false
               },
@@ -136,9 +137,7 @@ function Management() {
                   colors: [`${colorMode === "light" ? "#000" : "#fff"}`]
                 }
               },
-              tooltip: {
-                theme: colorMode === "light" ? "light" : "dark"
-              }
+              theme: { mode: colorMode === "light" ? "light" : "dark" }
             }}
             series={[
               {
