@@ -10,8 +10,10 @@ import SolvingView from "../components/studyWith/SolvingView";
 import TimeSetView from "../components/studyWith/TimeSetView";
 import {
   ClientToServerEvents,
+  PageViewState,
   ServerToClientEvents
 } from "../asset/data/socket.type";
+import { useAppSelector } from "../store/hooks";
 
 function StudyWith() {
   const socket: Socket<ServerToClientEvents, ClientToServerEvents> =
@@ -35,22 +37,34 @@ function StudyWith() {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isBoss, setIsBoss] = useState(false);
+  const [participants, setPartcipants] = useState<string[]>([]);
 
+  const { studyId, name } = useAppSelector(
+    ({ auth: { information } }) => information
+  );
   const bossView: React.FunctionComponentElement<undefined>[] = [
-    <NumberSetView key={v4()} onBtnClick={() => setStep(1)} />,
-    <ProblemSetView key={v4()} onBtnClick={() => setStep(2)} />,
+    <NumberSetView
+      key={v4()}
+      onBtnClick={() => setStep(PageViewState.ProblemSet)}
+    />,
+    <ProblemSetView
+      key={v4()}
+      onBtnClick={() => setStep(PageViewState.TimeSet)}
+    />,
     <TimeSetView
       key={v4()}
-      onBtnClick={() => setStep(3)}
-      onPrevBtnClick={() => setStep(1)}
+      onBtnClick={() => setStep(PageViewState.Solving)}
+      onPrevBtnClick={() => setStep(PageViewState.ProblemSet)}
     />,
-    <SolvingView key={v4()} onBtnClick={() => setStep(4)} />,
-    <ResultView key={v4()} onBtnClick={() => setStep(5)} />,
+    <SolvingView key={v4()} onBtnClick={() => setStep(PageViewState.Result)} />,
+    <ResultView key={v4()} onBtnClick={() => setStep(PageViewState.Review)} />,
     <ReviewView key={v4()} onBtnClick={() => setStep(1)} />
   ];
 
   useEffect(() => {
     socket.connect();
+    socket.emit("enter", studyId, name);
+
     return () => {
       socket.disconnect();
     };

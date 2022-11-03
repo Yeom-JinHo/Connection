@@ -2,7 +2,8 @@
 import express from "express";
 import cors from "cors";
 import http from "http";
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
+import { instrument } from "@socket.io/admin-ui";
 import {
   ClientToServerEvents,
   ServerToClientEvents,
@@ -21,17 +22,23 @@ const io = new Server<
   SocketData
 >(httpServer, {
   cors: {
-    origin: "*"
+    origin: "*",
+    credentials: true
   },
   transports: ["websocket"]
 });
+
+instrument(io, { auth: false });
 
 httpServer.listen(8000, () => {
   console.log("listening!!");
 });
 
 io.on("connection", socket => {
-  console.log("a user connected");
+  socket.on("enter", (studyId, name) => {
+    socket.join(`${studyId}`);
+    socket.to(`${studyId}`).emit("newParticipant", name);
+  });
   socket.on("disconnect", () => {
     console.log("user disconnected-123--!!");
   });
