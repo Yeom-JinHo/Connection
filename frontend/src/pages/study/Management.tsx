@@ -1,5 +1,14 @@
-import { Box, Button, Flex, Grid, Text, useDisclosure } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Grid,
+  Text,
+  useColorMode,
+  useDisclosure
+} from "@chakra-ui/react";
 import React, { useState } from "react";
+import ReactApexChart from "react-apexcharts";
 import { deleteStudy, quitStudy } from "../../api/study";
 import BackButton from "../../components/common/BackButton";
 import Confirm from "../../components/common/Confirm";
@@ -12,6 +21,7 @@ interface ConfirmStateType {
 }
 
 function Management() {
+  const { colorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [confirmState, setConfirmState] = useState<ConfirmStateType>({
     msg: "",
@@ -69,22 +79,86 @@ function Management() {
               No 1
             </Text>
             <Text flexGrow={3}>진호</Text>
-            {/* {isBoss && ( */}
-            <Text
-              flexGrow={1}
-              color="red"
-              cursor="pointer"
-              borderLeft="1px"
-              borderColor="border_gray"
-              onClick={() => {
-                onBanBtnClick("진호", 2);
-              }}
-            >
-              추방
-            </Text>
-            {/* )} */}
+            {isBoss && (
+              <Text
+                flexGrow={1}
+                color="red"
+                cursor="pointer"
+                borderLeft="1px"
+                borderColor="border_gray"
+                onClick={() => {
+                  onBanBtnClick("진호", 2);
+                }}
+              >
+                추방
+              </Text>
+            )}
           </Flex>
-          <Box h="200px" />
+          <ReactApexChart
+            type="bar"
+            height={220}
+            width="100%"
+            options={{
+              chart: {
+                type: "bar"
+              },
+              colors: ["#88BFFF"],
+              plotOptions: {
+                bar: {
+                  columnWidth: "60%"
+                }
+              },
+              dataLabels: {
+                enabled: false
+              },
+              xaxis: {
+                labels: {
+                  style: {
+                    colors: [`${colorMode === "light" ? "#000" : "#fff"}`]
+                  }
+                }
+              },
+              yaxis: {
+                labels: {
+                  style: {
+                    colors: [`${colorMode === "light" ? "#000" : "#fff"}`]
+                  }
+                }
+              },
+              legend: {
+                show: true,
+                showForSingleSeries: true,
+                customLegendItems: ["참여율", "평균"],
+                markers: {
+                  fillColors: ["#88BFFF", "#775DD0"]
+                },
+                labels: {
+                  colors: [`${colorMode === "light" ? "#000" : "#fff"}`]
+                }
+              },
+              tooltip: {
+                theme: colorMode === "light" ? "light" : "dark"
+              }
+            }}
+            series={[
+              {
+                name: "참여율",
+                data: [
+                  {
+                    x: "1월",
+                    y: 10,
+                    goals: [
+                      {
+                        name: "평균",
+                        value: 52,
+                        strokeColor: "#775DD0"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]}
+          />
         </Box>
       </Grid>
       <Confirm
