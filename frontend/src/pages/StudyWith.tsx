@@ -1,16 +1,20 @@
 import { Center, CircularProgress } from "@chakra-ui/react";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { v4 } from "uuid";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import NumberSetView from "../components/studyWith/NumberSetView";
 import ProblemSetView from "../components/studyWith/ProblemSetView";
 import ResultView from "../components/studyWith/ResultView";
 import ReviewView from "../components/studyWith/ReviewView";
 import SolvingView from "../components/studyWith/SolvingView";
 import TimeSetView from "../components/studyWith/TimeSetView";
+import {
+  ClientToServerEvents,
+  ServerToClientEvents
+} from "../asset/data/socket.type";
 
 function StudyWith() {
-  const socket =
+  const socket: Socket<ServerToClientEvents, ClientToServerEvents> =
     process.env.NODE_ENV === "development"
       ? io("ws://localhost:8000", {
           autoConnect: false,
