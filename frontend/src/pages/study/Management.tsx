@@ -100,7 +100,20 @@ function Management() {
             width="100%"
             options={{
               chart: {
-                type: "bar"
+                type: "bar",
+                animations: {
+                  enabled: true,
+                  easing: "easeinout",
+                  speed: 800,
+                  animateGradually: {
+                    enabled: true,
+                    delay: 150
+                  },
+                  dynamicAnimation: {
+                    enabled: true,
+                    speed: 350
+                  }
+                }
               },
               colors: ["#88BFFF"],
               plotOptions: {
@@ -150,6 +163,50 @@ function Management() {
                       {
                         name: "평균",
                         value: 52,
+                        strokeColor: "#775DD0"
+                      }
+                    ]
+                  },
+                  {
+                    x: "2월",
+                    y: 30,
+                    goals: [
+                      {
+                        name: "평균",
+                        value: 52,
+                        strokeColor: "#775DD0"
+                      }
+                    ]
+                  },
+                  {
+                    x: "1월",
+                    y: 10,
+                    goals: [
+                      {
+                        name: "평균",
+                        value: 92,
+                        strokeColor: "#775DD0"
+                      }
+                    ]
+                  },
+                  {
+                    x: "3월",
+                    y: 70,
+                    goals: [
+                      {
+                        name: "평균",
+                        value: 22,
+                        strokeColor: "#775DD0"
+                      }
+                    ]
+                  },
+                  {
+                    x: "4월",
+                    y: 10,
+                    goals: [
+                      {
+                        name: "평균",
+                        value: 22,
                         strokeColor: "#775DD0"
                       }
                     ]
