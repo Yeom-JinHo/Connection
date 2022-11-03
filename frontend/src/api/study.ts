@@ -21,5 +21,10 @@ export const quitStudy = async (userId: number) => {
 // 스터디 해체
 export const deleteStudy = async () => {
   const res = await api.delete(`/study`);
+};
+
+// 스터디 랭킹
+export const getRank = async () => {
+  const res = await api.get("/study/ranking");
   return res;
 };
