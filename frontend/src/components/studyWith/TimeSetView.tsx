@@ -15,6 +15,7 @@ import { ArrowBackIcon } from "@chakra-ui/icons";
 import getTime from "../../utils/getTime";
 import ViewTitle from "./ViewTitle";
 import NextBtn from "./NextBtn";
+import { useAppSelector } from "../../store/hooks";
 
 type ProblemContainerProps = {
   id: number;
@@ -101,6 +102,9 @@ function TimeSetView({ onBtnClick, onPrevBtnClick }: TimeSetViewProps) {
     { id: 3, title: "징검다리 달리기", recommendTime: 120 }
   ];
   const [times, setTimes] = useState<Map<number, number>>(new Map());
+  const studyName = useAppSelector(
+    ({ auth: { information } }) => information.studyName
+  );
 
   const totalTime = useMemo(() => {
     let total = 0;
@@ -143,8 +147,8 @@ function TimeSetView({ onBtnClick, onPrevBtnClick }: TimeSetViewProps) {
         main="문제 풀이 시간"
         mt={60}
         mb={60}
-        des="우건이와 아이들 과 함께 문제를 풀 제한 시간을 설정해주세요"
-        highLight="우건이와 아이들"
+        des={`${studyName} 과 함께 풀 문제 개수를 선택해주세요`}
+        highLight={`${studyName}`}
       />
       {problemDummy.map(problem => (
         <MemoProblemContainer

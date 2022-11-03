@@ -1,6 +1,7 @@
 import { Search2Icon } from "@chakra-ui/icons";
 import { Box, Button, Center, useDisclosure } from "@chakra-ui/react";
 import React from "react";
+import { useAppSelector } from "../../store/hooks";
 import ProblemSelect from "../common/ProblemSelect/ProblemSelect";
 import SearchModal from "../common/SearchModal";
 import NextBtn from "./NextBtn";
@@ -12,14 +13,17 @@ type ProblemSetViewProps = {
 
 function ProblemSetView({ onBtnClick }: ProblemSetViewProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const studyName = useAppSelector(
+    ({ auth: { information } }) => information.studyName
+  );
   return (
     <Center w="1200px" m="auto" flexDir="column">
       <ViewTitle
         main="문제 선택"
         mt={40}
         mb={0}
-        des="우건이와 아이들 과 함께 풀이할 문제를 선택해주세요."
-        highLight="우건이와 아이들"
+        des={`${studyName} 과 함께 풀 문제 개수를 선택해주세요`}
+        highLight={`${studyName}`}
       />
       <Box w="880px">
         <Center mb="12px">
