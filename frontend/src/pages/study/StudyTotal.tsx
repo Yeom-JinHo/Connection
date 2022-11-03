@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link as ReactLink } from "react-router-dom";
+import { Link as ReactLink, Navigate } from "react-router-dom";
 import { CopyIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -10,8 +10,10 @@ import {
   Image,
   Link,
   Text,
+  Toast,
   useClipboard,
-  useColorMode
+  useColorMode,
+  useToast
 } from "@chakra-ui/react";
 import TotalLayout from "../../components/layout/TotalLayout";
 import Homework from "../../components/study/Homework";
@@ -27,10 +29,16 @@ function StudyTotal() {
   const { colorMode } = useColorMode();
   const info: UserInfoType = useAppSelector(state => state.auth.information);
   const { onCopy } = useClipboard(info.studyCode);
+  const toast = useToast();
 
   function onCopyEvent() {
     onCopy();
-    alert("코드가 복사되었습니다!");
+    toast({
+      title: "스터디 코드를 복사했습니다!",
+      status: "success",
+      isClosable: true,
+      position: "top"
+    });
   }
 
   return (

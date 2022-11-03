@@ -43,7 +43,8 @@ export const authSlice = createSlice({
       }
     },
     resetUserInfo: state => {
-      state = initialState;
+      state.check = false;
+      state.information = initialState.information;
       localStorage.removeItem("token");
     }
   },
