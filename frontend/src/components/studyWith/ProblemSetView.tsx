@@ -1,7 +1,8 @@
 import { Search2Icon } from "@chakra-ui/icons";
-import { Box, Button, Center, Highlight, Text } from "@chakra-ui/react";
+import { Box, Button, Center, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import ProblemSelect from "../common/ProblemSelect/ProblemSelect";
+import SearchModal from "../common/SearchModal";
 import NextBtn from "./NextBtn";
 import ViewTitle from "./ViewTitle";
 
@@ -10,6 +11,7 @@ type ProblemSetViewProps = {
 };
 
 function ProblemSetView({ onBtnClick }: ProblemSetViewProps) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Center w="1200px" m="auto" flexDir="column">
       <ViewTitle
@@ -21,13 +23,20 @@ function ProblemSetView({ onBtnClick }: ProblemSetViewProps) {
       />
       <Box w="880px">
         <Center mb="12px">
-          <Button bg="dep_2" ml="auto" borderRadius="12px" p="4px">
+          <Button
+            bg="dep_2"
+            ml="auto"
+            borderRadius="12px"
+            p="4px"
+            onClick={onOpen}
+          >
             <Search2Icon w="20px" h="20px" />
           </Button>
         </Center>
         <ProblemSelect maxCnt={3} />
       </Box>
       <NextBtn mt={20} onBtnClick={onBtnClick} text="다음" />
+      <SearchModal isOpen={isOpen} onClose={onClose} maxCnt={3} />
     </Center>
   );
 }
