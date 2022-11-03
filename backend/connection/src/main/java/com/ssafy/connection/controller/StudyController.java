@@ -66,8 +66,9 @@ public class StudyController {
             @ApiImplicitParam(name = "study_code", value = "스터디코드", required = true)
     })
     @GetMapping("/join/{study_code}")
-    public ResponseEntity<StudyDto> getStudy(@PathVariable("study_code") String studyCode){
-        StudyDto studyDto = studyService.getStudy(studyCode);
+    public ResponseEntity<StudyDto> getStudy(@PathVariable("study_code") String studyCode, @Parameter(description = "Accesstoken", required = true) @CurrentUser UserPrincipal userPrincipal){
+        long userId = userPrincipal.getId();
+        StudyDto studyDto = studyService.getStudy(userId, studyCode);
 
         return ResponseEntity.status(HttpStatus.OK).body(studyDto);
     }
@@ -119,11 +120,11 @@ public class StudyController {
 
     @ApiOperation(value = "", notes = "")
     @GetMapping("ranking")
-    public ResponseEntity<?> getStudyRanking(@Parameter(description = "Accesstoken", required = true) @CurrentUser UserPrincipal userPrincipal) {
+    public ResponseEntity<Map<String, Object>> getStudyRanking(@Parameter(description = "Accesstoken", required = true) @CurrentUser UserPrincipal userPrincipal) {
         long userId = userPrincipal.getId();
-        //studyService.getStudyRanking(userId);
+        Map<String, Object> result = studyService.getStudyRanking();
 
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
 }

@@ -1,9 +1,7 @@
 package com.ssafy.connection.service;
 
 import com.ssafy.connection.advice.RestException;
-import com.ssafy.connection.dto.SolveStudyStatsDto;
-import com.ssafy.connection.dto.SolveStudyStatsInterface;
-import com.ssafy.connection.dto.StudyDto;
+import com.ssafy.connection.dto.*;
 import com.ssafy.connection.entity.ConnStudy;
 import com.ssafy.connection.entity.Study;
 import com.ssafy.connection.repository.ConnStudyRepository;
@@ -49,13 +47,16 @@ public class StudyServiceImpl implements StudyService {
     @Transactional
     public void createStudy(long userId, String studyName) {
         try {
+            if (!userRepository.findById(userId).get().isIsmember()) // 깃허브 미연동한 경우
+                throw new RestException(HttpStatus.I_AM_A_TEAPOT, "Github is not connected");
+
             if(studyRepository.findByStudyName(studyName).isPresent())
                 throw new RestException(HttpStatus.CONFLICT, "Duplicate study name");
 
             User userEntity = userRepository.findById(userId).get(); // 로그인 한 사용자 정보
             String studyCode = null; // study 코드
 
-            if (connStudyRepository.findByUser_UserId(userEntity.getUserId()).isPresent())
+            if (connStudyRepository.findByUser_UserId(userEntity.getUserId()).isPresent()) // 이미 스터디에 가입한 경우
                 throw new RestException(HttpStatus.BAD_REQUEST, "Already joined to another study");
 
             do { // 고유한 study 코드 생성
@@ -129,8 +130,13 @@ public class StudyServiceImpl implements StudyService {
 
     @Override
     @Transactional
-    public StudyDto getStudy(String studyCode) {
+    public StudyDto getStudy(long userId, String studyCode) {
         try {
+            User userEntity = userRepository.findById(userId).get(); // 로그인 한 사용자 정보
+
+            if (connStudyRepository.findByUser_UserId(userEntity.getUserId()).isPresent()) // 이미 스터디에 가입한 경우
+                throw new RestException(HttpStatus.BAD_REQUEST, "Already joined to another study");
+
             if (studyRepository.findByStudyCode(studyCode).isEmpty()) // studyCode와 일치하는 결과가 없을 경우 예외처리(찾는 study가 없는 경우)
                 throw new RestException(HttpStatus.NOT_FOUND, "Not Found Study");
 
@@ -151,6 +157,9 @@ public class StudyServiceImpl implements StudyService {
         try {
             User userEntity = userRepository.findById(userId).get(); // 로그인 한 사용자 정보
 
+            if (connStudyRepository.findByUser_UserId(userEntity.getUserId()).isPresent()) // 이미 스터디에 가입한 경우
+                throw new RestException(HttpStatus.BAD_REQUEST, "Already joined to another study");
+
             if (studyRepository.findByStudyCode(studyCode).isEmpty()) // studyCode와 일치하는 결과가 없을 경우 예외처리(찾는 study가 없는 경우)
                 throw new RestException(HttpStatus.NOT_FOUND, "Not found study");
 
@@ -159,8 +168,8 @@ public class StudyServiceImpl implements StudyService {
             User studyLeaderEntity = connStudyEntity.getUser(); // 참가하려는 스터디 스터디장 정보
             //githubToken = tokenRepository.findByGithubId(studyLeaderEntity.getGithubId()).get().getGithubToken(); // 스터디장 깃토큰
 
-            if(connStudyRepository.findByUser_UserIdAndStudy_StudyId(userId,studyEntity.getStudyId()).isPresent()) // userId, studyId와 일치하는 결과가 있을 경우 예외처리(이미 가입한 경우)
-                throw new RestException(HttpStatus.BAD_REQUEST, "Already joined");
+            //if(connStudyRepository.findByUser_UserIdAndStudy_StudyId(userId,studyEntity.getStudyId()).isPresent()) // userId, studyId와 일치하는 결과가 있을 경우 예외처리(이미 가입한 경우)
+            //    throw new RestException(HttpStatus.BAD_REQUEST, "Already joined");
 
             String inviteUserRequest = "{\"role\":\"maintainer\"}";
             webClient.put()
@@ -204,6 +213,10 @@ public class StudyServiceImpl implements StudyService {
 
                 connStudyEntity = connStudyRepository.findByUser_UserId(userId).get();
                 studyLeaderEntity = userRepository.findById(connStudyRepository.findByStudy_StudyIdAndRole(connStudyEntity.getStudy().getStudyId(), "LEADER").get().getUser().getUserId()).get();
+                studyEntity = studyRepository.findById(connStudyEntity.getStudy().getStudyId()).get();
+
+                if (connStudyRepository.findByUser_UserIdAndStudy_StudyIdAndRole(userId, studyEntity.getStudyId(), "READER").isPresent()) // userId,studyId,role과 일치하는 결과가 있는 경우 예외처리(탈퇴하려는 사용자가 스터디장인 경우)
+                    throw new RestException(HttpStatus.BAD_REQUEST, "Unable to quit because you are leader");
             } else { // 추방하는 경우
                 if (userRepository.findById(quitUserId).isEmpty()) // quitUserId 일치하는 결과가 없을 경우 예외처리(추방하려는 사용자가 없는 경우)
                     throw new RestException(HttpStatus.BAD_REQUEST, "Not found user to deport");
@@ -219,9 +232,8 @@ public class StudyServiceImpl implements StudyService {
                     throw new RestException(HttpStatus.BAD_REQUEST, "Not study reader");
 
                 studyLeaderEntity = userRepository.findById(userId).get();
+                studyEntity = studyRepository.findById(connStudyEntity.getStudy().getStudyId()).get();
             }
-
-            studyEntity = studyRepository.findById(connStudyEntity.getStudy().getStudyId()).get();
 
             if(connStudyRepository.findByUser_UserIdAndStudy_StudyId(quitUserEntity.getUserId(),studyEntity.getStudyId()).isEmpty()) // userId, studyId와 일치하는 결과가 없을 경우 예외처리(study의 스터디원이 아닌 경우)
                 throw new RestException(HttpStatus.BAD_REQUEST, "Already not a member");
@@ -317,13 +329,47 @@ public class StudyServiceImpl implements StudyService {
         }
 
         LocalDate endDate = LocalDate.now();
-        LocalDate startDate = endDate.minusMonths(3).minusDays(endDate.getDayOfWeek().getValue()-2);
+        LocalDate startDate = endDate.minusDays(155);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
         map.put("studyPersonnel", studyEntity.getStudyPersonnel());
         map.put("startDate", startDate.format(formatter));
         map.put("endDate", endDate.format(formatter));
         map.put("data", solveStudyStatsList);
+
+        return map;
+    }
+
+    @Override
+    @Transactional
+    public Map<String, Object> getStudyRanking() {
+
+        List<StudyRankingDto> studyRankingList = new ArrayList<>();
+        List<StudyRankingInterface> studyRanking = studyRepository.findStudyRanking();
+        Map<String, Object> map = new HashMap<>();
+
+        int ranking = 0;
+        int add = 0;
+        int beforeScore = 0;
+
+        for (StudyRankingInterface studyStatsInterface : studyRanking) {
+            StudyRankingDto studyRankingDto = new StudyRankingDto(studyStatsInterface.getStudyName(), studyStatsInterface.getStudyId(), studyStatsInterface.getStudyScore(), studyStatsInterface.getHomeworkScore(), studyStatsInterface.getTotalScore(), ranking + add, studyStatsInterface.getStudyRepository());
+
+            if (beforeScore != studyStatsInterface.getTotalScore()) {
+                ranking++;
+                studyRankingDto.setRanking(ranking + add);
+                add = 0;
+            }
+            else {
+                studyRankingDto.setRanking(ranking);
+                add++;
+            }
+
+            beforeScore = studyStatsInterface.getTotalScore();
+            studyRankingList.add(studyRankingDto);
+        }
+
+        map.put("data", studyRankingList);
 
         return map;
     }

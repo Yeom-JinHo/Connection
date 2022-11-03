@@ -51,7 +51,7 @@ public class SubjectController {
     @ApiResponse(responseCode = "409", description = "empty : 해당회원 스터디 정보 없음<br>" +
                                                     "wrong parameter value : 해당문제 존재하지 않거나 데드라인 잘못됨")
 //    @ApiResponse(responseCode = "409", description = "성공")
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity makeSubject(@RequestBody SubjectDto subjectDto, @Parameter(description = "Accesstoken", required = true) @CurrentUser UserPrincipal userPrincipal){
         if(subjectDto.getDeadline() == null) return new ResponseEntity<>(new ResponseDto("wrong parameter value"), HttpStatus.CONFLICT);
         ResponseEntity result = null;
