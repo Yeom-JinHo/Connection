@@ -18,7 +18,6 @@ function TotalLayout({
   mr,
   end
 }: TotalLayoutProps) {
-  console.log(end);
   return (
     <Box
       maxW="900px"
