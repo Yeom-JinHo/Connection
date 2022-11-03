@@ -7,7 +7,8 @@ import {
   useColorMode,
   useDisclosure
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { ApexOptions } from "apexcharts";
+import React, { useMemo, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import { deleteStudy, quitStudy } from "../../api/study";
 import BackButton from "../../components/common/BackButton";
@@ -22,6 +23,63 @@ interface ConfirmStateType {
 
 function Management() {
   const { colorMode } = useColorMode();
+  const CHART_OPTIONS = useMemo(
+    (): ApexOptions => ({
+      chart: {
+        type: "bar",
+        animations: {
+          enabled: true,
+          easing: "easeinout",
+          speed: 800,
+          animateGradually: {
+            enabled: true,
+            delay: 150
+          },
+          dynamicAnimation: {
+            enabled: true,
+            speed: 350
+          }
+        }
+      },
+      colors: ["#88BFFF"],
+      plotOptions: {
+        bar: {
+          columnWidth: "60%"
+        }
+      },
+
+      dataLabels: {
+        enabled: false
+      },
+      xaxis: {
+        labels: {
+          style: {
+            colors: [`${colorMode === "light" ? "#000" : "#fff"}`]
+          }
+        }
+      },
+      yaxis: {
+        labels: {
+          style: {
+            colors: [`${colorMode === "light" ? "#000" : "#fff"}`]
+          }
+        }
+      },
+      legend: {
+        show: true,
+        showForSingleSeries: true,
+        customLegendItems: ["참여율", "평균"],
+        markers: {
+          fillColors: ["#88BFFF", "#775DD0"]
+        },
+        labels: {
+          colors: [`${colorMode === "light" ? "#000" : "#fff"}`]
+        }
+      },
+      theme: { mode: colorMode === "light" ? "light" : "dark" }
+    }),
+    [colorMode]
+  );
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [confirmState, setConfirmState] = useState<ConfirmStateType>({
     msg: "",
@@ -30,7 +88,6 @@ function Management() {
     }
   });
   const auth = useAppSelector(state => state.auth);
-  const studyCode = auth.information?.studyCode;
   const isBoss = auth.information?.studyRole === "LEADER";
 
   const onExitBtnClick = () => {
@@ -98,60 +155,7 @@ function Management() {
             type="bar"
             height={220}
             width="100%"
-            options={{
-              chart: {
-                type: "bar",
-                animations: {
-                  enabled: true,
-                  easing: "easeinout",
-                  speed: 800,
-                  animateGradually: {
-                    enabled: true,
-                    delay: 150
-                  },
-                  dynamicAnimation: {
-                    enabled: true,
-                    speed: 350
-                  }
-                }
-              },
-              colors: ["#88BFFF"],
-              plotOptions: {
-                bar: {
-                  columnWidth: "60%"
-                }
-              },
-
-              dataLabels: {
-                enabled: false
-              },
-              xaxis: {
-                labels: {
-                  style: {
-                    colors: [`${colorMode === "light" ? "#000" : "#fff"}`]
-                  }
-                }
-              },
-              yaxis: {
-                labels: {
-                  style: {
-                    colors: [`${colorMode === "light" ? "#000" : "#fff"}`]
-                  }
-                }
-              },
-              legend: {
-                show: true,
-                showForSingleSeries: true,
-                customLegendItems: ["참여율", "평균"],
-                markers: {
-                  fillColors: ["#88BFFF", "#775DD0"]
-                },
-                labels: {
-                  colors: [`${colorMode === "light" ? "#000" : "#fff"}`]
-                }
-              },
-              theme: { mode: colorMode === "light" ? "light" : "dark" }
-            }}
+            options={CHART_OPTIONS}
             series={[
               {
                 name: "참여율",
