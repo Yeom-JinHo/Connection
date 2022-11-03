@@ -64,17 +64,40 @@ public class SubjectController {
         return result;
     }
 
-    @ApiOperation(value = "팀 과제 현황개발중", notes = "개발중")
+    @ApiOperation(value = "팀 과제 현황", notes = "")
+    @ApiResponse(responseCode = "200", description = "success : 성공<br>" +
+            "example : <br>{<br>" +
+            "&nbsp;\"inProgress\": false,<br>" +
+            "&nbsp;\"subjects\": [<br>" +
+            "&nbsp;&nbsp;{<br>" +
+            "&nbsp;&nbsp;&nbsp;\"deadline\": [<br>" +
+            "&nbsp;&nbsp;&nbsp;&nbsp;\"2022-10-31\",<br>" +
+            "&nbsp;&nbsp;&nbsp;&nbsp;\"2022-11-02\"<br>" +
+            "&nbsp;&nbsp;&nbsp;],<br>" +
+            "&nbsp;&nbsp;&nbsp;\"users\": [<br>" +
+            "&nbsp;&nbsp;&nbsp;&nbsp;{<br>" +
+            "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"problem_cnt\": 1,<br>" +
+            "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"user_id\": 7,<br>" +
+            "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"user_name\": \"Connection-code\"<br>" +
+            "&nbsp;&nbsp;&nbsp;&nbsp;},<br>" +
+            "&nbsp;&nbsp;&nbsp;&nbsp;...<br>" +
+            "&nbsp;&nbsp;&nbsp;],<br>" +
+            "&nbsp;&nbsp;&nbsp;\"problems\": [<br>" +
+            "&nbsp;&nbsp;&nbsp;&nbsp;{<br>" +
+            "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"problem_id\": 130,<br>" +
+            "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"problem_name\": \"문제제목\",<br>" +
+            "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"problem_solved\": [<br>" +
+            "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true,<br>" +
+            "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;false,<br>" +
+            "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;false<br>" +
+            "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br>" +
+            "&nbsp;&nbsp;&nbsp;&nbsp;},<br>" +
+            "&nbsp;&nbsp;&nbsp;]<br>" +
+            "&nbsp;&nbsp;},<br>" +
+            "&nbsp;]<br>" +
+            "}<br>")
     @GetMapping("/team")
     public ResponseEntity getTeamStatus(@Parameter(description = "Accesstoken", required = true) @CurrentUser UserPrincipal userPrincipal){
-//        Map<String, Object> returnMap = new HashMap<>();
-//
-//        List<Subject> totalSubjectList = subjectService.getTotalSubjectList(userPrincipal.getId());
-//        Map<String, Object> myMap = subjectService.getMyStatus(userPrincipal.getId(), totalSubjectList);
-//
-//        returnMap.put("msg", "success");
-//        returnMap.put("data", myMap);
-
         return subjectService.getTeamStatus(userPrincipal.getId());
     }
 

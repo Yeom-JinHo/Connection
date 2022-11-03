@@ -12,7 +12,13 @@ import com.ssafy.connection.securityOauth.repository.user.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -71,54 +77,88 @@ public class SubjectServiceImpl implements SubjectService{
     }
 
     @Override
+    @Transactional
     public ResponseEntity getTeamStatus(Long userId) {
         Optional<ConnStudy> connStudy = connStudyRepository.findByUser_UserId(userId);
         if(!connStudy.isPresent()) return new ResponseEntity<>(new ResponseDto("empty"), HttpStatus.CONFLICT);
 
         long studyId = connStudy.get().getStudy().getStudyId();
-        List<Object[]> result = subjectRepository.getTeamStatus(studyId);   //쿼리
+        List<Object[]> result = subjectRepository.getTeamStatus(studyId);   //쿼리날린 결과
+        long userCnt = connStudy.get().getStudy().getConnStudy().size();    //스터디 유저 수
+        List<Long> subjectCnts = subjectRepository.getTeamSubjectCount(studyId);//스터디 과제 수(데드라인별로 내림차순)
 
-
-        Object first_val = result.get(0)[0];
-        int cnt_user = 1;
-        for (int i = 1; i < result.size(); i++) {
-            if(first_val == result.get(i)[0]) break;
-            cnt_user ++;
-        }
-        int cnt_subject = result.size() / cnt_user;
-
-//        List<Map<String, Object>> users = new ArrayList<>();
-//        List<Map<String, Object>> problems = new ArrayList<>();
-
-        Object[] names = new Object[cnt_user];
-        Object[] titles = new Object[cnt_subject];
-        Object[] userIds = new Object[cnt_user];
-        Object[] problemIds = new Object[cnt_subject];
-        Object[][] solveds = new Object[cnt_subject][cnt_user];
-
-        for (int i = 0; i < cnt_user; i++) {
-            userIds[i] = result.get(i)[0];
-            names[i] = result.get(i)[1];
-        }
-        for (int i = 0; i < cnt_subject; i++) {
-            problemIds[i] = result.get(i*cnt_user)[2];
-            titles[i] = result.get(i*cnt_user)[3];
-            for (int j = 0; j < cnt_user; j++) {
-                if(!result.get(i*cnt_user + j)[4].toString().equals("0"))
-                    solveds[i][j] = 1;
-                else solveds[i][j] = 0;
+        /* result print
+        for (int i = 0; i < result.size(); i++) {
+            for (int j = 0; j < result.get(0).length; j++) {
+                System.out.print(result.get(i)[j] + " ");
             }
+            System.out.println();
+        }*/
+
+        int startIdx = 0;
+
+        Map<String,Object> subjectMap = new HashMap<>();
+        List<Map<String,Object>> subjects = new ArrayList<>();
+        for (int i = 0; i < subjectCnts.size(); i++) {
+            long endIdx = startIdx + subjectCnts.get(i) - 1;
+
+            List<Map<String,Object>> users = new ArrayList<>();
+            List<Map<String,Object>> problems = new ArrayList<>();
+
+            for (int j = 0; j < userCnt; j++) {
+                Map<String, Object> userInfo = new HashMap<>();
+                userInfo.put("user_id", result.get(j + startIdx)[0]);
+                userInfo.put("user_name", result.get(j + startIdx)[1]);
+                
+                int cnt = 0;
+                for (int k = 0; k < subjectCnts.get(i); k++) {
+                    if(!result.get(startIdx + j + k * (int)userCnt)[4].toString().equals("0"))
+                        cnt++;
+                }
+                userInfo.put("problem_cnt", cnt);
+                users.add(userInfo);
+            }
+            for (int j = 0; j < subjectCnts.get(i); j++) {
+                Map<String, Object> problemInfo = new HashMap<>();
+                problemInfo.put("problem_id", result.get(startIdx + j * (int)userCnt)[2]);
+                problemInfo.put("problem_name", result.get(startIdx + j * (int)userCnt)[3]);
+
+                List solved = new ArrayList<>();
+                for (int k = 0; k < userCnt; k++) {
+                    if(!result.get(startIdx + j*(int)userCnt + k)[4].toString().equals("0"))
+                        solved.add(true);
+                    else solved.add(false);
+                }
+                problemInfo.put("problem_solved", solved);
+
+                problems.add(problemInfo);
+            }
+
+            List deadline = new ArrayList<>();
+            DateTimeFormatter parseFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+            DateTimeFormatter returnFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+            LocalDateTime startDate = LocalDateTime.parse(result.get(startIdx)[5].toString(), parseFormat).minusHours(9).minusDays(2);
+            LocalDateTime endDate = LocalDateTime.parse(result.get(startIdx)[5].toString(), parseFormat).minusHours(9);
+
+            deadline.add(startDate.format(returnFormat));
+            deadline.add(endDate.format(returnFormat));
+
+            Map<String, Object> subjectInfo = new HashMap<>();
+            subjectInfo.put("problems", problems);
+            subjectInfo.put("users", users);
+            subjectInfo.put("deadline", deadline);
+
+            subjects.add(subjectInfo);
+
+            startIdx += subjectCnts.get(i) * userCnt;
         }
+        subjectMap.put("subjects", subjects);
+        subjectMap.put("inProgress", (LocalDateTime.now().isBefore(
+                LocalDateTime.parse(result.get(0)[5].toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")).minusHours(9)
+        ))? true : false);
 
-        Map<String,Object> map = new HashMap<>();
-        map.put("name", names);
-        map.put("UserId", userIds);
-        map.put("problemId", problemIds);
-        map.put("title", titles);
-        map.put("solved", solveds);
-
-        return new ResponseEntity<>(map, HttpStatus.OK);
-//        return new ResponseEntity<>(new ResponseDto("success"), HttpStatus.OK);
+        return new ResponseEntity<>(subjectMap, HttpStatus.OK);
     }
 
     @Override
