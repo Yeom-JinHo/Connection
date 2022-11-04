@@ -102,7 +102,7 @@ function ProblemList({ problemList }: ProblemListProps) {
     setBtnTypes(newBtnTypes);
     toast({
       title: `${problemId}번 문제를 삭제했습니다!`,
-      status: "error",
+      status: "warning",
       position: "top",
       isClosable: true
     });
