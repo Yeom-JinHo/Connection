@@ -13,7 +13,8 @@ import {
   ServerToClientEvents,
   UserProfileType
 } from "../asset/data/socket.type";
-import { useAppSelector } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { reset } from "../store/ducks/selectedProblem/selectedProblemSlice";
 
 function StudyWith() {
   const socket: Socket<ServerToClientEvents, ClientToServerEvents> =
@@ -36,7 +37,7 @@ function StudyWith() {
   const { studyId, name, imageUrl } = useAppSelector(
     ({ auth: { information } }) => information
   );
-
+  const dispatch = useAppDispatch();
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isBoss, setIsBoss] = useState(false);
@@ -91,6 +92,7 @@ function StudyWith() {
     });
 
     return () => {
+      dispatch(reset());
       socket.disconnect();
     };
   }, []);
