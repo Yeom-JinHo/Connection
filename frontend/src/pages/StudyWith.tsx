@@ -10,10 +10,10 @@ import TimeSetView from "../components/studyWith/TimeSetView";
 import {
   ClientToServerEvents,
   PageViewState,
-  ServerToClientEvents
+  ServerToClientEvents,
+  UserProfileType
 } from "../asset/data/socket.type";
 import { useAppSelector } from "../store/hooks";
-import { UserInfoType } from "../store/ducks/auth/auth.type";
 
 function StudyWith() {
   const socket: Socket<ServerToClientEvents, ClientToServerEvents> =
@@ -40,9 +40,7 @@ function StudyWith() {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isBoss, setIsBoss] = useState(false);
-  const [participants, setPartcipants] = useState<
-    Pick<UserInfoType, "name" | "imageUrl">[]
-  >([{ name, imageUrl }]);
+  const [participants, setPartcipants] = useState<UserProfileType[]>([]);
 
   const bossView: React.FunctionComponentElement<undefined>[] = [
     <NumberSetView
@@ -73,7 +71,13 @@ function StudyWith() {
 
   useEffect(() => {
     socket.connect();
-    socket.emit("enter", studyId, name, imageUrl);
+    socket.emit(
+      "enter",
+      studyId,
+      name,
+      imageUrl,
+      (userList: UserProfileType[]) => setPartcipants(userList)
+    );
 
     socket.on("addParticipant", (newName, newImageUrl) => {
       setPartcipants(prev => [
