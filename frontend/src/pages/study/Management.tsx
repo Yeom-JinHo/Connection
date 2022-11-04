@@ -10,6 +10,7 @@ import {
 import { ApexOptions } from "apexcharts";
 import React, { useEffect, useMemo, useState } from "react";
 import ReactApexChart from "react-apexcharts";
+import { useNavigate } from "react-router-dom";
 import { deleteStudy, getMember, quitStudy } from "../../api/study";
 import BackButton from "../../components/common/BackButton";
 import Confirm from "../../components/common/Confirm";
@@ -91,6 +92,7 @@ function Management() {
     }),
     [colorMode]
   );
+  const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [confirmState, setConfirmState] = useState<ConfirmStateType>({
     msg: "",
@@ -108,7 +110,7 @@ function Management() {
       setMembers(res.data);
     };
     fetch();
-  });
+  }, []);
   const onExitBtnClick = () => {
     setConfirmState({
       msg: `정말 ${isBoss ? "해체" : "탈퇴"}하시겠습니까?`,
@@ -118,10 +120,9 @@ function Management() {
           console.log(res);
           return;
         }
-        if (auth.information?.userId) {
-          const res = await quitStudy(auth.information?.userId);
-          console.log(res);
-        }
+        const res = await quitStudy();
+        console.log(res);
+        navigate("/");
       }
     });
     onOpen();

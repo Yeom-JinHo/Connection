@@ -13,8 +13,10 @@ export const getMyActivity = async () => {
 };
 
 // 스터디 탈퇴/추방
-export const quitStudy = async (userId: number) => {
-  const res = await api.delete(`/study/quit?user_id=${userId}`);
+export const quitStudy = async (userId?: number) => {
+  let res;
+  if (userId) res = await api.delete(`/study/quit?user_id=${userId}`);
+  else res = await api.delete(`/study/quit`);
   return res;
 };
 
