@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Grid, useToast } from "@chakra-ui/react";
 
-import { QuestionIcon } from "@chakra-ui/icons";
+import { QuestionIcon, RepeatIcon } from "@chakra-ui/icons";
 import ProblemCard from "../components/common/ProblemCard";
 import StudyLayout from "../components/layout/StudyLayout";
 import SideComponent from "../components/recommend/SideComponent";
@@ -182,6 +182,17 @@ function Recommend() {
       title={TABS[selectedTap].label}
       description={TABS[selectedTap].msg}
     >
+      <RepeatIcon
+        w={10}
+        h={10}
+        position="absolute"
+        top={120}
+        right={12}
+        cursor="pointer"
+        onClick={() => getAndSetRecommend()}
+        _hover={{ transform: "rotate(90deg)" }}
+        transition="transform .6s"
+      />
       {TABS[selectedTap].category === "weak" && (
         <>
           <QuestionIcon
