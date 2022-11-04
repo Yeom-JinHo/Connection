@@ -8,14 +8,25 @@ import {
   useDisclosure
 } from "@chakra-ui/react";
 import { ApexOptions } from "apexcharts";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ReactApexChart from "react-apexcharts";
-import { deleteStudy, quitStudy } from "../../api/study";
+import { deleteStudy, getMember, quitStudy } from "../../api/study";
 import BackButton from "../../components/common/BackButton";
 import Confirm from "../../components/common/Confirm";
 import StudyLayout from "../../components/layout/StudyLayout";
 import { useAppSelector } from "../../store/hooks";
 
+interface StatSeriesType {
+  date: string;
+  count: number;
+  total: number;
+  avg: number;
+}
+interface MemberType {
+  userId: number;
+  name: string;
+  series: StatSeriesType[];
+}
 interface ConfirmStateType {
   msg: string;
   onConfirmHandler: () => void;
@@ -87,9 +98,17 @@ function Management() {
       return null;
     }
   });
+  const [members, setMembers] = useState<MemberType[]>([]);
   const auth = useAppSelector(state => state.auth);
   const isBoss = auth.information?.studyRole === "LEADER";
-
+  useEffect(() => {
+    const fetch = async () => {
+      const res = await getMember();
+      console.log(res.data);
+      setMembers(res.data);
+    };
+    fetch();
+  });
   const onExitBtnClick = () => {
     setConfirmState({
       msg: `정말 ${isBoss ? "해체" : "탈퇴"}하시겠습니까?`,
@@ -135,96 +154,54 @@ function Management() {
         </Button>
       </Box>
       <Grid templateColumns="repeat(2,1fr)" gap="32px">
-        <Box bg="dep_1">
-          <Flex bg="dep_2" p={2} textAlign="center">
-            <Text flexGrow={1} borderRight="1px" borderColor="border_gray">
-              No 1
-            </Text>
-            <Text flexGrow={3}>진호</Text>
-            {isBoss && (
-              <Text
-                flexGrow={1}
-                color="red"
-                cursor="pointer"
-                borderLeft="1px"
-                borderColor="border_gray"
-                onClick={() => {
-                  onBanBtnClick("진호", 2);
-                }}
-              >
-                추방
+        {members.map((member, idx) => (
+          <Box bg="dep_1" key={member.userId}>
+            <Flex bg="dep_2" p={2} textAlign="center">
+              <Text flexGrow={1} borderRight="1px" borderColor="border_gray">
+                No {idx}
               </Text>
-            )}
-          </Flex>
-          <ReactApexChart
-            type="bar"
-            height={220}
-            width="100%"
-            options={CHART_OPTIONS}
-            series={[
-              {
-                name: "참여율",
-                data: [
-                  {
-                    x: "1월",
-                    y: 10,
-                    goals: [
-                      {
-                        name: "평균",
-                        value: 52,
-                        strokeColor: "#775DD0"
-                      }
-                    ]
-                  },
-                  {
-                    x: "2월",
-                    y: 30,
-                    goals: [
-                      {
-                        name: "평균",
-                        value: 52,
-                        strokeColor: "#775DD0"
-                      }
-                    ]
-                  },
-                  {
-                    x: "1월",
-                    y: 10,
-                    goals: [
-                      {
-                        name: "평균",
-                        value: 92,
-                        strokeColor: "#775DD0"
-                      }
-                    ]
-                  },
-                  {
-                    x: "3월",
-                    y: 70,
-                    goals: [
-                      {
-                        name: "평균",
-                        value: 22,
-                        strokeColor: "#775DD0"
-                      }
-                    ]
-                  },
-                  {
-                    x: "4월",
-                    y: 10,
-                    goals: [
-                      {
-                        name: "평균",
-                        value: 22,
-                        strokeColor: "#775DD0"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]}
-          />
-        </Box>
+              <Text flexGrow={3}>{member.name}</Text>
+              {isBoss && (
+                <Text
+                  flexGrow={1}
+                  color="red"
+                  cursor="pointer"
+                  borderLeft="1px"
+                  borderColor="border_gray"
+                  onClick={() => {
+                    onBanBtnClick(member.name, member.userId);
+                  }}
+                >
+                  추방
+                </Text>
+              )}
+            </Flex>
+            <ReactApexChart
+              type="bar"
+              height={220}
+              width="100%"
+              options={CHART_OPTIONS}
+              series={[
+                {
+                  name: "참여율",
+                  data: [
+                    ...member.series.map(data => ({
+                      x: data.date.split("-")[1],
+                      y: Math.round((100 * data.count) / data.total),
+                      goals: [
+                        {
+                          name: "평균",
+                          value: data.avg,
+                          strokeColor: "#775DD0"
+                        }
+                      ]
+                    }))
+                  ]
+                }
+              ]}
+            />
+          </Box>
+        ))}
       </Grid>
       <Confirm
         isOpen={isOpen}

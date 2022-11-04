@@ -29,3 +29,9 @@ export const getRank = async () => {
   const res = await api.get("/study/ranking");
   return res;
 };
+
+// 스터디 멤버
+export const getMember = async () => {
+  const res = await api.get("/study/member");
+  return res;
+};
