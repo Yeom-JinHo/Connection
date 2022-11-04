@@ -41,6 +41,11 @@ public class User extends DefaultTime {
 
     private String imageUrl;
 
+    private int tier;
+
+    @Column
+    private boolean ismember = false;
+
     //@Column(nullable = false)
     //private Boolean emailVerified = false;
 
@@ -72,6 +77,16 @@ public class User extends DefaultTime {
 
     public void updateImageUrl(String imageUrl){
         this.imageUrl = imageUrl;
+    }
+
+    public long getStudyId(){
+        if(this.getConnStudy() == null) return 0;
+        return this.getConnStudy().getStudy().getStudyId();
+    }
+
+    public String getStudyCode(){
+        if(this.getConnStudy() == null) return null;
+        return this.getConnStudy().getStudy().getStudyCode();
     }
 
     /* 연관관계 매핑 */

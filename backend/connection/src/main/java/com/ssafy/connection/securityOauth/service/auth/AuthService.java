@@ -1,5 +1,10 @@
 package com.ssafy.connection.securityOauth.service.auth;
 
+import com.ssafy.connection.dto.SolvedacUserDto;
+import com.ssafy.connection.entity.ConnStudy;
+import com.ssafy.connection.entity.Study;
+import com.ssafy.connection.repository.ConnStudyRepository;
+import com.ssafy.connection.repository.StudyRepository;
 import com.ssafy.connection.securityOauth.advice.assertThat.DefaultAssert;
 import com.ssafy.connection.securityOauth.config.security.token.UserPrincipal;
 import com.ssafy.connection.securityOauth.domain.entity.user.*;
@@ -15,6 +20,10 @@ import com.ssafy.connection.securityOauth.repository.auth.TokenRepository;
 import com.ssafy.connection.securityOauth.repository.user.UserRepository;
 import com.ssafy.connection.util.ModelMapperUtils;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.convention.NameTokenizers;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,8 +31,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.persistence.*;
 import java.net.URI;
 import java.util.Optional;
 
@@ -37,15 +49,76 @@ public class AuthService {
     
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
-    
+    private final ConnStudyRepository connStudyRepository;
+    private final StudyRepository studyRepository;
+    private WebClient solvedac = WebClient.create("https://solved.ac/api");
 
-    public ResponseEntity<?> whoAmI(UserPrincipal userPrincipal){
+    @Transactional
+    public ResponseEntity whoAmI(UserPrincipal userPrincipal){
         Optional<User> user = userRepository.findById(userPrincipal.getId());
         UserDto userDto = ModelMapperUtils.getModelMapper().map(user.get(), UserDto.class);
-        DefaultAssert.isOptionalPresent(user);
-        ApiResponse apiResponse = ApiResponse.builder().check(true).information(userDto).build();
 
-        return ResponseEntity.ok(apiResponse);
+        DefaultAssert.isOptionalPresent(user);
+//        ApiResponse apiResponse = ApiResponse.builder().information(userDto).build();
+
+//        return ResponseEntity.ok(userDto);
+        return new ResponseEntity<UserDto>(userDto,HttpStatus.OK);
+    }
+
+    public ResponseEntity getAuthBoj(String code, String baekjoonId, long userId){
+        SolvedacUserDto solvedacUserDto = new SolvedacUserDto();
+        try {
+            solvedacUserDto = solvedac.get()
+                    .uri("/v3/user/show?handle={baekjoonId}", baekjoonId)
+                    .retrieve()
+                    .bodyToMono(SolvedacUserDto.class)
+                    .block();
+        }
+        catch (Exception e){
+            return new ResponseEntity<String>(baekjoonId + " : user not found", HttpStatus.NOT_FOUND);
+        }
+
+        if(solvedacUserDto.getBio().length() >= code.length()){ //상태메세지가 난수보다 짧음 안 됨
+            String substr = solvedacUserDto.getBio().substring(solvedacUserDto.getBio().length()-code.length());
+            if(substr.equals(code)){
+                User u = userRepository.findById(userId).get();
+                User user = new User();
+                user.setUserId(u.getUserId());
+                user.setName(u.getName());
+                user.setGithubId(u.getGithubId());
+                user.setEmail(u.getEmail());
+                user.setImageUrl(u.getImageUrl());
+                user.setTier(u.getTier());
+                user.setPassword(u.getPassword());
+                user.setProvider(u.getProvider());
+                user.setRole(u.getRole());
+                user.setConnStudy(u.getConnStudy());
+                user.setSolve(u.getSolve());
+                user.setBackjoonId(baekjoonId);
+
+                userRepository.save(user);
+                return new ResponseEntity<String>(solvedacUserDto.getHandle() + " : authentication complete", HttpStatus.OK);
+            }
+        }
+
+        return new ResponseEntity<String>(solvedacUserDto.getHandle() + " : cannot find code in bio", HttpStatus.BAD_REQUEST);
+    }
+
+    private boolean valid(String refreshToken){
+
+        //1. 토큰 형식 물리적 검증
+        boolean validateCheck = customTokenProviderService.validateToken(refreshToken);
+        DefaultAssert.isTrue(validateCheck, "Token 검증에 실패하였습니다.");
+
+        //2. refresh token 값을 불러온다.
+        Optional<Token> token = tokenRepository.findByRefreshToken(refreshToken);
+        DefaultAssert.isTrue(token.isPresent(), "탈퇴 처리된 회원입니다.");
+
+        //3. email 값을 통해 인증값을 불러온다
+        Authentication authentication = customTokenProviderService.getAuthenticationByGithubId(token.get().getGithubId());
+        DefaultAssert.isTrue(token.get().getGithubId().equals(authentication.getName()), "사용자 인증에 실패하였습니다.");//dd이게맞아???????????????????????????????????????
+
+        return true;
     }
 
     public ResponseEntity<?> delete(UserPrincipal userPrincipal){
@@ -119,19 +192,19 @@ public class AuthService {
         return ResponseEntity.created(location).body(apiResponse);
     }
 
-    public ResponseEntity<?> refresh(RefreshTokenRequest tokenRefreshRequest){
+    public ResponseEntity<?> refresh(String refreshToken){
         //1차 검증
-        boolean checkValid = valid(tokenRefreshRequest.getRefreshToken());
+        boolean checkValid = valid(refreshToken);
         DefaultAssert.isAuthentication(checkValid);
 
-        Optional<Token> token = tokenRepository.findByRefreshToken(tokenRefreshRequest.getRefreshToken());
+        Optional<Token> token = tokenRepository.findByRefreshToken(refreshToken);
         Authentication authentication = customTokenProviderService.getAuthenticationByGithubId(token.get().getGithubId());
 
         //4. refresh token 정보 값을 업데이트 한다.
         //시간 유효성 확인
         TokenMapping tokenMapping;
 
-        Long expirationTime = customTokenProviderService.getExpiration(tokenRefreshRequest.getRefreshToken());
+        Long expirationTime = customTokenProviderService.getExpiration(refreshToken);
         if(expirationTime > 0){
             tokenMapping = customTokenProviderService.refreshToken(authentication, token.get().getRefreshToken());
         }else{
@@ -158,22 +231,7 @@ public class AuthService {
         return ResponseEntity.ok(apiResponse);
     }
 
-    private boolean valid(String refreshToken){
 
-        //1. 토큰 형식 물리적 검증
-        boolean validateCheck = customTokenProviderService.validateToken(refreshToken);
-        DefaultAssert.isTrue(validateCheck, "Token 검증에 실패하였습니다.");
-
-        //2. refresh token 값을 불러온다.
-        Optional<Token> token = tokenRepository.findByRefreshToken(refreshToken);
-        DefaultAssert.isTrue(token.isPresent(), "탈퇴 처리된 회원입니다.");
-
-        //3. email 값을 통해 인증값을 불러온다
-        Authentication authentication = customTokenProviderService.getAuthenticationByGithubId(token.get().getGithubId());
-        DefaultAssert.isTrue(token.get().getGithubId().equals(authentication.getName()), "사용자 인증에 실패하였습니다.");//dd이게맞아???????????????????????????????????????
-
-        return true;
-    }
 
 
 }
