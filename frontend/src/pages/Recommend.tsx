@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Grid } from "@chakra-ui/react";
+import { Box, Grid, useToast } from "@chakra-ui/react";
 
 import { QuestionIcon } from "@chakra-ui/icons";
 import ProblemCard from "../components/common/ProblemCard";
@@ -81,12 +81,18 @@ function ProblemList({ problemList }: ProblemListProps) {
         : "add"
     )
   );
+  const toast = useToast();
 
   const addProblem = async (problemId: number, idx: number) => {
     const res = await addWorkbook(problemId);
     const newBtnTypes = [...btnTypes];
     newBtnTypes[idx] = "delete";
     setBtnTypes(newBtnTypes);
+    toast({
+      title: `${problemId}번 문제를 추가했습니다`,
+      position: "top",
+      isClosable: true
+    });
     console.log(problemId);
   };
   const deleteProblem = async (problemId: number, idx: number) => {
@@ -94,6 +100,12 @@ function ProblemList({ problemList }: ProblemListProps) {
     const newBtnTypes = [...btnTypes];
     newBtnTypes[idx] = "add";
     setBtnTypes(newBtnTypes);
+    toast({
+      title: `${problemId}번 문제를 삭제했습니다!`,
+      status: "error",
+      position: "top",
+      isClosable: true
+    });
     console.log(problemId);
   };
   useEffect(() => {
@@ -139,13 +151,13 @@ function Recommend() {
   const hideTooltip = () => {
     setTooltipOpen(false);
   };
+  const getAndSetRecommend = async () => {
+    const res = await getRecommend();
+    setRecommends(res.data);
+    console.log(res);
+  };
   useEffect(() => {
-    const fetch = async () => {
-      const res = await getRecommend();
-      setRecommends(res.data);
-      console.log(res);
-    };
-    fetch();
+    getAndSetRecommend();
   }, []);
   return (
     <StudyLayout
