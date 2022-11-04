@@ -76,15 +76,7 @@ function StudyJoin() {
   };
   return (
     <Center w="1200px" m="auto">
-      <Accordion w="640px" mt="160px" allowToggle>
-        <JoinAccordionItem
-          title="스터디 생성하기"
-          panelTitle="스터디명"
-          btnTitle="생성"
-          errMsg={createErr}
-          onInputChange={(name: string) => setStudyName(name)}
-          onBtnClick={handleCreateBtn}
-        />
+      <Accordion w="640px" mt="160px" allowToggle defaultIndex={[0]}>
         <JoinAccordionItem
           title="스터디 참가하기"
           panelTitle="스터디 코드"
@@ -92,6 +84,14 @@ function StudyJoin() {
           errMsg={joinErr}
           onInputChange={(code: string) => setStudyCode(code)}
           onBtnClick={handleJoinBtn}
+        />
+        <JoinAccordionItem
+          title="스터디 생성하기"
+          panelTitle="스터디명"
+          btnTitle="생성"
+          errMsg={createErr}
+          onInputChange={(name: string) => setStudyName(name)}
+          onBtnClick={handleCreateBtn}
         />
       </Accordion>
       <StudyInfoModal studyInfo={studyInfo} isOpen={isOpen} onClose={onClose} />
