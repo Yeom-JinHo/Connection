@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import { api } from "./api";
 
 export const getRecommend = async () => {
@@ -10,6 +11,11 @@ export const searchProblem = async (keyword: string) => {
   return res;
 };
 
-export const recommendTimes = async (problemList: number[]) => {
-  const res = await api.get();
+export const getRecommendTimes = async (
+  problemList: number[]
+): Promise<AxiosResponse<{ time: { [key: number]: number } }, null>> => {
+  const res = await api.get(
+    `/problem/time?problemIdList=${problemList.join(",")}`
+  );
+  return res;
 };
