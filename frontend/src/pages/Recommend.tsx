@@ -109,6 +109,17 @@ function ProblemList({ problemList }: ProblemListProps) {
     console.log(problemId);
   };
   useEffect(() => {
+    setBtnTypes(
+      problemList.map(problem =>
+        myWorkbook.findIndex(
+          p => p.problemInfo.problemId === problem.problemInfo.problemId
+        ) >= 0
+          ? "delete"
+          : "add"
+      )
+    );
+  }, [problemList]);
+  useEffect(() => {
     const fetch = async () => {
       const res = await getWorkbook();
       setMyWorkbook(res.data);
