@@ -95,12 +95,8 @@ function StudyWith() {
     };
   }, []);
 
-  const test = (e: ChangeEvent<HTMLInputElement>) => {
-    socket.emit("chat", e.target.value);
-  };
   return (
     <Center>
-      <input onChange={test} />
       {isLoading ? (
         <CircularProgress size="120px" mt="30vh" isIndeterminate color="main" />
       ) : (

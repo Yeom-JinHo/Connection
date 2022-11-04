@@ -29,7 +29,6 @@ export interface ServerToClientEvents {
 }
 
 export interface ClientToServerEvents {
-  chat: (msg: string) => void;
   enter: (
     studyId: UserInfoType["studyId"],
     name: UserInfoType["name"],
