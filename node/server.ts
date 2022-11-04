@@ -60,7 +60,4 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("user disconnected-123--!!");
   });
-  socket.on("chat", (msg: any) => {
-    console.log(`message: ${msg}`);
-  });
 });
