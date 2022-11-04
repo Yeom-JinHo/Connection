@@ -18,6 +18,8 @@ import NextBtn from "./NextBtn";
 import { useAppSelector } from "../../store/hooks";
 import ParticipantContainer from "./ParticipantContainer";
 import { UserProfileType } from "../../asset/data/socket.type";
+import { getRecommendTimes } from "../../api/problem";
+import { Problem, ProblemInfo } from "../../pages/Recommend";
 
 type ProblemContainerProps = {
   id: number;
@@ -41,6 +43,7 @@ function ProblemContainer({
   const parse = (val: string) => +val.replace("분", "");
   const [time, setTime] = useState(recommendTime);
 
+  useEffect(() => {}, [recommendTime]);
   return (
     <Center mb="32px">
       <Flex
@@ -115,6 +118,10 @@ function TimeSetView({
   const selectedProblems = useAppSelector(
     ({ selectedProblem }) => selectedProblem.selectedProblemList
   );
+  const [problems, setProblems] = useState<
+    { recommendTime: number; problemId: number; title: string }[]
+  >(selectedProblems.map(p => ({ ...p.problemInfo, recommendTime: 0 })));
+
   const totalTime = useMemo(() => {
     let total = 0;
     let flag = false;
@@ -135,12 +142,31 @@ function TimeSetView({
 
   useEffect(() => {
     const newTimesMap = new Map();
-    // problemDummy.forEach(problem => {
-    //   newTimesMap.set(problem.id, problem.recommendTime);
-    // });
-    setTimes(newTimesMap);
+    (async () => {
+      const res = await getRecommendTimes(
+        selectedProblems.map(problem => problem.problemInfo.problemId)
+      );
+      const recommendTimes = res.data.time;
+      const newTimes = new Map();
+      // eslint-disable-next-line no-restricted-syntax
+      for (const id in recommendTimes) {
+        if (Object.prototype.hasOwnProperty.call(recommendTimes, id)) {
+          console.log(id, recommendTimes[id]);
+          newTimes.set(id, recommendTimes[id]);
+        }
+      }
+      setProblems(prev =>
+        prev.map(p => {
+          return { ...p, recommendTime: newTimes.get(`${p.problemId}`) };
+        })
+      );
+      setTimes(newTimes);
+    })();
   }, []);
 
+  useEffect(() => {
+    console.log("useEffect", problems);
+  }, [problems]);
   return (
     <Center w="1200px" m="auto" flexDir="column">
       <Box w="800px" pos="absolute" top="108px">
@@ -161,12 +187,12 @@ function TimeSetView({
       />
       <ParticipantContainer users={participants} />
       <Box mt="16px">
-        {selectedProblems.map(({ problemInfo }) => (
+        {problems.map(problem => (
           <MemoProblemContainer
-            key={problemInfo.problemId}
-            title={problemInfo.title}
-            id={problemInfo.problemId}
-            recommendTime={0}
+            key={problem.problemId}
+            title={problem.title}
+            id={problem.problemId}
+            recommendTime={problem.recommendTime}
             setTimes={handleTimes}
           />
         ))}
