@@ -51,7 +51,7 @@ function ProblemContainer({
         borderRadius="16px"
         shadow="2px 4px 4px rgba(0, 0, 0, 0.25)"
       >
-        <Center borderRight="1px solid #b8b8b8" h="40px">
+        <Center borderRight="1px solid #b8b8b8" w="80px" h="40px">
           <Text p="16px">{id}</Text>
         </Center>
         <Text ml="16px">{title}</Text>
@@ -103,16 +103,18 @@ function TimeSetView({
   onPrevBtnClick,
   participants
 }: TimeSetViewProps) {
-  const problemDummy = [
-    { id: 1, title: "징검다리 달리기", recommendTime: 60 },
-    { id: 2, title: "징검다리 달리기", recommendTime: 60 },
-    { id: 3, title: "징검다리 달리기", recommendTime: 120 }
-  ];
+  // const problemDummy = [
+  //   { id: 1, title: "징검다리 달리기", recommendTime: 60 },
+  //   { id: 2, title: "징검다리 달리기", recommendTime: 60 },
+  //   { id: 3, title: "징검다리 달리기", recommendTime: 120 }
+  // ];
   const [times, setTimes] = useState<Map<number, number>>(new Map());
   const studyName = useAppSelector(
     ({ auth: { information } }) => information.studyName
   );
-
+  const selectedProblems = useAppSelector(
+    ({ selectedProblem }) => selectedProblem.selectedProblemList
+  );
   const totalTime = useMemo(() => {
     let total = 0;
     let flag = false;
@@ -133,9 +135,9 @@ function TimeSetView({
 
   useEffect(() => {
     const newTimesMap = new Map();
-    problemDummy.forEach(problem => {
-      newTimesMap.set(problem.id, problem.recommendTime);
-    });
+    // problemDummy.forEach(problem => {
+    //   newTimesMap.set(problem.id, problem.recommendTime);
+    // });
     setTimes(newTimesMap);
   }, []);
 
@@ -159,12 +161,12 @@ function TimeSetView({
       />
       <ParticipantContainer users={participants} />
       <Box mt="16px">
-        {problemDummy.map(problem => (
+        {selectedProblems.map(({ problemInfo }) => (
           <MemoProblemContainer
-            key={problem.id}
-            title={problem.title}
-            id={problem.id}
-            recommendTime={problem.recommendTime}
+            key={problemInfo.problemId}
+            title={problemInfo.title}
+            id={problemInfo.problemId}
+            recommendTime={0}
             setTimes={handleTimes}
           />
         ))}
