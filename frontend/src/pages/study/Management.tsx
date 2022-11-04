@@ -103,13 +103,14 @@ function Management() {
   const [members, setMembers] = useState<MemberType[]>([]);
   const auth = useAppSelector(state => state.auth);
   const isBoss = auth.information?.studyRole === "LEADER";
+
+  const getAndSetMembers = async () => {
+    const res = await getMember();
+    console.log(res.data);
+    setMembers(res.data);
+  };
   useEffect(() => {
-    const fetch = async () => {
-      const res = await getMember();
-      console.log(res.data);
-      setMembers(res.data);
-    };
-    fetch();
+    getAndSetMembers();
   }, []);
   const onExitBtnClick = () => {
     setConfirmState({
@@ -133,6 +134,7 @@ function Management() {
       async onConfirmHandler() {
         const res = await quitStudy(id);
         console.log(res);
+        getAndSetMembers();
       }
     });
     onOpen();
