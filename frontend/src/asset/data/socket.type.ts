@@ -22,14 +22,7 @@ export interface ProblemType {
   isSolved: boolean;
 }
 /* eslint-disable no-shadow */
-
-export type UserProfileType = Pick<UserInfoType, "name" | "imageUrl">;
-
 export interface ServerToClientEvents {
-  initParticipant: (
-    newName: UserInfoType["name"][],
-    newImageUrl: UserInfoType["imageUrl"][]
-  ) => void;
   initParticipant: (
     newName: UserInfoType["name"][],
     newImageUrl: UserInfoType["imageUrl"][]
