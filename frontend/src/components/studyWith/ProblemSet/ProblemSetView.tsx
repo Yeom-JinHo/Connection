@@ -1,13 +1,13 @@
 import { Search2Icon } from "@chakra-ui/icons";
 import { Box, Button, Center, useDisclosure } from "@chakra-ui/react";
 import React from "react";
-import { UserProfileType } from "../../asset/data/socket.type";
-import { useAppSelector } from "../../store/hooks";
-import ProblemSelect from "../common/ProblemSelect/ProblemSelect";
-import SearchModal from "../common/SearchModal";
-import NextBtn from "./NextBtn";
-import ParticipantContainer from "./ParticipantContainer";
-import ViewTitle from "./ViewTitle";
+import { UserProfileType } from "../../../asset/data/socket.type";
+import { useAppSelector } from "../../../store/hooks";
+import ProblemSelect from "../../common/ProblemSelect/ProblemSelect";
+import SearchModal from "../../common/SearchModal";
+import NextBtn from "../NextBtn";
+import ParticipantContainer from "../ParticipantContainer";
+import ViewTitle from "../ViewTitle";
 
 type ProblemSetViewProps = {
   onBtnClick: () => void;

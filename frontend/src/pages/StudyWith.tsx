@@ -1,12 +1,12 @@
 import { Center, CircularProgress } from "@chakra-ui/react";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import NumberSetView from "../components/studyWith/NumberSetView";
-import ProblemSetView from "../components/studyWith/ProblemSetView";
-import ResultView from "../components/studyWith/ResultView";
-import ReviewView from "../components/studyWith/ReviewView";
-import SolvingView from "../components/studyWith/SolvingView";
-import TimeSetView from "../components/studyWith/TimeSetView";
+import NumberSetView from "../components/studyWith/NumberSet/NumberSetView";
+import ProblemSetView from "../components/studyWith/ProblemSet/ProblemSetView";
+import ResultView from "../components/studyWith/Result/ResultView";
+import ReviewView from "../components/studyWith/Review/ReviewView";
+import SolvingView from "../components/studyWith/Solving/SolvingView";
+import TimeSetView from "../components/studyWith/TimeSet/TimeSetView";
 import {
   ClientToServerEvents,
   PageViewState,

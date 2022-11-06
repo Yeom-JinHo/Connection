@@ -1,0 +1,58 @@
+import { Center, Text } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import getTime from "../../../utils/getTime";
+import NextBtn from "../NextBtn";
+import ViewTitle from "../ViewTitle";
+import ProblemBar from "./ProblemBar";
+
+type TimerProps = {
+  initTime: number;
+};
+
+function Timer({ initTime }: TimerProps) {
+  const [time, setTime] = useState(initTime);
+  const [timerId, setTimerId] = useState<ReturnType<
+    typeof setTimeout
+  > | null>();
+  useEffect(() => {
+    if (!timerId) {
+      const nextTimerId = setTimeout(() => {
+        setTimerId(null);
+        setTime(prev => prev - 1);
+      }, 1000);
+      setTimerId(nextTimerId);
+    }
+  }, [time]);
+
+  return (
+    <Text fontSize="100px" mt="60px" textAlign="center">
+      {getTime(time)}
+    </Text>
+  );
+}
+
+type SolvingViewProps = {
+  onBtnClick: () => void;
+};
+
+function SolvingView({ onBtnClick }: SolvingViewProps) {
+  return (
+    <Center w="1200px" m="auto" flexDir="column">
+      <Timer initTime={300} />
+      <ViewTitle
+        main="문제 풀이"
+        des="문제를 풀었으면 확인버튼을 눌러주세요."
+        highLight=""
+        mt={12}
+        mb={60}
+        desSize={20}
+      />
+      <ProblemBar />
+      <ProblemBar />
+      <ProblemBar />
+      <NextBtn text="다음" mt={20} onBtnClick={onBtnClick} />
+    </Center>
+  );
+}
+
+export default SolvingView;
