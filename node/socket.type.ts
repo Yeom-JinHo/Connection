@@ -15,6 +15,12 @@ export interface UserInfoType {
   ismember: boolean;
 }
 export type UserProfileType = Pick<UserInfoType, "name" | "imageUrl">;
+
+export interface ProblemType {
+  problemId: number;
+  title: string;
+  isSolved: boolean;
+}
 /* eslint-disable no-shadow */
 export interface ServerToClientEvents {
   initParticipant: (
@@ -39,9 +45,12 @@ export interface ClientToServerEvents {
   ) => void;
   startStudy: (
     studyId: UserInfoType["studyId"],
-    problemList: number[],
+    problemList: Pick<ProblemType, "problemId" | "title">[],
     time: number,
     callback: () => void
+  ) => void;
+  getSolvingInfo: (
+    callback: (problemList: ProblemType[], endTime: number) => void
   ) => void;
 }
 

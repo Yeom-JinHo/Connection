@@ -1,8 +1,27 @@
-import { UserInfoType } from "../../store/ducks/auth/auth.type";
-/* eslint-disable no-shadow */
-
+export interface UserInfoType {
+  userId: number;
+  name: string;
+  githubId: string;
+  backjoonId: null | string;
+  email: string;
+  imageUrl: string;
+  tier: number;
+  role: string;
+  studyId: number;
+  studyRole: string;
+  studyName: string;
+  studyRepository: string;
+  studyCode: string;
+  ismember: boolean;
+}
 export type UserProfileType = Pick<UserInfoType, "name" | "imageUrl">;
 
+export interface ProblemType {
+  problemId: number;
+  title: string;
+  isSolved: boolean;
+}
+/* eslint-disable no-shadow */
 export interface ServerToClientEvents {
   initParticipant: (
     newName: UserInfoType["name"][],
@@ -26,9 +45,12 @@ export interface ClientToServerEvents {
   ) => void;
   startStudy: (
     studyId: UserInfoType["studyId"],
-    problemList: number[],
+    problemList: Pick<ProblemType, "problemId" | "title">[],
     time: number,
     callback: () => void
+  ) => void;
+  getSolvingInfo: (
+    callback: (problemList: ProblemType[], endTime: number) => void
   ) => void;
 }
 

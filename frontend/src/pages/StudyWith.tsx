@@ -66,6 +66,7 @@ function StudyWith() {
     <SolvingView
       key={PageViewState.Solving}
       onBtnClick={() => setStep(PageViewState.Result)}
+      socket={socket}
     />,
     <ResultView
       key={PageViewState.Result}
