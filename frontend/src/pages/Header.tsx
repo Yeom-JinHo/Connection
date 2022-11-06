@@ -19,11 +19,13 @@ import {
 import { Link as ReactLink, useLocation } from "react-router-dom";
 import { v4 } from "uuid";
 import { MoonIcon } from "@chakra-ui/icons";
-import JoinModal from "../components/join/JoinModal";
 import LogoLight from "../asset/img/logo_light.svg";
 import LogoDark from "../asset/img/logo_dark.svg";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { resetUserInfo, setUserInfo } from "../store/ducks/auth/authSlice";
+import BackjoonModal from "../components/modal/BackjoonModal";
+import GithubModal from "../components/modal/GithubModal";
+import ExtensionModal from "../components/modal/ExtensionModal";
 
 interface menuType {
   title: string;
@@ -32,9 +34,14 @@ interface menuType {
 
 function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [isLogin, setIsLogin] = useState(false);
   const [isBJ, setIsBJ] = useState(false);
+  const [isGH, setIsGH] = useState(false);
+  const [isET, setIsET] = useState(false);
+  const BjModal = useDisclosure();
+  const GHModal = useDisclosure();
+  const ETModal = useDisclosure();
 
   const location = useLocation();
   const auth = useAppSelector(state => state.auth);
@@ -132,10 +139,32 @@ function Header() {
               <Button>로그인</Button>
             </Link>
           )}
-          <Button onClick={onOpen}>백준</Button>
-          <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
+          <Button onClick={BjModal.onOpen}>백준</Button>
+          <Button onClick={GHModal.onOpen}>깃허브</Button>
+          <Button onClick={ETModal.onOpen}>확장</Button>
+          <Modal
+            isOpen={BjModal.isOpen}
+            onClose={BjModal.onClose}
+            closeOnOverlayClick={false}
+          >
             <ModalOverlay />
-            <JoinModal onClose={onClose} />
+            <BackjoonModal onClose={BjModal.onClose} />
+          </Modal>
+          <Modal
+            isOpen={GHModal.isOpen}
+            onClose={GHModal.onClose}
+            closeOnOverlayClick={false}
+          >
+            <ModalOverlay />
+            <GithubModal onClose={GHModal.onClose} />
+          </Modal>
+          <Modal
+            isOpen={ETModal.isOpen}
+            onClose={ETModal.onClose}
+            closeOnOverlayClick={false}
+          >
+            <ModalOverlay />
+            <ExtensionModal onClose={ETModal.onClose} />
           </Modal>
         </Center>
       </Center>
