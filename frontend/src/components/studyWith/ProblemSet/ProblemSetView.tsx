@@ -1,5 +1,5 @@
 import { Search2Icon } from "@chakra-ui/icons";
-import { Box, Button, Center, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, Center, useDisclosure, useToast } from "@chakra-ui/react";
 import React from "react";
 import { UserProfileType } from "../../../asset/data/socket.type";
 import { useAppSelector } from "../../../store/hooks";
@@ -16,9 +16,28 @@ type ProblemSetViewProps = {
 
 function ProblemSetView({ onBtnClick, participants }: ProblemSetViewProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const studyName = useAppSelector(
-    ({ auth: { information } }) => information.studyName
+  const toast = useToast();
+  const { studyName, selectedProblemList } = useAppSelector(
+    ({ auth, selectedProblem }) => ({
+      studyName: auth.information.studyName,
+      selectedProblemList: selectedProblem.selectedProblemList
+    })
   );
+  const handleNextBtnClick = () => {
+    if (selectedProblemList.length === 0) {
+      toast({
+        title: "문제 미선택",
+        description: "문제를 선택해주세요",
+        status: "error",
+        duration: 1000,
+        position: "top",
+        isClosable: true
+      });
+    } else {
+      onBtnClick();
+    }
+  };
+
   return (
     <Center w="1200px" m="auto" flexDir="column">
       <ViewTitle
@@ -43,7 +62,7 @@ function ProblemSetView({ onBtnClick, participants }: ProblemSetViewProps) {
         </Center>
         <ProblemSelect maxCnt={3} />
       </Box>
-      <NextBtn mt={20} onBtnClick={onBtnClick} text="다음" />
+      <NextBtn mt={20} onBtnClick={handleNextBtnClick} text="다음" />
       <SearchModal isOpen={isOpen} onClose={onClose} maxCnt={3} />
     </Center>
   );
