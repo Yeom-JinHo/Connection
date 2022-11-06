@@ -1,18 +1,13 @@
 import { Button, Center, Flex } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
 
-function ProblemBar() {
-  type problemState = "waiting" | "success" | "fail";
-  const [state, setState] = useState<problemState>("fail");
-  const stateBg = useMemo(() => {
-    if (state === "waiting") {
-      return "dep_1";
-    }
-    if (state === "success") {
-      return "gra";
-    }
-    return "red_lin";
-  }, [state]);
+export interface ProblemBarProps {
+  problemId: number;
+  title: string;
+  isSolved: boolean;
+}
+
+function ProblemBar({ problemId, title, isSolved }: ProblemBarProps) {
   return (
     <Center
       w="700px"
@@ -25,7 +20,7 @@ function ProblemBar() {
       _hover={{ background: "gra" }}
     >
       <Center borderRight="1px solid #b8b8b8" h="48px" p="0 16px">
-        123
+        {problemId}
       </Center>
       <Flex
         borderRight="1px solid #b8b8b8"
@@ -34,7 +29,7 @@ function ProblemBar() {
         p="0 16px"
         justify="space-between"
       >
-        <Center>123</Center>
+        <Center>{title}</Center>
         <Center>
           <Button bg="transparent" _hover={{ background: "transparent" }}>
             문제풀기
@@ -52,7 +47,12 @@ function ProblemBar() {
       </Center>
 
       <Center p="0 16px">
-        <Center borderRadius={50} w="20px" h="20px" bg={stateBg} />
+        <Center
+          borderRadius={50}
+          w="20px"
+          h="20px"
+          bg={isSolved ? "gra" : "red_lin"}
+        />
       </Center>
     </Center>
   );

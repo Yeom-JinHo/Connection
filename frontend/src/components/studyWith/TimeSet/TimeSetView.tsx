@@ -69,7 +69,10 @@ function TimeSetView({
     socket.emit(
       "startStudy",
       studyId,
-      problems.map(problem => problem.problemId),
+      problems.map(problem => ({
+        problemId: problem.problemId,
+        title: problem.title
+      })),
       duringTime,
       () => onBtnClick()
     );
