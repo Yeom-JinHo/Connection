@@ -26,6 +26,8 @@ export interface ServerToClientEvents {
     newImageUrl: UserInfoType["imageUrl"]
   ) => void;
   removeParticipant: (targetName: UserInfoType["name"]) => void;
+  endStudy: () => void;
+  startSolve: () => void;
 }
 
 export interface ClientToServerEvents {
@@ -34,6 +36,12 @@ export interface ClientToServerEvents {
     name: UserInfoType["name"],
     imageUrl: UserInfoType["imageUrl"],
     initParticipant: (userList: UserProfileType[]) => void
+  ) => void;
+  startStudy: (
+    studyId: UserInfoType["studyId"],
+    problemList: number[],
+    time: number,
+    callback: () => void
   ) => void;
 }
 

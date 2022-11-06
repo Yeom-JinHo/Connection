@@ -17,7 +17,7 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { reset } from "../store/ducks/selectedProblem/selectedProblemSlice";
 
 function StudyWith() {
-  const socket: Socket<ServerToClientEvents, ClientToServerEvents> =
+  const [socket] = useState<Socket<ServerToClientEvents, ClientToServerEvents>>(
     process.env.NODE_ENV === "development"
       ? io("ws://localhost:8000", {
           autoConnect: false,
@@ -33,10 +33,13 @@ function StudyWith() {
           reconnectionDelayMax: 5000,
           reconnectionAttempts: 3,
           transports: ["websocket"]
-        });
+        })
+  );
+
   const { studyId, name, imageUrl } = useAppSelector(
     ({ auth: { information } }) => information
   );
+
   const dispatch = useAppDispatch();
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -58,6 +61,7 @@ function StudyWith() {
       onBtnClick={() => setStep(PageViewState.Solving)}
       onPrevBtnClick={() => setStep(PageViewState.ProblemSet)}
       participants={participants}
+      socket={socket}
     />,
     <SolvingView
       key={PageViewState.Solving}
@@ -91,6 +95,13 @@ function StudyWith() {
       setPartcipants(prev => prev.filter(user => user.name !== targetName));
     });
 
+    socket.on("endStudy", () => {
+      setStep(PageViewState.Result);
+    });
+
+    socket.on("startSolve", () => {
+      setStep(PageViewState.Solving);
+    });
     return () => {
       dispatch(reset());
       socket.disconnect();

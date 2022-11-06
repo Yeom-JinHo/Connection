@@ -1,12 +1,17 @@
 import { Box, Center, Text } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
+import { Socket } from "socket.io-client";
 import getTime from "../../../utils/getTime";
 import ViewTitle from "../ViewTitle";
 import NextBtn from "../NextBtn";
 import { useAppSelector } from "../../../store/hooks";
 import ParticipantContainer from "../ParticipantContainer";
-import { UserProfileType } from "../../../asset/data/socket.type";
+import {
+  ClientToServerEvents,
+  ServerToClientEvents,
+  UserProfileType
+} from "../../../asset/data/socket.type";
 import { getRecommendTimes } from "../../../api/problem";
 import TimeProblemContainer from "./TimeProblemContainer";
 
@@ -14,17 +19,22 @@ type TimeSetViewProps = {
   onBtnClick: () => void;
   onPrevBtnClick: () => void;
   participants: UserProfileType[];
+  socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 };
 
 function TimeSetView({
   onBtnClick,
   onPrevBtnClick,
-  participants
+  participants,
+  socket
 }: TimeSetViewProps) {
-  const [times, setTimes] = useState<Map<number, number>>(new Map());
+  const [times, setTimes] = useState<Map<string, number>>(new Map());
   const [isLaoding, setIsLoading] = useState(true);
-  const studyName = useAppSelector(
-    ({ auth: { information } }) => information.studyName
+  const { studyName, studyId } = useAppSelector(
+    ({ auth: { information } }) => ({
+      studyName: information.studyName,
+      studyId: information.studyId
+    })
   );
   const selectedProblems = useAppSelector(
     ({ selectedProblem }) => selectedProblem.selectedProblemList
@@ -47,9 +57,23 @@ function TimeSetView({
   }, [times]);
 
   const handleTimes = useCallback(
-    (id: number, time: number) => setTimes(prev => new Map(prev).set(id, time)),
+    (id: string, time: number) => setTimes(prev => new Map(prev).set(id, time)),
     []
   );
+
+  const handleNextBtnClick = () => {
+    let duringTime = 0;
+    times.forEach(time => {
+      duringTime += time;
+    });
+    socket.emit(
+      "startStudy",
+      studyId,
+      problems.map(problem => problem.problemId),
+      duringTime,
+      () => onBtnClick()
+    );
+  };
 
   useEffect(() => {
     (async () => {
@@ -117,7 +141,7 @@ function TimeSetView({
               {totalTime}
             </Text>
           </Center>
-          <NextBtn text="다음" mt={0} onBtnClick={onBtnClick} />
+          <NextBtn text="다음" mt={0} onBtnClick={handleNextBtnClick} />
         </>
       )}
     </Center>

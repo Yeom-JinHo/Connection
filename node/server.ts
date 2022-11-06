@@ -35,6 +35,13 @@ httpServer.listen(8000, () => {
   console.log("listening!!");
 });
 
+interface StudyInfoType {
+  startTime: number;
+  problems: number[];
+  duringMinute: number;
+}
+const studyInfo = new Map<number, StudyInfoType>();
+
 const getUserList = async (studyId: string): Promise<UserProfileType[]> => {
   const Users = await io.in(studyId).fetchSockets();
   return Users.map((user) => ({
@@ -59,5 +66,19 @@ io.on("connection", (socket) => {
   });
   socket.on("disconnect", () => {
     console.log("user disconnected-123--!!");
+  });
+  socket.on("startStudy", (studyId, problemList, time, callback) => {
+    console.log("startStudy", studyId, problemList, time);
+    studyInfo.set(studyId, {
+      startTime: Date.now(),
+      problems: problemList,
+      duringMinute: time,
+    });
+
+    io.to(`${studyId}`).emit("startSolve");
+
+    setTimeout(() => {
+      io.to(`${studyId}`).emit("endStudy");
+    }, time * 1000 * 60);
   });
 });

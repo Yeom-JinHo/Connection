@@ -15,7 +15,7 @@ type TimeProblemContainerProps = {
   id: number;
   title: string;
   recommendTime: number;
-  setTimes: (id: number, time: number) => void;
+  setTimes: (id: string, time: number) => void;
 };
 
 function TimeProblemContainer({
@@ -49,7 +49,7 @@ function TimeProblemContainer({
         value={format(time)}
         onChange={value => {
           setTime(parse(value));
-          setTimes(id, parse(value));
+          setTimes(`${id}`, parse(value));
         }}
         borderColor="dep_1"
         ml="32px"
