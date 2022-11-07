@@ -71,6 +71,7 @@ function StudyWith() {
     <ResultView
       key={PageViewState.Result}
       onBtnClick={() => setStep(PageViewState.Review)}
+      socket={socket}
     />,
     <ReviewView key={PageViewState.Review} onBtnClick={() => setStep(1)} />
   ];

@@ -40,13 +40,29 @@ interface ProblemInfoType {
   problemId: number;
   solvedUser: string[];
 }
+interface UserMapStudyType {
+  studyId: number;
+}
 interface StudyInfoType {
   startTime: number;
   problems: ProblemInfoType[];
   duringMinute: number;
+  finishedUser: {
+    name: string;
+    imageUrl: string;
+    problem: number;
+    time: number | null;
+  }[];
+  notFinishedUser: {
+    name: string;
+    imageUrl: string;
+    problem: number;
+    time: number | null;
+  }[];
 }
+
 const studyInfos = new Map<number, StudyInfoType>();
-const userInfos = new Map<string, number>();
+const userMappingStudyId = new Map<string, UserMapStudyType>();
 
 const getUserList = async (studyId: string): Promise<UserProfileType[]> => {
   const Users = await io.in(studyId).fetchSockets();
@@ -61,7 +77,7 @@ io.on("connection", (socket) => {
     console.log(`${studyId}방에 ${name}님이 입장하셨어`);
     socket.data.name = name;
     socket.data.imageUrl = imageUrl;
-    userInfos.set(name, studyId);
+    userMappingStudyId.set(name, { studyId });
     socket.join(`${studyId}`);
     socket.to(`${studyId}`).emit("addParticipant", name, imageUrl);
     cb(await getUserList(studyId + ""));
@@ -77,12 +93,19 @@ io.on("connection", (socket) => {
     console.log("user disconnected-123--!!");
   });
 
-  socket.on("startStudy", (studyId, problemList, time, callback) => {
+  socket.on("startStudy", async (studyId, problemList, time, callback) => {
     console.log("startStudy", studyId, problemList, time);
+    const loginedUser = await getUserList(`${studyId}`);
     studyInfos.set(studyId, {
       startTime: Date.now(),
       problems: problemList.map((problem) => ({ ...problem, solvedUser: [] })),
       duringMinute: time,
+      finishedUser: [],
+      notFinishedUser: loginedUser.map((user) => ({
+        ...user,
+        problem: 0,
+        time: null,
+      })),
     });
 
     io.to(`${studyId}`).emit("startSolve");
@@ -93,13 +116,24 @@ io.on("connection", (socket) => {
   });
 
   socket.on("getSolvingInfo", (callback) => {
-    const userStudyId = userInfos.get(socket.data.name as string);
-    const studyInfo = studyInfos.get(userStudyId as number);
+    const userName = socket.data.name as string;
+    const { studyId } = userMappingStudyId.get(
+      socket.data.name as string
+    ) as UserMapStudyType;
+    const studyInfo = studyInfos.get(studyId);
     const problemInfo = studyInfo!.problems.map((problem) => ({
       title: problem.title,
       problemId: problem.problemId,
-      isSolved: problem.solvedUser.includes(socket.data.name as string),
+      isSolved: problem.solvedUser.includes(userName),
     }));
     callback(problemInfo, studyInfo!.startTime + studyInfo!.duringMinute * 60);
+  });
+
+  socket.on("getResult", (callback) => {
+    const { studyId } = userMappingStudyId.get(
+      socket.data.name as string
+    ) as UserMapStudyType;
+    const studyInfo = studyInfos.get(studyId);
+    callback([...studyInfo!.finishedUser, ...studyInfo!.notFinishedUser]);
   });
 });

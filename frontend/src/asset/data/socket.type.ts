@@ -52,6 +52,16 @@ export interface ClientToServerEvents {
   getSolvingInfo: (
     callback: (problemList: ProblemType[], endTime: number) => void
   ) => void;
+  getResult: (
+    callback: (
+      results: {
+        name: string;
+        problem: number;
+        time: number | null;
+        imageUrl: string;
+      }[]
+    ) => void
+  ) => void;
 }
 
 export interface InterServerEvents {}
