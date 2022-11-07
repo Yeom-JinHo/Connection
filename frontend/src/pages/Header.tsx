@@ -26,6 +26,7 @@ import { resetUserInfo, setUserInfo } from "../store/ducks/auth/authSlice";
 import BackjoonModal from "../components/modal/BackjoonModal";
 import GithubModal from "../components/modal/GithubModal";
 import ExtensionModal from "../components/modal/ExtensionModal";
+import AuthModal from "../components/modal/AuthModal";
 
 interface menuType {
   title: string;
@@ -34,11 +35,12 @@ interface menuType {
 
 function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
-
+  const [code, setCode] = useState("");
   const [isLogin, setIsLogin] = useState(false);
   const [isBJ, setIsBJ] = useState(false);
   const [isGH, setIsGH] = useState(false);
   const [isET, setIsET] = useState(false);
+  const allModal = useDisclosure();
   const BjModal = useDisclosure();
   const GHModal = useDisclosure();
   const ETModal = useDisclosure();
@@ -54,8 +56,17 @@ function Header() {
   ];
 
   useEffect(() => {
+    setCode(v4().substring(0, 6).toUpperCase());
+    // 확장 프로그램 확인
+  }, []);
+
+  useEffect(() => {
     setIsLogin(auth.check);
     if (auth.check) {
+      if (auth.information?.backjoonId) {
+        setIsBJ(true);
+      }
+      setIsGH(auth.information?.ismember);
       if (auth.information?.backjoonId) {
         setIsBJ(true);
       }
@@ -69,9 +80,9 @@ function Header() {
     }
   }, [isBJ, isLogin, location]);
 
-  function logout() {
+  const logout = () => {
     dispatch(resetUserInfo());
-  }
+  };
 
   return (
     <Flex
@@ -139,33 +150,40 @@ function Header() {
               <Button>로그인</Button>
             </Link>
           )}
+          <Button onClick={allModal.onOpen}>통합</Button>
+          <AuthModal
+            isOpen={allModal.isOpen}
+            onClose={allModal.onClose}
+            content={
+              !isBJ ? (
+                <BackjoonModal onClose={BjModal.onClose} code={code} />
+              ) : !isGH ? (
+                <GithubModal onClose={GHModal.onClose} />
+              ) : !isET ? (
+                <ExtensionModal onClose={ETModal.onClose} />
+              ) : null
+            }
+          />
+
           <Button onClick={BjModal.onOpen}>백준</Button>
           <Button onClick={GHModal.onOpen}>깃허브</Button>
           <Button onClick={ETModal.onOpen}>확장</Button>
-          <Modal
+
+          <AuthModal
             isOpen={BjModal.isOpen}
             onClose={BjModal.onClose}
-            closeOnOverlayClick={false}
-          >
-            <ModalOverlay />
-            <BackjoonModal onClose={BjModal.onClose} />
-          </Modal>
-          <Modal
+            content={<BackjoonModal onClose={BjModal.onClose} code={code} />}
+          />
+          <AuthModal
             isOpen={GHModal.isOpen}
             onClose={GHModal.onClose}
-            closeOnOverlayClick={false}
-          >
-            <ModalOverlay />
-            <GithubModal onClose={GHModal.onClose} />
-          </Modal>
-          <Modal
+            content={<GithubModal onClose={GHModal.onClose} />}
+          />
+          <AuthModal
             isOpen={ETModal.isOpen}
             onClose={ETModal.onClose}
-            closeOnOverlayClick={false}
-          >
-            <ModalOverlay />
-            <ExtensionModal onClose={ETModal.onClose} />
-          </Modal>
+            content={<ExtensionModal onClose={ETModal.onClose} />}
+          />
         </Center>
       </Center>
     </Flex>

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ExternalLinkIcon } from "@chakra-ui/icons";
-import axios from "axios";
+import { CopyIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -10,41 +9,100 @@ import {
   Link,
   ModalBody,
   ModalContent,
-  Text
+  Text,
+  useClipboard,
+  useToast
 } from "@chakra-ui/react";
-import { v4 } from "uuid";
-import { getUserProblems, postBJConfirm } from "../../api/auth";
+import { getUserProblems, postBJConfirm, postBJSolved } from "../../api/auth";
+import { useAppDispatch } from "../../store/hooks";
+import { updateUserInfo } from "../../store/ducks/auth/authSlice";
 
 type BackjoonModalProps = {
   onClose: () => void;
+  code: string;
 };
 
-function BackjoonModal({ onClose }: BackjoonModalProps) {
+type BJPromblemProps = {
+  acceptedUserCount: number;
+  averageTries: number;
+  givesNoRating: boolean;
+  isLevelLocked: boolean;
+  isPartial: boolean;
+  isSolvable: boolean;
+  level: number;
+  official: boolean;
+  problemId: number;
+  sprout: boolean;
+  tags: any[];
+  titleKo: string;
+  titles: any[];
+  votedUserCount: number;
+};
+
+function BackjoonModal({ onClose, code }: BackjoonModalProps) {
   const [id, setId] = useState("");
   const [msg, setMsg] = useState("");
-  const [code, setCode] = useState("");
-
+  const [ready, setReady] = useState(false);
+  const { onCopy } = useClipboard(code);
+  const toast = useToast();
+  const dispatch = useAppDispatch();
   // 백준 연동 확인하기
   const confirmBJ = async () => {
     // 연동 확인
-    const data = await postBJConfirm({
-      baekjoonId: id,
-      code
-    });
-    console.log(data);
-
-    // // 연동 완료면 백준에서 푼 문제 가져와서 api 사용
-    // setMsg("연동되었습니다");
-    // // const data = await getUserProblems(id, 1);
-
-    // // 연동 안됐으면 경고 메시지
-    // setMsg("연동이 확인되지 않았어요");
-    // onClose();
+    try {
+      const data = await postBJConfirm({
+        baekjoonId: id,
+        code
+      });
+      if (data.msg === "success") {
+        setMsg("인증되었습니다");
+        setReady(true);
+      }
+    } catch (error) {
+      console.log(error);
+      setMsg("인증에 실패했습니다");
+      setReady(false);
+    }
   };
 
-  useEffect(() => {
-    setCode(v4().substring(0, 6).toUpperCase());
-  }, []);
+  const onCopyEvent = () => {
+    onCopy();
+    toast({
+      title: "인증 코드를 복사했습니다!",
+      status: "success",
+      isClosable: true,
+      position: "top"
+    });
+  };
+
+  const onFinish = async () => {
+    // onClose();
+    // 백준에서 푼 문제 가져오기
+    const res = await getUserProblems(id, 1);
+    const total = res.data.count;
+    const range = Array.from({ length: total / 50 + 1 }, (v, i) => i + 1);
+    const alls = await Promise.all(
+      range.map(async params => getUserProblems(id, params))
+    );
+    const solved: number[] = [];
+    alls.map(data =>
+      data.data.items.map((item: BJPromblemProps) =>
+        solved.push(item.problemId)
+      )
+    );
+    console.log(solved);
+    // 푼 문제 보내기
+    const resSolved = await postBJSolved({ list: solved });
+    console.log(resSolved);
+    if (resSolved.msg === "success") {
+      toast({
+        title: "백준 인증 성공했습니다!"
+      });
+
+      // redux 수정하기
+      dispatch(updateUserInfo({ backjoonId: id }));
+    }
+  };
 
   return (
     <ModalContent bg="dep_1" maxW={650}>
@@ -61,10 +119,10 @@ function BackjoonModal({ onClose }: BackjoonModalProps) {
               <Input
                 type="text"
                 value={id}
-                placeholder="백준 아이디"
+                placeholder="백준 ID를 입력해주세요"
                 onChange={e => setId(e.target.value)}
               />
-              <Text fontSize={12} mt="5px">
+              <Text fontSize={12} mt="5px" color={ready ? "green" : "red"}>
                 {msg}
               </Text>
             </Flex>
@@ -87,6 +145,13 @@ function BackjoonModal({ onClose }: BackjoonModalProps) {
                 align="center"
               >
                 {code}
+                <CopyIcon
+                  color="black"
+                  boxSize="15px"
+                  mx="3px"
+                  onClick={() => onCopyEvent()}
+                  cursor="pointer"
+                />
               </Flex>
               <Text fontSize={12} mt="5px">
                 Solved.ac 프로필 편집 {">"} 상태메시지를
@@ -96,23 +161,32 @@ function BackjoonModal({ onClose }: BackjoonModalProps) {
                 </Text>{" "}
                 버튼을 눌러주세요
               </Text>
-              <Link
-                href={`https://solved.ac/profile/${id}`}
-                isExternal
-                fontSize={12}
-                display="flex"
-                alignItems="center"
-                mt="10px"
-                textDecorationLine="underline"
-              >
-                Solved.ac로 이동하기 {"->id 비어있는지 확인해야함"}
-                <ExternalLinkIcon mx="2px" />
-              </Link>
+              <Box h="20px">
+                {id !== "" && (
+                  <Link
+                    href={`https://solved.ac/profile/${id}`}
+                    isExternal
+                    fontSize={12}
+                    display="flex"
+                    alignItems="center"
+                    textDecorationLine="underline"
+                  >
+                    Solved.ac로 이동하기
+                    <ExternalLinkIcon mx="2px" />
+                  </Link>
+                )}
+              </Box>
             </Flex>
           </Flex>
         </Center>
         <Center>
-          <Button bg="gra" width="100px" _hover={{}}>
+          <Button
+            bg="gra"
+            width="100px"
+            _hover={{}}
+            disabled={!ready}
+            onClick={() => onFinish()}
+          >
             완료
           </Button>
         </Center>
