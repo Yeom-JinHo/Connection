@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { api } from "./api";
 
-export type ErrMsgTpye = {
+export type ErrMsgType = {
   message: string;
 };
 
@@ -24,7 +24,7 @@ export interface createStudyRes {
 export const createStudy = async (
   name: string
 ): Promise<
-  AxiosResponse<createStudyRes, null> | AxiosError<ErrMsgTpye, null>
+  AxiosResponse<createStudyRes, null> | AxiosError<ErrMsgType, null>
 > => {
   try {
     const res = await api.post(`/study?study_name=${name}`);
@@ -40,7 +40,7 @@ export const createStudy = async (
 
 export const dupliChkStudy = async (
   name: string
-): Promise<AxiosResponse<string, null> | AxiosError<ErrMsgTpye, null>> => {
+): Promise<AxiosResponse<string, null> | AxiosError<ErrMsgType, null>> => {
   try {
     const res = await api.get(`/study?study_name=${name}`);
     return res;
@@ -56,7 +56,7 @@ export const dupliChkStudy = async (
 export const getStudyInfo = async (
   code: string
 ): Promise<
-  AxiosResponse<GetStudyInfoRes, null> | AxiosError<ErrMsgTpye, null>
+  AxiosResponse<GetStudyInfoRes, null> | AxiosError<ErrMsgType, null>
 > => {
   try {
     const res = await api.get(`/study/join/${code}`);
@@ -72,7 +72,7 @@ export const getStudyInfo = async (
 
 export const joinStudy = async (
   code: string
-): Promise<AxiosResponse<string, null> | AxiosError<ErrMsgTpye, null>> => {
+): Promise<AxiosResponse<string, null> | AxiosError<ErrMsgType, null>> => {
   try {
     const res = await api.post(`/study/join/${code}`);
     return res;
