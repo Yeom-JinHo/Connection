@@ -14,7 +14,7 @@ function start() {
 	if (checkSubmitDone()) {
 		return;
 	}
-	loader = setInterval(() => {
+	loader = setInterval(async () => {
 		if (checkSubmitDone()) {
 			stop();
 			const lastResult = document.querySelector('#status-table > tbody > tr');
@@ -24,6 +24,9 @@ function start() {
 			const result = lastResult.querySelector(':nth-child(4)').innerText;
 
 			if (result.indexOf('맞았습니다') >= 0) {
+				const code = await fetch(`https://www.acmicpc.net/source/download/${submitNo}`, {
+					method: 'GET',
+				}).then((res) => res.text());
 				fetch('https://k7c202.p.ssafy.io/api/problem/submit', {
 					method: 'POST',
 					headers: {
@@ -33,6 +36,7 @@ function start() {
 						submitNo,
 						userId,
 						problemNo,
+						code,
 					}),
 				})
 					.then((data) => data.json())
@@ -47,6 +51,7 @@ function start() {
 						submitNo,
 						userId,
 						problemNo,
+						code,
 					}),
 				})
 					.then((data) => data.json())
