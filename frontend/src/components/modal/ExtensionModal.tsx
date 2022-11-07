@@ -1,14 +1,11 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
-  Box,
   Button,
   Center,
   Flex,
-  Input,
   Link,
   ModalBody,
-  ModalContent,
   Text,
   useToast
 } from "@chakra-ui/react";

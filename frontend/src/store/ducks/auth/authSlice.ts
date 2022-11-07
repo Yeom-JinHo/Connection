@@ -29,7 +29,11 @@ export const authSlice = createSlice({
   reducers: {
     setUserInfo: (state, action) => {
       state.check = true;
+      state.extension = false;
       state.information = { ...action.payload };
+    },
+    updateExtension: (state, { payload }) => {
+      state.extension = payload;
     },
     updateUserInfo: (
       state,
@@ -45,6 +49,7 @@ export const authSlice = createSlice({
     },
     resetUserInfo: state => {
       state.check = false;
+      state.extension = false;
       state.information = initialState.information;
       localStorage.removeItem("token");
     }
@@ -57,6 +62,7 @@ export const authSlice = createSlice({
   }
 });
 
-export const { setUserInfo, updateUserInfo, resetUserInfo } = authSlice.actions;
+export const { setUserInfo, updateExtension, updateUserInfo, resetUserInfo } =
+  authSlice.actions;
 
 export default authSlice.reducer;

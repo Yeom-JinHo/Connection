@@ -1,31 +1,24 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
-  Box,
   Button,
   Center,
   Flex,
   Link,
   ModalBody,
-  ModalContent,
   Text,
   useToast
 } from "@chakra-ui/react";
-import { getUserProblems, postGithubConfirm } from "../../api/auth";
+import { postGithubConfirm } from "../../api/auth";
 import { useAppDispatch } from "../../store/hooks";
 import { updateUserInfo } from "../../store/ducks/auth/authSlice";
 
-type GithubModalProps = {
-  onClose: () => void;
-};
-
-function GithubModal({ onClose }: GithubModalProps) {
+function GithubModal() {
   const toast = useToast();
   const dispatch = useAppDispatch();
   const confirmGithub = async () => {
     try {
       const { data } = await postGithubConfirm();
-      console.log(data);
       toast({
         title: "connection의 멤버가 된 걸 환영합니다😊",
         position: "top",
@@ -40,8 +33,6 @@ function GithubModal({ onClose }: GithubModalProps) {
         status: "error"
       });
     }
-
-    // onClose();
   };
 
   return (

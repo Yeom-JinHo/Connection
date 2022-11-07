@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { CopyIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -8,7 +8,6 @@ import {
   Input,
   Link,
   ModalBody,
-  ModalContent,
   Text,
   useClipboard,
   useToast
@@ -18,7 +17,6 @@ import { useAppDispatch } from "../../store/hooks";
 import { updateUserInfo } from "../../store/ducks/auth/authSlice";
 
 type BackjoonModalProps = {
-  onClose: () => void;
   code: string;
 };
 
@@ -39,7 +37,7 @@ type BJPromblemProps = {
   votedUserCount: number;
 };
 
-function BackjoonModal({ onClose, code }: BackjoonModalProps) {
+function BackjoonModal({ code }: BackjoonModalProps) {
   const [id, setId] = useState("");
   const [msg, setMsg] = useState("");
   const [ready, setReady] = useState(false);
@@ -90,13 +88,14 @@ function BackjoonModal({ onClose, code }: BackjoonModalProps) {
         solved.push(item.problemId)
       )
     );
-    console.log(solved);
+    // console.log(solved);
     // 푼 문제 보내기
     const resSolved = await postBJSolved({ list: solved });
-    console.log(resSolved);
+    // console.log(resSolved);
     if (resSolved.msg === "success") {
       toast({
-        title: "백준 인증 성공했습니다!"
+        title: "백준 인증 성공했습니다!",
+        position: "top"
       });
 
       // redux 수정하기

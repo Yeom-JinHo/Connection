@@ -22,13 +22,8 @@ export default function Routes() {
   const auth = useAppSelector(state => state.auth);
 
   const defaultPrivateRouteProps: Omit<PrivateRouteProps, "outlet"> = {
-    isAuth: auth.check,
-    isBJ: !!auth.information?.backjoonId
+    auth
   };
-
-  useEffect(() => {
-    console.log("test");
-  }, []);
 
   return (
     <BrowserRouter>
