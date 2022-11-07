@@ -18,5 +18,16 @@
 	},
 	"externally_connectable": {
 		"matches": ["http://localhost:3000/*", "https://k7c202.p.ssafy.io/*"]
-	}
+	},
+	"declarative_net_request": {
+		"rule_resources": [
+			{
+				"id": "ruleset",
+				"enabled": true,
+				"path": "rules.json"
+			}
+		]
+	},
+	"permissions": ["declarativeNetRequest"],
+	"host_permissions": ["https://www.acmicpc.net/"]
 }
