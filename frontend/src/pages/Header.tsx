@@ -167,8 +167,8 @@ function Header() {
             }
           />
 
-          <Button onClick={BjModal.onOpen}>백준</Button>
-          <Button onClick={GHModal.onOpen}>깃허브</Button>
+          {/* <Button onClick={BjModal.onOpen}>백준</Button>
+          <Button onClick={GHModal.onOpen}>깃허브</Button> */}
           <Button onClick={ETModal.onOpen}>확장</Button>
 
           <AuthModal
