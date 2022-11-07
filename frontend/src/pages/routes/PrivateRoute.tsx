@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 
 export type PrivateRouteProps = {
@@ -8,6 +8,10 @@ export type PrivateRouteProps = {
 };
 
 function PrivateRoute({ isAuth, isBJ, outlet }: PrivateRouteProps) {
+  useEffect(() => {
+    console.log("object");
+  }, []);
+
   // 로그인시 true, 백준 연동시 true
   if (isAuth && isBJ) {
     return outlet;

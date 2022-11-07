@@ -10,8 +10,6 @@ import {
   MenuGroup,
   MenuItem,
   MenuList,
-  Modal,
-  ModalOverlay,
   Spacer,
   useColorMode,
   useDisclosure
@@ -22,7 +20,7 @@ import { MoonIcon } from "@chakra-ui/icons";
 import LogoLight from "../asset/img/logo_light.svg";
 import LogoDark from "../asset/img/logo_dark.svg";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { resetUserInfo, setUserInfo } from "../store/ducks/auth/authSlice";
+import { resetUserInfo } from "../store/ducks/auth/authSlice";
 import BackjoonModal from "../components/modal/BackjoonModal";
 import GithubModal from "../components/modal/GithubModal";
 import ExtensionModal from "../components/modal/ExtensionModal";
@@ -37,10 +35,6 @@ interface menuType {
 function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
   const [code, setCode] = useState("");
-  const [isLogin, setIsLogin] = useState(false);
-  const [isBJ, setIsBJ] = useState(false);
-  const [isGH, setIsGH] = useState(false);
-  const [isET, setIsET] = useState(false);
   const allModal = useDisclosure();
   const BjModal = useDisclosure();
   const GHModal = useDisclosure();
@@ -59,28 +53,28 @@ function Header() {
   useEffect(() => {
     setCode(v4().substring(0, 6).toUpperCase());
     // 확장 프로그램 확인
-    checkExtension(
-      () => setIsET(true),
-      () => setIsET(false)
-    );
+    // checkExtension(
+    //   () => setIsET(true),
+    //   () => setIsET(false)
+    // );
   }, []);
 
-  useEffect(() => {
-    setIsLogin(auth.check);
-    if (auth.check) {
-      if (auth.information?.backjoonId) {
-        setIsBJ(true);
-      }
-      setIsGH(auth.information?.ismember);
-    }
-  }, [auth]);
+  // useEffect(() => {
+  //   setIsLogin(auth.check);
+  //   if (auth.check) {
+  //     if (auth.information?.backjoonId) {
+  //       setIsBJ(true);
+  //     }
+  //     setIsGH(auth.information?.ismember);
+  //   }
+  // }, [auth]);
 
-  useEffect(() => {
-    if (!isBJ && isLogin) {
-      // 모달창 띄우기 추후 주석 해제
-      // onOpen();
-    }
-  }, [isBJ, isLogin, location]);
+  // useEffect(() => {
+  //   if (!isBJ && isLogin) {
+  //     // 모달창 띄우기 추후 주석 해제
+  //     // onOpen();
+  //   }
+  // }, [isBJ, isLogin, location]);
 
   const logout = () => {
     dispatch(resetUserInfo());
@@ -128,7 +122,7 @@ function Header() {
             <MoonIcon />
           </Button>
 
-          {isLogin ? (
+          {auth.check ? (
             <Menu>
               <MenuButton>
                 <Image
@@ -156,14 +150,21 @@ function Header() {
           <AuthModal
             isOpen={allModal.isOpen}
             onClose={allModal.onClose}
+            // content={
+            //   !isBJ ? (
+            //     <BackjoonModal onClose={BjModal.onClose} code={code} />
+            //   ) : isGH ? (
+            //     <GithubModal onClose={GHModal.onClose} />
+            //   ) : !isET ? (
+            //     <ExtensionModal onClose={ETModal.onClose} />
+            //   ) : null
+            // }
             content={
-              !isBJ ? (
-                <BackjoonModal onClose={BjModal.onClose} code={code} />
-              ) : !isGH ? (
+              auth.information.backjoonId ? (
                 <GithubModal onClose={GHModal.onClose} />
-              ) : !isET ? (
-                <ExtensionModal onClose={ETModal.onClose} />
-              ) : null
+              ) : (
+                <BackjoonModal onClose={BjModal.onClose} code={code} />
+              )
             }
           />
 

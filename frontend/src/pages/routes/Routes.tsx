@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter,
   Route,
@@ -25,6 +25,10 @@ export default function Routes() {
     isAuth: auth.check,
     isBJ: !!auth.information?.backjoonId
   };
+
+  useEffect(() => {
+    console.log("test");
+  }, []);
 
   return (
     <BrowserRouter>

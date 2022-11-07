@@ -4,6 +4,7 @@ import { InitialStateType, UserInfoType } from "./auth.type";
 
 const initialState: InitialStateType = {
   check: false,
+  extension: false,
   information: {
     userId: 0,
     name: "",

@@ -105,93 +105,91 @@ function BackjoonModal({ onClose, code }: BackjoonModalProps) {
   };
 
   return (
-    <ModalContent bg="dep_1" maxW={650}>
-      <ModalBody p="50px">
-        <Text fontSize="30px" fontStyle="bold">
-          백준 연동
-        </Text>
-        <Center p="50px 0 30px" flexDir="column">
-          <Flex w="350px" mb="50px">
-            <Flex w="70px" h={10} fontSize="18px" alignItems="center">
-              백준ID
-            </Flex>
-            <Flex direction="column">
-              <Input
-                type="text"
-                value={id}
-                placeholder="백준 ID를 입력해주세요"
-                onChange={e => setId(e.target.value)}
+    <ModalBody p="50px">
+      <Text fontSize="30px" fontWeight="bold">
+        백준 연동
+      </Text>
+      <Center p="50px 0 30px" flexDir="column">
+        <Flex w="350px" mb="50px">
+          <Flex w="70px" h={10} fontSize="18px" alignItems="center">
+            백준ID
+          </Flex>
+          <Flex direction="column">
+            <Input
+              type="text"
+              value={id}
+              placeholder="백준 ID를 입력해주세요"
+              onChange={e => setId(e.target.value)}
+            />
+            <Text fontSize={12} mt="5px" color={ready ? "green" : "red"}>
+              {msg}
+            </Text>
+          </Flex>
+          <Box ml="10px">
+            <Button bg="gra" _hover={{}} onClick={() => confirmBJ()}>
+              인증
+            </Button>
+          </Box>
+        </Flex>
+        <Flex w="350px">
+          <Flex w="70px" h={10} fontSize="18px" alignItems="center">
+            Code
+          </Flex>
+          <Flex direction="column">
+            <Flex
+              fontSize={20}
+              h={10}
+              fontWeight="bold"
+              color="main"
+              align="center"
+            >
+              {code}
+              <CopyIcon
+                color="black"
+                boxSize="15px"
+                mx="3px"
+                onClick={() => onCopyEvent()}
+                cursor="pointer"
               />
-              <Text fontSize={12} mt="5px" color={ready ? "green" : "red"}>
-                {msg}
-              </Text>
             </Flex>
-            <Box ml="10px">
-              <Button bg="gra" _hover={{}} onClick={() => confirmBJ()}>
+            <Text fontSize={12} mt="5px">
+              Solved.ac 프로필 편집 {">"} 상태메시지를
+              <br /> Code로 변경한 뒤,{" "}
+              <Text as="span" color="main" display="inline" fontWeight="bold">
                 인증
-              </Button>
+              </Text>{" "}
+              버튼을 눌러주세요
+            </Text>
+            <Box h="20px">
+              {id !== "" && (
+                <Link
+                  href={`https://solved.ac/profile/${id}`}
+                  isExternal
+                  fontSize={12}
+                  display="flex"
+                  alignItems="center"
+                  textDecorationLine="underline"
+                >
+                  Solved.ac로 이동하기
+                  <ExternalLinkIcon mx="2px" />
+                </Link>
+              )}
             </Box>
           </Flex>
-          <Flex w="350px">
-            <Flex w="70px" h={10} fontSize="18px" alignItems="center">
-              Code
-            </Flex>
-            <Flex direction="column">
-              <Flex
-                fontSize={20}
-                h={10}
-                fontWeight="bold"
-                color="main"
-                align="center"
-              >
-                {code}
-                <CopyIcon
-                  color="black"
-                  boxSize="15px"
-                  mx="3px"
-                  onClick={() => onCopyEvent()}
-                  cursor="pointer"
-                />
-              </Flex>
-              <Text fontSize={12} mt="5px">
-                Solved.ac 프로필 편집 {">"} 상태메시지를
-                <br /> Code로 변경한 뒤,{" "}
-                <Text as="span" color="main" display="inline" fontWeight="bold">
-                  인증
-                </Text>{" "}
-                버튼을 눌러주세요
-              </Text>
-              <Box h="20px">
-                {id !== "" && (
-                  <Link
-                    href={`https://solved.ac/profile/${id}`}
-                    isExternal
-                    fontSize={12}
-                    display="flex"
-                    alignItems="center"
-                    textDecorationLine="underline"
-                  >
-                    Solved.ac로 이동하기
-                    <ExternalLinkIcon mx="2px" />
-                  </Link>
-                )}
-              </Box>
-            </Flex>
-          </Flex>
-        </Center>
-        <Center>
-          <Button
-            bg="gra"
-            width="100px"
-            _hover={{}}
-            disabled={!ready}
-            onClick={() => onFinish()}
-          >
-            완료
-          </Button>
-        </Center>
-      </ModalBody>
-    </ModalContent>
+        </Flex>
+      </Center>
+      <Center>
+        <Button
+          bg="gra"
+          width="100px"
+          _hover={{}}
+          disabled={!ready}
+          onClick={() => onFinish()}
+        >
+          완료
+        </Button>
+      </Center>
+    </ModalBody>
   );
 }
 

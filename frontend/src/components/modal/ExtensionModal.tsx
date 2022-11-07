@@ -42,42 +42,40 @@ function ExtensionModal({ onClose }: ExtensionModalProps) {
   };
 
   return (
-    <ModalContent bg="dep_1" maxW={650}>
-      <ModalBody p="50px">
-        <Text fontSize="30px" fontStyle="bold">
-          Extension
+    <ModalBody p="50px">
+      <Text fontSize="30px" fontWeight="bold">
+        Extension
+      </Text>
+      <Center p="50px 0 30px" flexDir="column">
+        <Text fontSize={20} textAlign="center">
+          “connection” 확장 프로그램이 <br />
+          설치되지 않았거나 꺼져있어요😢 <br />
+          확장 프로그램을 실행해주세요!
         </Text>
-        <Center p="50px 0 30px" flexDir="column">
-          <Text fontSize={20} textAlign="center">
-            “connection” 확장 프로그램이 <br />
-            설치되지 않았거나 꺼져있어요😢 <br />
-            확장 프로그램을 실행해주세요!
-          </Text>
-          <Flex direction="column">
-            <Link
-              href="https://chrome.google.com/webstore/detail/connection/opbaphhnjcekebclmnflpeppggdpenej?hl=ko&authuser=0"
-              isExternal
-              fontSize={12}
-              display="flex"
-              alignItems="center"
-              m="30px 0"
-              textDecorationLine="underline"
-            >
-              Extension 설치 페이지
-              <ExternalLinkIcon mx="2px" />
-            </Link>
-          </Flex>
-          <Button
-            bg="gra"
-            width="100px"
-            _hover={{}}
-            onClick={() => confirmExtension()}
+        <Flex direction="column">
+          <Link
+            href="https://chrome.google.com/webstore/detail/connection/opbaphhnjcekebclmnflpeppggdpenej?hl=ko&authuser=0"
+            isExternal
+            fontSize={12}
+            display="flex"
+            alignItems="center"
+            m="30px 0"
+            textDecorationLine="underline"
           >
-            확인
-          </Button>
-        </Center>
-      </ModalBody>
-    </ModalContent>
+            Extension 설치 페이지
+            <ExternalLinkIcon mx="2px" />
+          </Link>
+        </Flex>
+        <Button
+          bg="gra"
+          width="100px"
+          _hover={{}}
+          onClick={() => confirmExtension()}
+        >
+          확인
+        </Button>
+      </Center>
+    </ModalBody>
   );
 }
 
