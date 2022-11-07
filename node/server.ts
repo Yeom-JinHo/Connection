@@ -150,7 +150,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("startStudy", async (studyId, problemList, time, callback) => {
-    console.log("startStudy", studyId, problemList, time, getTime(Date.now()));
+    console.log("startStudy", studyId, problemList, time);
     const loginedUser = await getUserList(studyId);
     studyInfos.set(studyId, {
       startTime: moment(),
