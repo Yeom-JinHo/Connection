@@ -9,7 +9,7 @@
 	},
 	"content_scripts": [
 		{
-			"js": ["status.js"],
+			"js": ["constant.js", "status.js"],
 			"matches": ["https://www.acmicpc.net/status*"]
 		}
 	],

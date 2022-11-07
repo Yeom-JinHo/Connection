@@ -4,8 +4,6 @@ function checkSubmitDone() {
 	const userId = lastResult.querySelector(':nth-child(2)').innerText;
 	const problemNo = lastResult.querySelector(':nth-child(3)').innerText;
 	const result = lastResult.querySelector(':nth-child(4)').innerText;
-	// console.log({ submitNo, userId, problemNo, result });
-	//언어는 https://www.acmicpc.net/source/download/제출번호에서 가져오는 파일로 확인
 	return !(result.indexOf('채점') >= 0 || result.indexOf('기다리는 중') >= 0);
 }
 let loader;
@@ -22,6 +20,8 @@ function start() {
 			const userId = lastResult.querySelector(':nth-child(2)').innerText;
 			const problemNo = lastResult.querySelector(':nth-child(3)').innerText;
 			const result = lastResult.querySelector(':nth-child(4)').innerText;
+			const language = lastResult.querySelector(':nth-child(7)').innerText.split('/')[0].trim();
+			const lang = languages[language];
 
 			if (result.indexOf('맞았습니다') >= 0) {
 				const code = await fetch(`https://www.acmicpc.net/source/download/${submitNo}`, {
@@ -37,6 +37,7 @@ function start() {
 						userId,
 						problemNo,
 						code,
+						lang,
 					}),
 				})
 					.then((data) => data.json())
@@ -52,6 +53,7 @@ function start() {
 						userId,
 						problemNo,
 						code,
+						lang,
 					}),
 				})
 					.then((data) => data.json())
