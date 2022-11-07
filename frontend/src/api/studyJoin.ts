@@ -14,17 +14,19 @@ export interface GetStudyInfoRes {
   studyRepository: string;
 }
 
-export interface createStudyRes {
+export interface CreateStudyRes {
   studyId: number;
   studyName: string;
   studyRepository: string;
   studyCode: string;
 }
 
+export type RegistReviewReq = { problemId: string; difficulty: string }[];
+
 export const createStudy = async (
   name: string
 ): Promise<
-  AxiosResponse<createStudyRes, null> | AxiosError<ErrMsgType, null>
+  AxiosResponse<CreateStudyRes, null> | AxiosError<ErrMsgType, null>
 > => {
   try {
     const res = await api.post(`/study?study_name=${name}`);
@@ -75,6 +77,23 @@ export const joinStudy = async (
 ): Promise<AxiosResponse<string, null> | AxiosError<ErrMsgType, null>> => {
   try {
     const res = await api.post(`/study/join/${code}`);
+    return res;
+  } catch (error) {
+    const e = error as AxiosError | Error;
+    if (axios.isAxiosError(e)) {
+      return e;
+    }
+    throw e;
+  }
+};
+
+export const registReview = async (
+  reviews: RegistReviewReq
+): Promise<
+  AxiosResponse<{ msg: string }, RegistReviewReq> | AxiosError<ErrMsgType, null>
+> => {
+  try {
+    const res = await api.post(`/problem/review`, reviews);
     return res;
   } catch (error) {
     const e = error as AxiosError | Error;
