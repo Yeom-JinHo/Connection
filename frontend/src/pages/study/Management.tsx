@@ -76,7 +76,8 @@ function Management() {
           style: {
             colors: [`${colorMode === "light" ? "#000" : "#fff"}`]
           }
-        }
+        },
+        max: 100
       },
       legend: {
         show: true,
@@ -197,7 +198,7 @@ function Management() {
                       goals: [
                         {
                           name: "평균",
-                          value: data.avg,
+                          value: data.avg * 100,
                           strokeColor: "#775DD0"
                         }
                       ]
