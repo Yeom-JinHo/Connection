@@ -35,23 +35,29 @@ export interface ServerToClientEvents {
   removeParticipant: (targetName: UserInfoType["name"]) => void;
   endStudy: () => void;
   startSolve: () => void;
+  solvedByExtension: (
+    bojId: string,
+    problemNo: number,
+    isAllSol: boolean
+  ) => void;
 }
 
 export interface ClientToServerEvents {
   enter: (
-    studyId: UserInfoType["studyId"],
+    studyId: string,
     name: UserInfoType["name"],
     imageUrl: UserInfoType["imageUrl"],
+    bojId: string,
     initParticipant: (userList: UserProfileType[]) => void
   ) => void;
   startStudy: (
-    studyId: UserInfoType["studyId"],
+    studyId: string,
     problemList: Pick<ProblemType, "problemId" | "title" | "level">[],
     time: number,
     callback: () => void
   ) => void;
   getSolvingInfo: (
-    callback: (problemList: ProblemType[], endTime: number) => void
+    callback: (problemList: ProblemType[], remainTime: number) => void
   ) => void;
   getResult: (
     callback: (
@@ -70,6 +76,7 @@ export interface InterServerEvents {}
 export interface SocketData {
   name: UserInfoType["name"];
   imageUrl: UserInfoType["imageUrl"];
+  bojId: string;
 }
 
 export enum PageViewState {

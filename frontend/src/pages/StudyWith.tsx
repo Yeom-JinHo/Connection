@@ -37,7 +37,7 @@ function StudyWith() {
         })
   );
 
-  const { studyId, name, imageUrl } = useAppSelector(
+  const { studyId, name, imageUrl, backjoonId } = useAppSelector(
     ({ auth: { information } }) => information
   );
 
@@ -86,9 +86,10 @@ function StudyWith() {
     socket.connect();
     socket.emit(
       "enter",
-      studyId,
+      `${studyId}`,
       name,
       imageUrl,
+      backjoonId as string,
       (userList: UserProfileType[]) => setPartcipants(userList)
     );
 

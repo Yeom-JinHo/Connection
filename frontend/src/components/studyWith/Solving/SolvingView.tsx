@@ -5,6 +5,7 @@ import {
   ClientToServerEvents,
   ServerToClientEvents
 } from "../../../asset/data/socket.type";
+import { useAppSelector } from "../../../store/hooks";
 import getTime from "../../../utils/getTime";
 import NextBtn from "../NextBtn";
 import ViewTitle from "../ViewTitle";
@@ -46,12 +47,26 @@ function SolvingView({ onBtnClick, socket }: SolvingViewProps) {
   const [isLaoding, setIsLoading] = useState(true);
   const [remainTime, setRemainTime] = useState(0);
   const [problems, setProblems] = useState<ProblemBarProps[]>();
+  const baekjoonId = useAppSelector(({ auth }) => auth.information.backjoonId);
 
   useEffect(() => {
-    socket.emit("getSolvingInfo", (problemList, endTime) => {
-      setRemainTime(endTime - Date.now());
+    socket.emit("getSolvingInfo", (problemList, time) => {
+      setRemainTime(time);
       setProblems(problemList);
       setIsLoading(false);
+    });
+    socket.on("solvedByExtension", (bojId, problemNo, allSol) => {
+      if (allSol) onBtnClick();
+      if (baekjoonId === bojId) {
+        setProblems(prev =>
+          prev?.map(problem => {
+            if (problem.problemId === problemNo) {
+              return { ...problem, isSolved: true };
+            }
+            return problem;
+          })
+        );
+      }
     });
   }, []);
 
@@ -83,7 +98,7 @@ function SolvingView({ onBtnClick, socket }: SolvingViewProps) {
               problemId={problem.problemId}
             />
           ))}
-          <NextBtn text="다음" mt={20} onBtnClick={onBtnClick} />
+          {/* <NextBtn text="다음" mt={20} onBtnClick={onBtnClick} /> */}
         </>
       )}
     </Center>
