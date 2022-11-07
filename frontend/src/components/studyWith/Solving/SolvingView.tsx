@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import {
   ClientToServerEvents,
+  ServerProblemType,
   ServerToClientEvents
 } from "../../../asset/data/socket.type";
 import { useAppSelector } from "../../../store/hooks";
@@ -41,25 +42,31 @@ function Timer({ initTime }: TimerProps) {
 type SolvingViewProps = {
   onBtnClick: () => void;
   socket: Socket<ServerToClientEvents, ClientToServerEvents>;
+  solvingProblmes: ServerProblemType[];
+  setSolvingProblems: (promblems: ServerProblemType[]) => void;
 };
 
-function SolvingView({ onBtnClick, socket }: SolvingViewProps) {
+function SolvingView({
+  onBtnClick,
+  socket,
+  solvingProblmes,
+  setSolvingProblems
+}: SolvingViewProps) {
   const [isLaoding, setIsLoading] = useState(true);
   const [remainTime, setRemainTime] = useState(0);
-  const [problems, setProblems] = useState<ProblemBarProps[]>();
   const baekjoonId = useAppSelector(({ auth }) => auth.information.backjoonId);
 
   useEffect(() => {
     socket.emit("getSolvingInfo", (problemList, time) => {
       setRemainTime(time);
-      setProblems(problemList);
+      setSolvingProblems(problemList);
       setIsLoading(false);
     });
     socket.on("solvedByExtension", (bojId, problemNo, allSol) => {
       if (allSol) onBtnClick();
       if (baekjoonId === bojId) {
-        setProblems(prev =>
-          prev?.map(problem => {
+        setSolvingProblems(
+          solvingProblmes?.map(problem => {
             if (problem.problemId === problemNo) {
               return { ...problem, isSolved: true };
             }
@@ -90,7 +97,7 @@ function SolvingView({ onBtnClick, socket }: SolvingViewProps) {
       />
       {!isLaoding && (
         <>
-          {problems?.map(problem => (
+          {solvingProblmes?.map(problem => (
             <ProblemBar
               key={problem.problemId}
               title={problem.title}
@@ -98,7 +105,7 @@ function SolvingView({ onBtnClick, socket }: SolvingViewProps) {
               problemId={problem.problemId}
             />
           ))}
-          {/* <NextBtn text="다음" mt={20} onBtnClick={onBtnClick} /> */}
+          <NextBtn text="다음" mt={20} onBtnClick={onBtnClick} />
         </>
       )}
     </Center>

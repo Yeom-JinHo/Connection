@@ -16,7 +16,7 @@ export interface UserInfoType {
 }
 export type UserProfileType = Pick<UserInfoType, "name" | "imageUrl">;
 
-export interface ProblemType {
+export interface ServerProblemType {
   problemId: number;
   title: string;
   level: number;
@@ -52,12 +52,12 @@ export interface ClientToServerEvents {
   ) => void;
   startStudy: (
     studyId: string,
-    problemList: Pick<ProblemType, "problemId" | "title" | "level">[],
+    problemList: Pick<ServerProblemType, "problemId" | "title" | "level">[],
     time: number,
     callback: () => void
   ) => void;
   getSolvingInfo: (
-    callback: (problemList: ProblemType[], remainTime: number) => void
+    callback: (problemList: ServerProblemType[], remainTime: number) => void
   ) => void;
   getResult: (
     callback: (
