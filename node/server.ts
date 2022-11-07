@@ -39,6 +39,7 @@ interface ProblemInfoType {
   title: string;
   problemId: number;
   solvedUser: string[];
+  level: number;
 }
 interface UserMapStudyType {
   studyId: number;
@@ -122,8 +123,7 @@ io.on("connection", (socket) => {
     ) as UserMapStudyType;
     const studyInfo = studyInfos.get(studyId);
     const problemInfo = studyInfo!.problems.map((problem) => ({
-      title: problem.title,
-      problemId: problem.problemId,
+      ...problem,
       isSolved: problem.solvedUser.includes(userName),
     }));
     callback(problemInfo, studyInfo!.startTime + studyInfo!.duringMinute * 60);
