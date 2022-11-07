@@ -27,6 +27,7 @@ import BackjoonModal from "../components/modal/BackjoonModal";
 import GithubModal from "../components/modal/GithubModal";
 import ExtensionModal from "../components/modal/ExtensionModal";
 import AuthModal from "../components/modal/AuthModal";
+import checkExtension from "../utils/checkExtension";
 
 interface menuType {
   title: string;
@@ -58,6 +59,10 @@ function Header() {
   useEffect(() => {
     setCode(v4().substring(0, 6).toUpperCase());
     // 확장 프로그램 확인
+    checkExtension(
+      () => setIsET(true),
+      () => setIsET(false)
+    );
   }, []);
 
   useEffect(() => {
@@ -67,9 +72,6 @@ function Header() {
         setIsBJ(true);
       }
       setIsGH(auth.information?.ismember);
-      if (auth.information?.backjoonId) {
-        setIsBJ(true);
-      }
     }
   }, [auth]);
 

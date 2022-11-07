@@ -5,22 +5,41 @@ import {
   Button,
   Center,
   Flex,
-  Input,
   Link,
   ModalBody,
   ModalContent,
-  Text
+  Text,
+  useToast
 } from "@chakra-ui/react";
 import { getUserProblems, postGithubConfirm } from "../../api/auth";
+import { useAppDispatch } from "../../store/hooks";
+import { updateUserInfo } from "../../store/ducks/auth/authSlice";
 
 type GithubModalProps = {
   onClose: () => void;
 };
 
 function GithubModal({ onClose }: GithubModalProps) {
+  const toast = useToast();
+  const dispatch = useAppDispatch();
   const confirmGithub = async () => {
-    const { data } = await postGithubConfirm();
-    console.log(data);
+    try {
+      const { data } = await postGithubConfirm();
+      console.log(data);
+      toast({
+        title: "connection의 멤버가 된 걸 환영합니다😊",
+        position: "top",
+        status: "success"
+      });
+      dispatch(updateUserInfo({ ismember: true }));
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: "가입이 확인되지 않았습니다😥",
+        position: "top",
+        status: "error"
+      });
+    }
 
     // onClose();
   };
@@ -43,7 +62,7 @@ function GithubModal({ onClose }: GithubModalProps) {
           </Text>
           <Flex direction="column">
             <Link
-              href={`"깃허브조직초대페이지"`}
+              href="https://github.com/orgs/co-nnection/invitation"
               isExternal
               fontSize={12}
               display="flex"

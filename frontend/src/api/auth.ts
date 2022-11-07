@@ -40,6 +40,6 @@ export const postBJSolved = async (payload: SolvedProps) => {
 
 // 깃허브 연동 확인
 export const postGithubConfirm = async () => {
-  const data = await api.post(`/auth/github`);
+  const data = await api.get(`/organization`);
   return data;
 };
