@@ -43,6 +43,14 @@ export interface ServerToClientEvents {
     problemNo: number,
     isAllSol: boolean
   ) => void;
+  newResult: (
+    results: {
+      name: string;
+      problem: number;
+      time: number | null;
+      imageUrl: string;
+    }[]
+  ) => void;
 }
 
 export interface ClientToServerEvents {
@@ -61,7 +69,11 @@ export interface ClientToServerEvents {
     callback: () => void
   ) => void;
   getSolvingInfo: (
-    callback: (problemList: ServerProblemType[], remainTime: number) => void
+    callback: (
+      problemList: ServerProblemType[],
+      remainTime: number,
+      allSol: boolean
+    ) => void
   ) => void;
   getResult: (
     callback: (

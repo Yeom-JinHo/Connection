@@ -123,6 +123,10 @@ app.post("/problem/submit", (req, res) => {
           studyInfo.notFinishedUser = studyInfo.notFinishedUser.filter(
             (user) => user.name !== name
           );
+          io.to(studyId).emit("newResult", [
+            ...studyInfo.finishedUser,
+            ...studyInfo.notFinishedUser,
+          ]);
         }
       }
     }
@@ -194,14 +198,23 @@ io.on("connection", (socket) => {
     const bojId = socket.data.bojId as string;
     const userInfo = userInfos.get(socket.data.bojId as string);
     const studyInfo = studyInfos.get(userInfo!.studyId);
-    const problemInfo = studyInfo!.problems.map((problem) => ({
-      ...problem,
-      isSolved: problem.solvedUser.includes(bojId),
-    }));
+    let isAllSol = false;
+    let solveCnt = 0;
+    const problemInfo = studyInfo!.problems.map((problem) => {
+      const isSolved = problem.solvedUser.includes(bojId);
+      if (isSolved) solveCnt += 1;
+      return {
+        ...problem,
+        isSolved,
+      };
+    });
+    if (solveCnt === problemInfo.length) isAllSol = true;
+
     callback(
       problemInfo,
       studyInfo!.duringMinute * 60 -
-        moment().diff(studyInfo!.startTime, "seconds")
+        moment().diff(studyInfo!.startTime, "seconds"),
+      isAllSol
     );
   });
 

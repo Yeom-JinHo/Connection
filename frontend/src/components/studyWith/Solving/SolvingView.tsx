@@ -57,7 +57,8 @@ function SolvingView({
   const baekjoonId = useAppSelector(({ auth }) => auth.information.backjoonId);
 
   useEffect(() => {
-    socket.emit("getSolvingInfo", (problemList, time) => {
+    socket.emit("getSolvingInfo", (problemList, time, allSol) => {
+      if (allSol) onBtnClick();
       setRemainTime(time);
       setSolvingProblems(problemList);
       setIsLoading(false);
