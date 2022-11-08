@@ -4,7 +4,7 @@
 }
 .chakra-ui-dark {
   --color-primary: #121212;
-  --color-secondary: #e684af;
+  --color-secondary: #e48fff;
 }
 
 .theme-toggle {
@@ -108,11 +108,11 @@
   height: 23px;
   width: 23px;
   position: absolute;
-  background: var(--color-primary);
+  background: var(--color-primary); 
   border-radius: 50%;
   top: 0;
   right: 0;
-  transition: 0.4s transform;
+  transition: 0.4s transform !important;
   transform: scale(0) translate(20%, -24%);
   z-index: 9;
   transform-origin: right;

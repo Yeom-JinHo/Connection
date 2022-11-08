@@ -1,7 +1,7 @@
 import React from "react";
 import "./style.css";
 
-function Index() {
+function DarkmodeButton() {
   return (
     <main className="content">
       <div className="theme-toggle theme-toggle-js">
@@ -18,4 +18,4 @@ function Index() {
   );
 }
 
-export default Index;
+export default DarkmodeButton;

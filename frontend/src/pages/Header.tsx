@@ -16,7 +16,6 @@ import {
 } from "@chakra-ui/react";
 import { Link as ReactLink, useLocation, useNavigate } from "react-router-dom";
 import { v4 } from "uuid";
-import { MoonIcon } from "@chakra-ui/icons";
 import LogoLight from "../asset/img/logo_light.svg";
 import LogoDark from "../asset/img/logo_dark.svg";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -27,7 +26,7 @@ import ExtensionModal from "../components/modal/ExtensionModal";
 import AuthModal from "../components/modal/AuthModal";
 import checkExtension from "../utils/checkExtension";
 import { InitialStateType } from "../store/ducks/auth/auth.type";
-import Index from "../components/darkmode";
+import DarkmodeButton from "../components/darkmode";
 
 interface menuType {
   title: string;
@@ -115,12 +114,8 @@ function Header() {
         <Spacer />
         <Center p="14px" flex={1} minW="170px">
           <Center position="relative" mr="10px" onClick={toggleColorMode}>
-            <Index />
+            <DarkmodeButton />
           </Center>
-          <Button mr="14px" onClick={toggleColorMode}>
-            <MoonIcon />
-          </Button>
-
           {auth.check ? (
             <Menu>
               <MenuButton>
