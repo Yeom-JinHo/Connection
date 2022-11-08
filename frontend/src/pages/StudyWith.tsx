@@ -97,8 +97,7 @@ function StudyWith() {
       `${studyId}`,
       name,
       imageUrl,
-      // backjoonId as string,
-      "wlsgh97",
+      backjoonId as string,
       (userList: UserProfileType[]) => setPartcipants(userList)
     );
 
