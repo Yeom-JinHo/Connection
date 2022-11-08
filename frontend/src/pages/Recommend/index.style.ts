@@ -1,11 +1,5 @@
 import { RepeatIcon } from "@chakra-ui/icons";
-import {
-  ComponentWithAs,
-  IconProps,
-  keyframes,
-  styled
-} from "@chakra-ui/react";
-import { transform } from "typescript";
+import { styled } from "@chakra-ui/react";
 
 const StyledIcon = styled(RepeatIcon, {
   baseStyle: {
