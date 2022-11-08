@@ -1,8 +1,5 @@
 function checkSubmitDone() {
 	const lastResult = document.querySelector('#status-table > tbody > tr');
-	const submitNo = lastResult.querySelector(':nth-child(1)').innerText;
-	const userId = lastResult.querySelector(':nth-child(2)').innerText;
-	const problemNo = lastResult.querySelector(':nth-child(3)').innerText;
 	const result = lastResult.querySelector(':nth-child(4)').innerText;
 	return !(result.indexOf('채점') >= 0 || result.indexOf('기다리는 중') >= 0);
 }
