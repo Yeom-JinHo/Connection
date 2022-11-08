@@ -105,7 +105,7 @@ function SolvingView({
               problemId={problem.problemId}
             />
           ))}
-          <NextBtn text="다음" mt={20} onBtnClick={onBtnClick} />
+          {/* <NextBtn text="다음" mt={20} onBtnClick={onBtnClick} /> */}
         </>
       )}
     </Center>

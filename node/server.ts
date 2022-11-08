@@ -72,6 +72,7 @@ interface UserInfoType {
   name: string;
   studyId: string;
   imageUrl: string;
+  studyRole: "MEMBER" | "LEADER";
 }
 
 const studyInfos = new Map<string, StudyInfoType>();
@@ -143,15 +144,16 @@ app.post("/problem/submit", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  socket.on("enter", async (studyId, name, imageUrl, bojId, cb) => {
+  socket.on("enter", async (studyId, name, imageUrl, bojId, studyRole, cb) => {
     console.log(`${studyId}방에 ${name}님이 입장하셨어 boj ${bojId}`);
     socket.data.name = name;
     socket.data.bojId = bojId;
     socket.data.imageUrl = imageUrl;
-    userInfos.set(bojId, { studyId, name, imageUrl });
+    socket.data.studyRole = studyRole;
+    userInfos.set(bojId, { studyId, name, imageUrl, studyRole });
     socket.join(studyId);
-    socket.to(studyId).emit("addParticipant", name, imageUrl);
-    cb(await getUserList(studyId));
+    socket.to(studyId).emit("addParticipant", name, imageUrl, studyRole);
+    cb(await getUserList(studyId), !!studyInfos.get(studyId));
   });
 
   socket.on("disconnecting", () => {
