@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Flex, Link, Text } from "@chakra-ui/react";
 import { AddIcon, DeleteIcon, LinkIcon } from "@chakra-ui/icons";
 import { Problem } from "../../@types/Problem";
+import DIFFICULTY from "../../utils/DIFFICULTY";
 
 interface CardButtonProps {
   btnType: "delete" | "add";
@@ -85,10 +86,28 @@ function ProblemCard({
           ))}
         </Flex>
       </Box>
-      <Box>
-        {/* <Text mb="10px">소요시간 : {elapsedTime}</Text> */}
-        <Text>체감 난이도 : {difficulty}</Text>
-      </Box>
+      <Flex justifyContent="space-between">
+        <Flex gap={2} p={1}>
+          <Text alignSelf="flex-start">백준 난이도 </Text>
+          <img
+            style={{ paddingTop: 5 }}
+            width="15px"
+            height="100%"
+            src={`https://static.solved.ac/tier_small/${level}.svg`}
+            alt={DIFFICULTY[level]}
+          />
+        </Flex>
+        <Flex gap={2} p={1}>
+          <Text alignSelf="flex-start">체감 난이도 </Text>
+          <img
+            style={{ paddingTop: 5 }}
+            width="15px"
+            height="100%"
+            src={`https://static.solved.ac/tier_small/${difficulty}.svg`}
+            alt={DIFFICULTY[difficulty]}
+          />
+        </Flex>
+      </Flex>
     </Box>
   );
 }
