@@ -52,7 +52,7 @@ interface ProblemInfoType {
   level: number;
 }
 interface StudyInfoType {
-  startTime: moment.Moment;
+  startTime: moment.Moment | null;
   problems: ProblemInfoType[];
   duringMinute: number;
   finishedUser: {
@@ -111,7 +111,7 @@ app.post("/problem/submit", (req, res) => {
 
       if (allSol) {
         const studyInfo = studyInfos.get(studyId);
-        if (studyInfo) {
+        if (studyInfo?.startTime) {
           console.log(studyInfo.startTime.diff(moment(), "seconds"));
           studyInfo.finishedUser.push({
             name,
@@ -158,7 +158,7 @@ io.on("connection", (socket) => {
     userInfos.set(bojId, { studyId, name, imageUrl, studyRole });
     socket.join(studyId);
     socket.to(studyId).emit("addParticipant", name, imageUrl, studyRole);
-    cb(await getUserList(studyId), !!studyInfos.get(studyId));
+    cb(await getUserList(studyId), !!studyInfos.get(studyId)?.startTime);
   });
 
   socket.on("disconnecting", () => {
@@ -189,7 +189,22 @@ io.on("connection", (socket) => {
     io.to(`${studyId}`).emit("startSolve");
 
     setTimeout(() => {
-      io.to(`${studyId}`).emit("endStudy");
+      const studyInfo = studyInfos.get(studyId);
+      if (studyInfo) {
+        studyInfo.notFinishedUser.forEach((user) => {
+          studyInfo.finishedUser.push({
+            ...user,
+            time: studyInfo.duringMinute * 60,
+          });
+        });
+        studyInfo.notFinishedUser = [];
+        io.to(studyId).emit("newResult", [
+          ...studyInfo.finishedUser,
+          ...studyInfo.notFinishedUser,
+        ]);
+        io.to(`${studyId}`).emit("endStudy");
+        studyInfo.startTime = null;
+      }
     }, time * 1000 * 60);
   });
 
