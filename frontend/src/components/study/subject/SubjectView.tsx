@@ -44,7 +44,7 @@ function SubjectkView() {
 
   return (
     <SliderLayout
-      total={isProgress ? subjectList.length - 1 : subjectList.length}
+      total={isProgress ? subjectList.length - 1 : subjectList.length + 1}
     >
       {subjectList.map(subject => {
         return (
@@ -56,6 +56,7 @@ function SubjectkView() {
           />
         );
       })}
+      <NoSubject studyRole={studyRole} />
       {!isProgress && <NoSubject studyRole={studyRole} />}
     </SliderLayout>
   );
