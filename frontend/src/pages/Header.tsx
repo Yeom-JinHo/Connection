@@ -27,6 +27,7 @@ import ExtensionModal from "../components/modal/ExtensionModal";
 import AuthModal from "../components/modal/AuthModal";
 import checkExtension from "../utils/checkExtension";
 import { InitialStateType } from "../store/ducks/auth/auth.type";
+import Index from "../components/darkmode";
 
 interface menuType {
   title: string;
@@ -113,6 +114,9 @@ function Header() {
         </Center>
         <Spacer />
         <Center p="14px" flex={1} minW="170px">
+          <Center position="relative" mr="10px" onClick={toggleColorMode}>
+            <Index />
+          </Center>
           <Button mr="14px" onClick={toggleColorMode}>
             <MoonIcon />
           </Button>
