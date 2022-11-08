@@ -16,10 +16,10 @@ function start() {
 		if (checkSubmitDone()) {
 			stop();
 			const lastResult = document.querySelector('#status-table > tbody > tr');
-			const submitNo = lastResult.querySelector(':nth-child(1)').innerText;
-			const userId = lastResult.querySelector(':nth-child(2)').innerText;
-			const problemNo = lastResult.querySelector(':nth-child(3)').innerText;
-			const result = lastResult.querySelector(':nth-child(4)').innerText;
+			const submitNo = lastResult.querySelector(':nth-child(1)').innerText.trim();
+			const userId = lastResult.querySelector(':nth-child(2)').innerText.trim();
+			const problemNo = lastResult.querySelector(':nth-child(3)').innerText.trim();
+			const result = lastResult.querySelector(':nth-child(4)').innerText.trim();
 			const language = lastResult.querySelector(':nth-child(7)').innerText.split('/')[0].trim();
 			const lang = languages[language];
 
