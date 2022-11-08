@@ -83,6 +83,7 @@ const getUserList = async (studyId: string): Promise<UserProfileType[]> => {
   return Users.map((user) => ({
     name: user.data.name,
     imageUrl: user.data.imageUrl,
+    studyRole: user.data.studyRole,
   }));
 };
 

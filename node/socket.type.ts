@@ -14,8 +14,10 @@ export interface UserInfoType {
   studyCode: string;
   ismember: boolean;
 }
-export type UserProfileType = Pick<UserInfoType, "name" | "imageUrl">;
-
+export type UserProfileType = Pick<
+  UserInfoType,
+  "name" | "imageUrl" | "studyRole"
+>;
 export interface ServerProblemType {
   problemId: number;
   title: string;
