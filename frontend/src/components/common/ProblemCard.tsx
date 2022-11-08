@@ -43,15 +43,15 @@ function ProblemCard({
       direction="column"
       bg={bg}
       borderRadius="20px"
-      p="20px"
+      p="20px 20px 0 20px"
       boxShadow="0 4px 4px rgba(0,0,0,0.25)"
       _hover={{
         transform: "scale(1.03)",
         transition: "transform ease-out .5s"
       }}
-      maxH="250px"
+      // maxH="250px"
     >
-      <Box borderBottom="1px" borderColor="border_gray" pb="20px" mb="20px">
+      <Box pb="20px" mb="auto">
         <Flex
           justifyContent="space-between"
           mt="10px"
@@ -87,7 +87,12 @@ function ProblemCard({
           ))}
         </Flex>
       </Box>
-      <Flex justifyContent="space-between" marginY="auto">
+      <Flex
+        justifyContent="space-between"
+        py="20px"
+        borderTop="1px"
+        borderColor="border_gray"
+      >
         <Flex gap={2} p={1}>
           <Text alignSelf="flex-start">백준 난이도 </Text>
           <img
