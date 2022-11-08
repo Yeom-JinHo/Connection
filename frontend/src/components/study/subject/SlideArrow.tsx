@@ -12,18 +12,21 @@ export default function SlideArrow({
   isDisabled,
   Icon
 }: SlideArrowProps) {
-  return (
-    <Button
-      onClick={onClick}
-      w="30px"
-      style={{ background: "none" }}
-      disabled={isDisabled}
-    >
-      <Icon
-        boxSize={8}
-        color={isDisabled ? "gray.300" : "black"}
-        _dark={{ color: `${isDisabled ? "gray.900" : "gray.100"} ` }}
-      />
-    </Button>
-  );
+  if (!isDisabled) {
+    return (
+      <Button
+        onClick={onClick}
+        w="30px"
+        style={{ background: "none" }}
+        disabled={isDisabled}
+      >
+        <Icon
+          boxSize={8}
+          color={isDisabled ? "gray.300" : "black"}
+          _dark={{ color: `${isDisabled ? "gray.900" : "gray.100"} ` }}
+        />
+      </Button>
+    );
+  }
+  return null;
 }
