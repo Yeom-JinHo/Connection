@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Flex, Spinner } from "@chakra-ui/react";
+import { Flex, keyframes, Spinner } from "@chakra-ui/react";
 import StudyLayout from "../../components/layout/StudyLayout";
 import SideComponent, {
   RECOMMEND_TAPS
@@ -34,7 +34,14 @@ function Recommend() {
   useEffect(() => {
     getAndSetRecommend();
   }, []);
-
+  const animation = keyframes`
+  0%{
+    transform: rotate(90deg);
+  }
+  100% {
+      transform: rotate(450deg);
+  }
+`;
   return (
     <StudyLayout
       sideComponent={
@@ -43,7 +50,11 @@ function Recommend() {
       title={RECOMMEND_TAPS[selectedTap].label}
       description={RECOMMEND_TAPS[selectedTap].msg}
     >
-      <Style.StyledIcon onClick={getAndSetRecommend} />
+      <Style.StyledIcon
+        onClick={getAndSetRecommend}
+        animation={pending ? `${animation} ease-in-out infinite 1s` : "none"}
+        _hover={{ transform: pending ? "none" : "rotate(90deg)" }}
+      />
       {RECOMMEND_TAPS[selectedTap].category === "weak" && (
         <Tooltip recommends={recommends} />
       )}
