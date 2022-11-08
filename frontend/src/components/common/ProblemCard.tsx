@@ -39,7 +39,8 @@ function ProblemCard({
   const { problemInfo, tagList, difficulty } = problem;
   const { problemId, title, level } = problemInfo;
   return (
-    <Box
+    <Flex
+      direction="column"
       bg={bg}
       borderRadius="20px"
       p="20px"
@@ -86,7 +87,7 @@ function ProblemCard({
           ))}
         </Flex>
       </Box>
-      <Flex justifyContent="space-between">
+      <Flex justifyContent="space-between" marginY="auto">
         <Flex gap={2} p={1}>
           <Text alignSelf="flex-start">백준 난이도 </Text>
           <img
@@ -108,7 +109,7 @@ function ProblemCard({
           />
         </Flex>
       </Flex>
-    </Box>
+    </Flex>
   );
 }
 
