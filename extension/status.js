@@ -27,7 +27,7 @@ function start() {
 				const code = await fetch(`https://www.acmicpc.net/source/download/${submitNo}`, {
 					method: 'GET',
 				}).then((res) => res.text());
-				fetch('https://k7c202.p.ssafy.io/api/problem/submit', {
+				fetch('https://k7c202.p.ssafy.io/api/subject/submit', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
