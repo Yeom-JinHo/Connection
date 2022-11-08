@@ -12,6 +12,7 @@ import {
   UserProfileType,
 } from "./socket.type";
 import moment from "moment";
+import fetch from "node-fetch";
 
 const app = express();
 app.use(
@@ -85,9 +86,9 @@ const getUserList = async (studyId: string): Promise<UserProfileType[]> => {
 };
 
 app.post("/problem/submit", (req, res) => {
-  const { userId, problemNo, submitNo } = req.body;
+  const { userId, problemNo, submitNo, code, lang } = req.body;
   const problemId = +`${problemNo}`.trim();
-  console.log(userId, problemNo, +problemNo, submitNo);
+  console.log(userId, +problemNo, submitNo, lang, code);
   const userInfo = userInfos.get(userId);
   if (userInfo) {
     const { studyId, name, imageUrl } = userInfo;
@@ -124,7 +125,21 @@ app.post("/problem/submit", (req, res) => {
       }
     }
   }
-  res.send(200);
+  fetch(`https://k7c202.p.ssafy.io/api/problem/submit/study`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      submitNo,
+      userId,
+      problemNo,
+      code,
+      lang,
+    }),
+  });
+
+  res.sendStatus(200);
 });
 
 io.on("connection", (socket) => {
