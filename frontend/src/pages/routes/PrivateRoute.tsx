@@ -12,19 +12,12 @@ function PrivateRoute({ auth, outlet }: PrivateRouteProps) {
   const { check, extension, information } = auth;
   const toast = useToast();
   // 로그인x, 백준연동x, 깃허브 ismember x, extension x 인 경우 메인으로
-  if (!check) {
-    toast({ title: "로그인 해주세요!", position: "top", duration: 1000 });
-    return <Navigate to="/" />;
-  }
   if (
+    !check ||
     !information.backjoonId ||
-    !information.ismember
-    // !extension
+    !information.ismember ||
+    !extension
   ) {
-    return <Navigate to="/" />;
-  }
-
-  if (!check || !information.backjoonId || !information.ismember) {
     if (!check) {
       toast({ title: "로그인 해주세요!", position: "top", duration: 1000 });
       return <Navigate to="/" />;

@@ -60,8 +60,7 @@ function Header() {
     );
     const { information, extension, check } = auth;
     if (check) {
-      // if (!information.backjoonId || !information.ismember || !extension) {
-      if (!information.backjoonId || !information.ismember) {
+      if (!information.backjoonId || !information.ismember || !extension) {
         AllModal.onOpen();
       } else {
         AllModal.onClose();
@@ -113,7 +112,14 @@ function Header() {
         </Center>
         <Spacer />
         <Center p="14px" flex={1} minW="170px">
-          <Center position="relative" mr="10px" onClick={toggleColorMode}>
+          <Center
+            position="relative"
+            mr="10px"
+            onClick={() => {
+              console.log("clickkkk");
+              toggleColorMode();
+            }}
+          >
             <DarkmodeButton />
           </Center>
           {auth.check ? (
@@ -148,8 +154,7 @@ function Header() {
                 <BackjoonModal code={code} />
               ) : !auth.information.ismember ? (
                 <GithubModal />
-              ) : // ) : !auth.extension ? (
-              false ? (
+              ) : !auth.extension ? (
                 <ExtensionModal onClose={AllModal.onClose} />
               ) : null
             }
