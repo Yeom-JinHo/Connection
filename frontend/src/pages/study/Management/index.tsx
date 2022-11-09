@@ -56,12 +56,12 @@ function Management() {
         if (isBoss) {
           const res = await deleteStudy();
           console.log(res);
-          return;
+        } else {
+          const res = await quitStudy();
+          console.log(res);
         }
-        const res = await quitStudy();
-        console.log(res);
         dispatch(getUserInfo());
-        navigate("/");
+        navigate("/study");
       }
     });
     onOpen();
