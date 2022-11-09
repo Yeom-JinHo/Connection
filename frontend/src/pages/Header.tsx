@@ -112,14 +112,7 @@ function Header() {
         </Center>
         <Spacer />
         <Center p="14px" flex={1} minW="170px">
-          <Center
-            position="relative"
-            mr="10px"
-            onClick={() => {
-              console.log("clickkkk");
-              toggleColorMode();
-            }}
-          >
+          <Center position="relative" mr="10px" onClick={toggleColorMode}>
             <DarkmodeButton />
           </Center>
           {auth.check ? (
