@@ -10,8 +10,8 @@ import {
   useColorMode
 } from "@chakra-ui/react";
 import { v4 } from "uuid";
-import AOS from "aos";
-import "aos/dist/aos.css";
+// import AOS from "aos";
+// import "aos/dist/aos.css";
 import C from "../asset/img/c.png";
 import Java from "../asset/img/java.png";
 import JS from "../asset/img/js.png";
@@ -35,9 +35,9 @@ function Main() {
   const mainRef = useRef<HTMLDivElement>(null);
   const imgs = [C, Java, JS, Python, Kotlin];
 
-  useEffect(() => {
-    AOS.init();
-  }, []);
+  // useEffect(() => {
+  //   AOS.init();
+  // }, []);
 
   function onDown() {
     mainRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -51,7 +51,7 @@ function Main() {
         position="relative"
         h="calc(100vh - 68px)"
         justifyContent="space-around"
-        minH="550px"
+        minH="300px"
       >
         <Flex w="100%" maxW="800px">
           <Center flexDir="column" flex="1" alignItems="">
@@ -93,9 +93,9 @@ function Main() {
             {imgs.map((img, idx) => {
               return (
                 <Box
-                  data-aos="flip-left"
-                  data-aos-delay={idx * 300}
-                  data-aos-duration="1500"
+                  // data-aos="flip-left"
+                  // data-aos-delay={idx * 300}
+                  // data-aos-duration="1500"
                   key={v4()}
                 >
                   <Image src={img} alt="language" w="80px" mx="20px" />
@@ -131,7 +131,12 @@ function Main() {
         p="100px 0 0"
       >
         <Center maxW="800px" m="0 auto" flexDir="column" pt="30px">
-          <Box w="100%" display="flex" alignItems="center" data-aos="fade-up">
+          <Box
+            w="100%"
+            display="flex"
+            alignItems="center"
+            // data-aos="fade-up"
+          >
             <Box
               bg="gra"
               w="500px"
@@ -192,7 +197,7 @@ function Main() {
             display="flex"
             alignItems="center"
             justifyContent="flex-end"
-            data-aos="fade-up"
+            // data-aos="fade-up"
           >
             <Image src={Notebook} alt="code" w="200px" mr="50px" />
             <Box

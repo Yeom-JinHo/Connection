@@ -80,6 +80,7 @@ function Header() {
       top="0px"
       bg={colorMode === "light" ? "white" : "#121212"}
       zIndex="5"
+      h="68px"
     >
       <Center maxW="1200px" m="0 auto" w="100%" flex={1}>
         <Center p="14px">
@@ -93,11 +94,15 @@ function Header() {
         </Center>
         <Spacer />
         <Center p="14px" w="540px" justifyContent="left" flex={6}>
-          {menus.map(menu => {
+          {menus.map((menu, idx) => {
             return (
               <Link
                 as={ReactLink}
-                to={menu.link}
+                to={
+                  idx !== 0 && !auth.information.studyName
+                    ? "/study/join"
+                    : menu.link
+                }
                 mr="50px"
                 key={v4()}
                 color={location.pathname === menu.link ? "main" : ""}
@@ -112,14 +117,7 @@ function Header() {
         </Center>
         <Spacer />
         <Center p="14px" flex={1} minW="170px">
-          <Center
-            position="relative"
-            mr="10px"
-            onClick={() => {
-              console.log("clickkkk");
-              toggleColorMode();
-            }}
-          >
+          <Center position="relative" mr="10px" onClick={toggleColorMode}>
             <DarkmodeButton />
           </Center>
           {auth.check ? (
