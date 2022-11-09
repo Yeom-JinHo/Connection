@@ -73,7 +73,12 @@ function Assignment() {
         <Style.Container>
           <Style.Top>
             <Style.TopText>과제 기간</Style.TopText>
-            <Style.DurationInput type="date" value={startDate} readOnly />
+            <Style.DurationInput
+              type="date"
+              value={startDate}
+              readOnly
+              cursor="not-allowed"
+            />
             <Style.TopText>~</Style.TopText>
             <Style.DurationInput
               type="date"
