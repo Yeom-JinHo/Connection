@@ -56,10 +56,15 @@ function Assignment() {
       ]
     };
     const res = await postSubject(body);
-    if (res.data.statusCode === "ACCEPTED") {
+    if (res.data.msg === "success") {
       navigate("/study");
     } else {
-      alert("에러가 발생했습니다. 다시 시도해주세요.");
+      toast({
+        title: `에러가 발생했습니다. 다시 시도해주세요.`,
+        position: "top",
+        isClosable: true,
+        status: "error"
+      });
     }
   };
   return (
