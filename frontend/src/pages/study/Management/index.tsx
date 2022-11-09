@@ -24,7 +24,7 @@ export interface MemberType {
 }
 interface ConfirmStateType {
   msg: string;
-  onConfirmHandler: () => void;
+  onConfirmHandler: () => Promise<void> | null;
 }
 
 function Management() {
