@@ -129,9 +129,8 @@ app.post("/problem/submit", (req, res) => {
 
       const { problemList, isAllSol } = getSolvingInfo(studyId, userId);
       io.to(studyId).emit("solvedByExtension", userId, problemList, isAllSol);
-
+      const studyInfo = studyInfos.get(studyId);
       if (isAllSol) {
-        const studyInfo = studyInfos.get(studyId);
         if (studyInfo?.startTime) {
           console.log(studyInfo.startTime.diff(moment(), "seconds"));
           studyInfo.finishedUser.push({
@@ -149,6 +148,13 @@ app.post("/problem/submit", (req, res) => {
             ...studyInfo.notFinishedUser,
           ]);
         }
+      } else {
+        const studyInfo = studyInfos.get(studyId);
+        studyInfo?.notFinishedUser.forEach((user) => {
+          if (user.name === name) {
+            user.problem = cnt;
+          }
+        });
       }
     }
   }
@@ -193,10 +199,6 @@ io.on("connection", (socket) => {
     socket.rooms.forEach((room) => {
       socket.to(room).emit("removeParticipant", socket.data.name as string);
     });
-  });
-
-  socket.on("disconnect", () => {
-    console.log("user disconnected-123--!!");
   });
 
   socket.on("startStudy", async (studyId, problemList, time, callback) => {
