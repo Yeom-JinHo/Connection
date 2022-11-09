@@ -169,19 +169,13 @@ function Main() {
             );
           })}
           <Center w="100%" justifyContent="space-around">
-            {squares.map(((square, idx), idx) => {
+            {squares.map((square, idx) => {
               return (
-                (
                 <MainSquare
-                 
                   data={square}
-                 
                   key={v4()}
                   dir={idx % 2 === 0 ? "zoom-in-right" : "zoom-in-left"}
-               
-                  dir={idx % 2 === 0 ? "zoom-in-right" : "zoom-in-left"}
                 />
-              )
               );
             })}
           </Center>

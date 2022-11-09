@@ -132,7 +132,6 @@ function BackjoonModal({ code }: BackjoonModalProps) {
               <CopyIcon
                 color="black"
                 _dark={{ color: "white" }}
-                _dark={{ color: "white" }}
                 boxSize="15px"
                 mx="3px"
                 onClick={() => onCopyEvent()}
