@@ -8,7 +8,7 @@ import {
   ModalOverlay,
   Text
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 interface ConfirmPropType {
   isOpen: boolean;
@@ -19,6 +19,20 @@ interface ConfirmPropType {
 
 function Confirm({ isOpen, onClose, msg, onConfirmHandler }: ConfirmPropType) {
   const [pending, setPending] = useState(false);
+  const timer = useRef<ReturnType<typeof setInterval>>();
+  const [dot, setDot] = useState(0);
+
+  const onBtnClick = async () => {
+    setPending(true);
+    timer.current = setInterval(() => {
+      setDot(prev => (prev % 3) + 1);
+    }, 500);
+    await onConfirmHandler();
+    clearInterval(timer.current);
+    setPending(false);
+    onClose();
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={!pending}>
       <ModalOverlay />
@@ -26,22 +40,13 @@ function Confirm({ isOpen, onClose, msg, onConfirmHandler }: ConfirmPropType) {
         <ModalHeader />
         <ModalBody>
           <Text fontSize="2xl" fontWeight="bold" align="center">
-            {pending ? "요청중입니다" : msg}
+            {pending ? `요청중입니다${".".repeat(dot)}` : msg}
           </Text>
         </ModalBody>
         <ModalFooter>
           {!pending && (
             <>
-              <Button
-                colorScheme="red"
-                mr={3}
-                onClick={async () => {
-                  setPending(true);
-                  await onConfirmHandler();
-                  setPending(false);
-                  onClose();
-                }}
-              >
+              <Button colorScheme="red" mr={3} onClick={onBtnClick}>
                 네
               </Button>
               <Button variant="ghost" onClick={onClose}>
