@@ -10,8 +10,10 @@ import {
   InterServerEvents,
   SocketData,
   UserProfileType,
+  ServerProblemType,
 } from "./socket.type";
 import moment from "moment";
+import fetch from "node-fetch";
 
 const app = express();
 app.use(
@@ -40,9 +42,7 @@ const io = new Server<
 
 instrument(io, { auth: false });
 
-httpServer.listen(8000, () => {
-  console.log("listening!!");
-});
+httpServer.listen(8000, () => {});
 
 interface ProblemInfoType {
   title: string;
@@ -51,16 +51,10 @@ interface ProblemInfoType {
   level: number;
 }
 interface StudyInfoType {
-  startTime: moment.Moment;
+  startTime: moment.Moment | null;
   problems: ProblemInfoType[];
   duringMinute: number;
-  finishedUser: {
-    name: string;
-    imageUrl: string;
-    problem: number;
-    time: number | null;
-  }[];
-  notFinishedUser: {
+  users: {
     name: string;
     imageUrl: string;
     problem: number;
@@ -71,6 +65,7 @@ interface UserInfoType {
   name: string;
   studyId: string;
   imageUrl: string;
+  studyRole: "MEMBER" | "LEADER";
 }
 
 const studyInfos = new Map<string, StudyInfoType>();
@@ -81,13 +76,34 @@ const getUserList = async (studyId: string): Promise<UserProfileType[]> => {
   return Users.map((user) => ({
     name: user.data.name,
     imageUrl: user.data.imageUrl,
+    studyRole: user.data.studyRole,
   }));
 };
 
+const getSolvingInfo = (
+  studyId: string,
+  bojId: string
+): { problemList: ServerProblemType[]; isAllSol: boolean } => {
+  const studyInfo = studyInfos.get(studyId);
+  let isAllSol = false;
+  let solveCnt = 0;
+  const problemList = studyInfo!.problems.map((problem) => {
+    const isSolved = problem.solvedUser.includes(bojId);
+    if (isSolved) solveCnt += 1;
+    return {
+      ...problem,
+      isSolved,
+    };
+  });
+  if (solveCnt === problemList.length) isAllSol = true;
+
+  return { problemList, isAllSol };
+};
+
 app.post("/problem/submit", (req, res) => {
-  const { userId, problemNo, submitNo } = req.body;
+  const { userId, problemNo, submitNo, code, lang } = req.body;
   const problemId = +`${problemNo}`.trim();
-  console.log(userId, problemNo, +problemNo, submitNo);
+  console.log(userId, +problemNo, submitNo, lang, code);
   const userInfo = userInfos.get(userId);
   if (userInfo) {
     const { studyId, name, imageUrl } = userInfo;
@@ -103,50 +119,70 @@ app.post("/problem/submit", (req, res) => {
         }
       });
 
-      const allSol = cnt === problems.length;
-      io.to(studyId).emit("solvedByExtension", userId, problemId, allSol);
-
-      if (allSol) {
-        const studyInfo = studyInfos.get(studyId);
-        if (studyInfo) {
+      const { problemList, isAllSol } = getSolvingInfo(studyId, userId);
+      io.to(studyId).emit("solvedByExtension", userId, problemList, isAllSol);
+      const studyInfo = studyInfos.get(studyId);
+      if (isAllSol) {
+        if (studyInfo?.startTime) {
           console.log(studyInfo.startTime.diff(moment(), "seconds"));
-          studyInfo.finishedUser.push({
-            name,
-            imageUrl,
-            problem: cnt,
-            time: moment().diff(studyInfo.startTime, "seconds"),
+          studyInfo.users.forEach((user) => {
+            if (user.name === name) {
+              user.time = moment().diff(studyInfo.startTime, "seconds");
+            }
           });
-
-          studyInfo.notFinishedUser = studyInfo.notFinishedUser.filter(
-            (user) => user.name !== name
-          );
+          io.to(studyId).emit("newResult", [...studyInfo.users]);
         }
+      } else {
+        const studyInfo = studyInfos.get(studyId);
+        studyInfo?.users.forEach((user) => {
+          if (user.name === name) {
+            user.problem = cnt;
+          }
+        });
       }
     }
   }
-  res.send(200);
+  console.log({
+    submitNo,
+    userId,
+    problemNo,
+    code,
+    lang,
+  });
+  fetch(`https://k7c202.p.ssafy.io/api/problem/submit/study`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      submitNo,
+      userId,
+      problemNo,
+      code,
+      lang,
+    }),
+  }).then(() => console.log("백에 전송 성공"));
+
+  res.sendStatus(200);
 });
 
 io.on("connection", (socket) => {
-  socket.on("enter", async (studyId, name, imageUrl, bojId, cb) => {
+  socket.on("enter", async (studyId, name, imageUrl, bojId, studyRole, cb) => {
     console.log(`${studyId}방에 ${name}님이 입장하셨어 boj ${bojId}`);
     socket.data.name = name;
     socket.data.bojId = bojId;
     socket.data.imageUrl = imageUrl;
-    userInfos.set(bojId, { studyId, name, imageUrl });
+    socket.data.studyRole = studyRole;
+    userInfos.set(bojId, { studyId, name, imageUrl, studyRole });
     socket.join(studyId);
-    socket.to(studyId).emit("addParticipant", name, imageUrl);
-    cb(await getUserList(studyId));
+    socket.to(studyId).emit("addParticipant", name, imageUrl, studyRole);
+    cb(await getUserList(studyId), !!studyInfos.get(studyId)?.startTime);
   });
 
   socket.on("disconnecting", () => {
     socket.rooms.forEach((room) => {
       socket.to(room).emit("removeParticipant", socket.data.name as string);
     });
-  });
-
-  socket.on("disconnect", () => {
-    console.log("user disconnected-123--!!");
   });
 
   socket.on("startStudy", async (studyId, problemList, time, callback) => {
@@ -156,8 +192,7 @@ io.on("connection", (socket) => {
       startTime: moment(),
       problems: problemList.map((problem) => ({ ...problem, solvedUser: [] })),
       duringMinute: time,
-      finishedUser: [],
-      notFinishedUser: loginedUser.map((user) => ({
+      users: loginedUser.map((user) => ({
         ...user,
         problem: 0,
         time: null,
@@ -167,7 +202,18 @@ io.on("connection", (socket) => {
     io.to(`${studyId}`).emit("startSolve");
 
     setTimeout(() => {
-      io.to(`${studyId}`).emit("endStudy");
+      const studyInfo = studyInfos.get(studyId);
+      if (studyInfo) {
+        studyInfo.users = studyInfo.users.map((user) => {
+          if (!user.time) {
+            return { ...user, time: studyInfo.duringMinute * 60 };
+          }
+          return user;
+        });
+        io.to(studyId).emit("newResult", [...studyInfo.users]);
+        io.to(`${studyId}`).emit("endStudy");
+        studyInfo.startTime = null;
+      }
     }, time * 1000 * 60);
   });
 
@@ -176,20 +222,18 @@ io.on("connection", (socket) => {
     const bojId = socket.data.bojId as string;
     const userInfo = userInfos.get(socket.data.bojId as string);
     const studyInfo = studyInfos.get(userInfo!.studyId);
-    const problemInfo = studyInfo!.problems.map((problem) => ({
-      ...problem,
-      isSolved: problem.solvedUser.includes(bojId),
-    }));
+    const { problemList, isAllSol } = getSolvingInfo(userInfo!.studyId, bojId);
     callback(
-      problemInfo,
+      problemList,
       studyInfo!.duringMinute * 60 -
-        moment().diff(studyInfo!.startTime, "seconds")
+        moment().diff(studyInfo!.startTime, "seconds"),
+      isAllSol
     );
   });
 
   socket.on("getResult", (callback) => {
     const userInfo = userInfos.get(socket.data.bojId as string);
     const studyInfo = studyInfos.get(userInfo!.studyId);
-    callback([...studyInfo!.finishedUser, ...studyInfo!.notFinishedUser]);
+    callback([...studyInfo!.users]);
   });
 });

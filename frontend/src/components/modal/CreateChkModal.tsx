@@ -60,13 +60,18 @@ function CreateChkModal({ isOpen, onClose, studyName }: CreateChkModalProps) {
     }
 
     if (!axios.isAxiosError(res)) {
-      dispatch(updateUserInfo(res.data));
+      dispatch(updateUserInfo({ ...res.data, studyRole: "LEADER" }));
       navigator("/study", { replace: true });
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="2xl">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="2xl"
+      closeOnOverlayClick={false}
+    >
       <ModalOverlay />
       <ModalContent p="20px">
         <ModalHeader fontSize="32px">스터디 생성</ModalHeader>
