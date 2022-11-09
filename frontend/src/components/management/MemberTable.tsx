@@ -1,8 +1,10 @@
 import React from "react";
 import { Box, Flex, Grid, Text } from "@chakra-ui/react";
 import ReactApexChart from "react-apexcharts";
+
 import useChartOption from "../../hooks/useChartOption";
 import { MemberType } from "../../pages/study/Management";
+import { useAppSelector } from "../../store/hooks";
 
 interface MemberTableProps {
   members: MemberType[];
@@ -11,6 +13,7 @@ interface MemberTableProps {
 }
 
 function MemberTable({ members, onBanBtnClick, isBoss }: MemberTableProps) {
+  const auth = useAppSelector(state => state.auth);
   const chartOption = useChartOption();
   return (
     <Grid templateColumns="repeat(2,1fr)" gap="32px">
@@ -21,7 +24,7 @@ function MemberTable({ members, onBanBtnClick, isBoss }: MemberTableProps) {
               No {idx + 1}
             </Text>
             <Text flexGrow={3}>{member.name}</Text>
-            {isBoss && (
+            {isBoss && member.userId !== auth.information.userId && (
               <Text
                 flexGrow={1}
                 color="red"
