@@ -42,9 +42,7 @@ const io = new Server<
 
 instrument(io, { auth: false });
 
-httpServer.listen(8000, () => {
-  console.log("listening!!");
-});
+httpServer.listen(8000, () => {});
 
 interface ProblemInfoType {
   title: string;
@@ -56,13 +54,7 @@ interface StudyInfoType {
   startTime: moment.Moment | null;
   problems: ProblemInfoType[];
   duringMinute: number;
-  finishedUser: {
-    name: string;
-    imageUrl: string;
-    problem: number;
-    time: number | null;
-  }[];
-  notFinishedUser: {
+  users: {
     name: string;
     imageUrl: string;
     problem: number;
@@ -133,24 +125,16 @@ app.post("/problem/submit", (req, res) => {
       if (isAllSol) {
         if (studyInfo?.startTime) {
           console.log(studyInfo.startTime.diff(moment(), "seconds"));
-          studyInfo.finishedUser.push({
-            name,
-            imageUrl,
-            problem: cnt,
-            time: moment().diff(studyInfo.startTime, "seconds"),
+          studyInfo.users.forEach((user) => {
+            if (user.name === name) {
+              user.time = moment().diff(studyInfo.startTime, "seconds");
+            }
           });
-
-          studyInfo.notFinishedUser = studyInfo.notFinishedUser.filter(
-            (user) => user.name !== name
-          );
-          io.to(studyId).emit("newResult", [
-            ...studyInfo.finishedUser,
-            ...studyInfo.notFinishedUser,
-          ]);
+          io.to(studyId).emit("newResult", [...studyInfo.users]);
         }
       } else {
         const studyInfo = studyInfos.get(studyId);
-        studyInfo?.notFinishedUser.forEach((user) => {
+        studyInfo?.users.forEach((user) => {
           if (user.name === name) {
             user.problem = cnt;
           }
@@ -208,8 +192,7 @@ io.on("connection", (socket) => {
       startTime: moment(),
       problems: problemList.map((problem) => ({ ...problem, solvedUser: [] })),
       duringMinute: time,
-      finishedUser: [],
-      notFinishedUser: loginedUser.map((user) => ({
+      users: loginedUser.map((user) => ({
         ...user,
         problem: 0,
         time: null,
@@ -221,17 +204,13 @@ io.on("connection", (socket) => {
     setTimeout(() => {
       const studyInfo = studyInfos.get(studyId);
       if (studyInfo) {
-        studyInfo.notFinishedUser.forEach((user) => {
-          studyInfo.finishedUser.push({
-            ...user,
-            time: studyInfo.duringMinute * 60,
-          });
+        studyInfo.users = studyInfo.users.map((user) => {
+          if (!user.time) {
+            return { ...user, time: studyInfo.duringMinute * 60 };
+          }
+          return user;
         });
-        studyInfo.notFinishedUser = [];
-        io.to(studyId).emit("newResult", [
-          ...studyInfo.finishedUser,
-          ...studyInfo.notFinishedUser,
-        ]);
+        io.to(studyId).emit("newResult", [...studyInfo.users]);
         io.to(`${studyId}`).emit("endStudy");
         studyInfo.startTime = null;
       }
@@ -255,6 +234,6 @@ io.on("connection", (socket) => {
   socket.on("getResult", (callback) => {
     const userInfo = userInfos.get(socket.data.bojId as string);
     const studyInfo = studyInfos.get(userInfo!.studyId);
-    callback([...studyInfo!.finishedUser, ...studyInfo!.notFinishedUser]);
+    callback([...studyInfo!.users]);
   });
 });
