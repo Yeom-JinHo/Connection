@@ -152,6 +152,13 @@ app.post("/problem/submit", (req, res) => {
       }
     }
   }
+  console.log({
+    submitNo,
+    userId,
+    problemNo,
+    code,
+    lang,
+  });
   fetch(`https://k7c202.p.ssafy.io/api/problem/submit/study`, {
     method: "POST",
     headers: {
@@ -164,7 +171,7 @@ app.post("/problem/submit", (req, res) => {
       code,
       lang,
     }),
-  });
+  }).then(() => console.log("백에 전송 성공"));
 
   res.sendStatus(200);
 });
@@ -234,17 +241,6 @@ io.on("connection", (socket) => {
     const bojId = socket.data.bojId as string;
     const userInfo = userInfos.get(socket.data.bojId as string);
     const studyInfo = studyInfos.get(userInfo!.studyId);
-    // let isAllSol = false;
-    // let solveCnt = 0;
-    // const problemInfo = studyInfo!.problems.map((problem) => {
-    //   const isSolved = problem.solvedUser.includes(bojId);
-    //   if (isSolved) solveCnt += 1;
-    //   return {
-    //     ...problem,
-    //     isSolved,
-    //   };
-    // });
-    // if (solveCnt === problemInfo.length) isAllSol = true;
     const { problemList, isAllSol } = getSolvingInfo(userInfo!.studyId, bojId);
     callback(
       problemList,
