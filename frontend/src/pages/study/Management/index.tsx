@@ -20,6 +20,7 @@ interface StatSeriesType {
 export interface MemberType {
   userId: number;
   name: string;
+  imageUrl: string;
   series: StatSeriesType[];
 }
 interface ConfirmStateType {
