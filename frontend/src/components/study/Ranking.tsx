@@ -29,6 +29,9 @@ function Ranking() {
 
   useEffect(() => {
     getRanking();
+  }, []);
+
+  useEffect(() => {
     if (myStudyRef.current && parentRef.current) {
       const test = myStudyRef.current.offsetTop;
       // 가운데로 포커싱하기 위해 빼주는 값
@@ -54,6 +57,7 @@ function Ranking() {
       ref={parentRef}
     >
       {ranks.map(study => {
+        // console.log(study);
         return (
           <Link href={study.studyRepository} key={v4()} _hover={{}}>
             <Tooltip

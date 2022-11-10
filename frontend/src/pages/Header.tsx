@@ -11,6 +11,7 @@ import {
   MenuItem,
   MenuList,
   Spacer,
+  Tooltip,
   useColorMode,
   useDisclosure
 } from "@chakra-ui/react";
@@ -98,11 +99,12 @@ function Header() {
             return (
               <Link
                 as={ReactLink}
-                to={
-                  idx !== 0 && !auth.information.studyName
-                    ? "/study/join"
-                    : menu.link
-                }
+                // to={
+                //   idx !== 0 && !auth.information.studyName
+                //     ? "/study/join"
+                //     : menu.link
+                // }
+                to={menu.link}
                 mr="50px"
                 key={v4()}
                 color={location.pathname === menu.link ? "main" : ""}
@@ -141,12 +143,14 @@ function Header() {
               </MenuList>
             </Menu>
           ) : (
-            <Link
-              href={`${process.env.REACT_APP_API_URL}/oauth2/authorize/github?redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URL}`}
-              _hover={{}}
-            >
-              <Button>로그인</Button>
-            </Link>
+            <Tooltip label="connection은 깃허브 로그인을 사용하고 있어요">
+              <Link
+                href={`${process.env.REACT_APP_API_URL}/oauth2/authorize/github?redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URL}`}
+                _hover={{}}
+              >
+                <Button>로그인</Button>
+              </Link>
+            </Tooltip>
           )}
           <AuthModal
             isOpen={AllModal.isOpen}
