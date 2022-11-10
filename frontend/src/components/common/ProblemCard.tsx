@@ -78,7 +78,7 @@ function ProblemCard({
           </Flex>
           {hasBtn && <Button btnType={btnType} onBtnClick={onBtnClick} />}
         </Flex>
-        <Flex gap="8px" wrap="wrap">
+        <Flex gap="8px" wrap="wrap" maxH="70px" overflowY="hidden">
           {tagList.map(tag => (
             <Box
               key={tag.tagId}
