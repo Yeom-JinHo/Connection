@@ -132,11 +132,17 @@ app.post("/problem/submit", (req, res) => {
     });
 
     const studyInfo = getStudyInfo(studyId);
-    studyInfo?.users.forEach((user) => {
+    studyInfo.users.forEach((user) => {
       if (user.name === name) {
         user.problem = cnt;
       }
     });
+
+    studyInfo.users.sort((a, b) =>
+      a.problem !== b.problem
+        ? a.problem - b.problem
+        : (a.time || 0) - (b.time || 0)
+    );
 
     const { problemList, isAllSol } = getSolvingInfo(studyId, userId);
     io.to(studyId).emit("solvedByExtension", userId, problemList, isAllSol);
