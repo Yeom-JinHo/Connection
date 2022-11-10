@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Flex, Link, Text, Tooltip } from "@chakra-ui/react";
+import { Box, Flex, Link, Text, Tooltip, Image } from "@chakra-ui/react";
 import { v4 } from "uuid";
 import { getRank } from "../../api/study";
 import { useAppSelector } from "../../store/hooks";
+import getMedalColor from "../../utils/getMedalColor";
 
 type RankingProps = {
   homeworkScore: number;
@@ -28,28 +29,31 @@ function Ranking() {
     setRanks(data);
     setLoading(true);
   };
-  useEffect(() => {
-    getRanking();
-  }, []);
+  // useEffect(() => {
+  // }, []);
 
   useEffect(() => {
-    if (myStudyRef.current && parentRef.current) {
-      const { scrollHeight } = myStudyRef.current;
-      const test = myStudyRef.current.offsetTop;
-      // 가운데로 포커싱하기 위해 빼주는 값
-      const centerHeight =
-        parentRef.current.clientHeight / 2 -
-        myStudyRef.current.clientHeight / 2;
-      // console.log(scrollHeight);
-      // console.log(test);
-      // console.log(centerHeight);
-      // console.log(test - centerHeight);
-      parentRef.current.scrollTo({
-        top: scrollHeight,
-        behavior: "smooth"
-      });
-    }
-  }, [loading]);
+    (async () => {
+      await getRanking();
+      console.log(myStudyRef);
+      if (myStudyRef.current && parentRef.current) {
+        const { scrollHeight } = myStudyRef.current;
+        const test = myStudyRef.current.offsetTop;
+        // 가운데로 포커싱하기 위해 빼주는 값
+        const centerHeight =
+          parentRef.current.clientHeight / 2 -
+          myStudyRef.current.clientHeight / 2;
+        // console.log(scrollHeight);
+        // console.log(test);
+        // console.log(centerHeight);
+        // console.log(test - centerHeight);
+        parentRef.current.scrollTo({
+          top: scrollHeight,
+          behavior: "smooth"
+        });
+      }
+    })();
+  }, []);
 
   return (
     <Box
@@ -59,7 +63,7 @@ function Ranking() {
       display="flex"
       flexDir="column"
       alignItems="center"
-      p="26px 0 10px"
+      p="10px 0 10px"
       ref={parentRef}
     >
       {ranks.map(study => {
@@ -82,18 +86,31 @@ function Ranking() {
                 boxShadow="md"
                 p="8px 16px"
                 m="3px 0"
-                w="200px"
+                w="230px"
                 _dark={id === study.studyId ? {} : { bg: "dep_3" }}
                 ref={id === study.studyId ? myStudyRef : null}
               >
-                <Text w="40px">{study.ranking}</Text>
-                <Text
-                  textOverflow="ellipsis"
-                  overflow="hidden"
-                  whiteSpace="nowrap"
+                {study.ranking <= 3 ? (
+                  <Image src={getMedalColor(study.ranking)} w="30px" mr="5px" />
+                ) : (
+                  <Text w="40px" color="main">
+                    {study.ranking}
+                  </Text>
+                )}
+                <Flex
+                  w="100%"
+                  justifyContent="space-between"
+                  alignItems="center"
                 >
-                  {study.studyName}
-                </Text>
+                  <Text
+                    textOverflow="ellipsis"
+                    overflow="hidden"
+                    whiteSpace="nowrap"
+                  >
+                    {study.studyName}
+                  </Text>
+                  <Text fontSize="14px">{study.totalScore}</Text>
+                </Flex>
               </Flex>
             </Tooltip>
           </Link>
