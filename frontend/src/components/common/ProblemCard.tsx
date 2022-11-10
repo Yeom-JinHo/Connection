@@ -49,8 +49,14 @@ function ProblemCard({
         transform: "scale(1.03)",
         transition: "transform ease-out .5s"
       }}
+      justifyContent="space-between"
     >
-      <Box pb="20px" mb="auto">
+      <Flex
+        direction="column"
+        justifyContent="space-between"
+        pb="20px"
+        flexGrow="1"
+      >
         <Flex
           justifyContent="space-between"
           mt="10px"
@@ -85,7 +91,7 @@ function ProblemCard({
             </Box>
           ))}
         </Flex>
-      </Box>
+      </Flex>
       <Flex
         justifyContent="space-between"
         py="20px"
