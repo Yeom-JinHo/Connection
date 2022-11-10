@@ -101,13 +101,13 @@ const getSolvingInfo = (
 };
 
 const getStudyInfo = (studyId: string): StudyInfoType => {
-  const studyInfo = getStudyInfo(studyId);
+  const studyInfo = studyInfos.get(studyId);
   if (studyInfo) return studyInfo;
   throw new Error(`ID : ${studyId} 가 존재하지 않습니다.`);
 };
 
 const getUserInfo = (bojId: string): UserInfoType => {
-  const userInfo = getUserInfo(bojId);
+  const userInfo = userInfos.get(bojId);
   if (userInfo) return userInfo;
   throw new Error(`BOJ_ID : ${bojId} 가 존재하지 않습니다.`);
 };
@@ -176,7 +176,7 @@ io.on("connection", (socket) => {
     userInfos.set(bojId, { studyId, name, imageUrl, studyRole });
     socket.join(studyId);
     socket.to(studyId).emit("addParticipant", name, imageUrl, studyRole);
-    cb(await getUserList(studyId), !!getStudyInfo(studyId)?.startTime);
+    cb(await getUserList(studyId), !!studyInfos.get(studyId)?.startTime);
   });
 
   socket.on("disconnecting", () => {
