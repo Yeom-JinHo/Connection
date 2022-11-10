@@ -101,7 +101,11 @@ function Header() {
             return (
               <Link
                 as={ReactLink}
-                to={menu.link}
+                to={
+                  idx !== 0 && !auth.information.studyName
+                    ? "/study/join"
+                    : menu.link
+                }
                 mr="50px"
                 key={v4()}
                 color={location.pathname === menu.link ? "main" : ""}

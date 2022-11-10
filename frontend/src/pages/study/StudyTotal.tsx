@@ -29,6 +29,7 @@ function StudyTotal() {
   const info: UserInfoType = useAppSelector(state => state.auth.information);
   const { onCopy } = useClipboard(info.studyCode);
   const toast = useToast();
+  const navigator = useNavigate();
 
   function onCopyEvent() {
     onCopy();
