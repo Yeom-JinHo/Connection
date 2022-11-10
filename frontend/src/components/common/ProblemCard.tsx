@@ -17,13 +17,13 @@ interface ProblemCardProps extends CardButtonProps {
 function Button({ btnType, onBtnClick }: CardButtonProps) {
   if (btnType === "delete") {
     return (
-      <Box onClick={onBtnClick}>
+      <Box onClick={onBtnClick} alignSelf="flex-start">
         <DeleteIcon w="5" h="5" cursor="pointer" alignSelf="center" />
       </Box>
     );
   }
   return (
-    <Box onClick={onBtnClick}>
+    <Box onClick={onBtnClick} alignSelf="flex-start">
       <AddIcon w="5" h="5" cursor="pointer" alignSelf="center" />
     </Box>
   );
@@ -62,6 +62,7 @@ function ProblemCard({
           mt="10px"
           mb="10px"
           alignItems="center"
+          gap={4}
         >
           <Flex>
             <Link
