@@ -1,5 +1,5 @@
-import { Box, Center, Flex, Link, Text, Tooltip } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
+import { Box, Flex, Link, Text, Tooltip } from "@chakra-ui/react";
 import { v4 } from "uuid";
 import { getRank } from "../../api/study";
 import { useAppSelector } from "../../store/hooks";
@@ -21,6 +21,7 @@ function Ranking() {
   const parentRef = useRef<null | HTMLDivElement>(null);
 
   const getRanking = async () => {
+    console.log("랭킹불러오기");
     const {
       data: { data }
     } = await getRank();
@@ -29,7 +30,9 @@ function Ranking() {
 
   useEffect(() => {
     getRanking();
+    console.log(myStudyRef);
     if (myStudyRef.current && parentRef.current) {
+      console.log("object");
       const test = myStudyRef.current.offsetTop;
       // 가운데로 포커싱하기 위해 빼주는 값
       const centerHeight =
