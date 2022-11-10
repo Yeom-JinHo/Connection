@@ -19,6 +19,8 @@ import { Link as ReactLink, useLocation, useNavigate } from "react-router-dom";
 import { v4 } from "uuid";
 import LogoLight from "../asset/img/logo_light.svg";
 import LogoDark from "../asset/img/logo_dark.svg";
+import GithubLight from "../asset/img/githubL.svg";
+import GithubDark from "../asset/img/githubD.svg";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { resetUserInfo, updateExtension } from "../store/ducks/auth/authSlice";
 import BackjoonModal from "../components/modal/BackjoonModal";
@@ -99,11 +101,6 @@ function Header() {
             return (
               <Link
                 as={ReactLink}
-                // to={
-                //   idx !== 0 && !auth.information.studyName
-                //     ? "/study/join"
-                //     : menu.link
-                // }
                 to={menu.link}
                 mr="50px"
                 key={v4()}
@@ -143,12 +140,19 @@ function Header() {
               </MenuList>
             </Menu>
           ) : (
-            <Tooltip label="connection은 깃허브 로그인을 사용하고 있어요">
+            <Tooltip label="깃허브 로그인으로 이동합니다">
               <Link
                 href={`${process.env.REACT_APP_API_URL}/oauth2/authorize/github?redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URL}`}
                 _hover={{}}
               >
-                <Button>로그인</Button>
+                <Button>
+                  로그인
+                  <Image
+                    w="18px"
+                    ml="5px"
+                    src={colorMode === "light" ? GithubLight : GithubDark}
+                  />
+                </Button>
               </Link>
             </Tooltip>
           )}

@@ -22,7 +22,7 @@ function PrivateRoute({ auth, outlet, study }: PrivateRouteProps) {
   ) {
     if (!check) {
       toast({ title: "로그인 해주세요!", position: "top", duration: 1000 });
-      return <Navigate to="/" />;
+      window.location.href = `${process.env.REACT_APP_API_URL}/oauth2/authorize/github?redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URL}`;
     }
     return <Navigate to="/" />;
   }
