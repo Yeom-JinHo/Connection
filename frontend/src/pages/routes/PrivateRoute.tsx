@@ -28,7 +28,7 @@ function PrivateRoute({ auth, outlet, study }: PrivateRouteProps) {
   }
   if (study && !information.studyName) {
     toast({
-      title: "스터디에 가입해야 사용할 수 있는 서비스 입니다.",
+      title: "스터디가 있어야  사용할 수 있는 서비스 입니다.",
       position: "top",
       duration: 1000
     });
