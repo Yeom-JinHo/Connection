@@ -13,7 +13,7 @@ interface MainBoxProps {
 
 function MainBox({ dir, data }: MainBoxProps) {
   useEffect(() => {
-    AOS.init();
+    // AOS.init();
   }, []);
   return (
     <Flex
