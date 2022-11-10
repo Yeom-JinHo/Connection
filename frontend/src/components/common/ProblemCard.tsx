@@ -18,13 +18,13 @@ function Button({ btnType, onBtnClick }: CardButtonProps) {
   if (btnType === "delete") {
     return (
       <Box onClick={onBtnClick}>
-        <DeleteIcon w="6" h="6" cursor="pointer" alignSelf="center" />
+        <DeleteIcon w="5" h="5" cursor="pointer" alignSelf="center" />
       </Box>
     );
   }
   return (
     <Box onClick={onBtnClick}>
-      <AddIcon w="6" h="6" cursor="pointer" alignSelf="center" />
+      <AddIcon w="5" h="5" cursor="pointer" alignSelf="center" />
     </Box>
   );
 }
@@ -49,7 +49,6 @@ function ProblemCard({
         transform: "scale(1.03)",
         transition: "transform ease-out .5s"
       }}
-      // maxH="250px"
     >
       <Box pb="20px" mb="auto">
         <Flex
@@ -62,12 +61,12 @@ function ProblemCard({
             <Link
               href={`https://www.acmicpc.net/problem/${problemId}`}
               isExternal
-              fontSize="2xl"
+              fontSize="xl"
               fontWeight="bold"
               noOfLines={3}
             >
               {title}
-              <LinkIcon w="18px" h="18px" mx="2" marginBottom={2} />
+              <LinkIcon w="18px" h="18px" mx="2" marginBottom={1} />
             </Link>
           </Flex>
           {hasBtn && <Button btnType={btnType} onBtnClick={onBtnClick} />}
