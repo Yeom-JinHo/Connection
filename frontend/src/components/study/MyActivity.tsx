@@ -43,9 +43,9 @@ function MyActivity() {
     getMyActivityApi();
   }, []);
 
-  useEffect(() => {
-    console.log(inInViewport);
-  }, [inInViewport]);
+  // useEffect(() => {
+  //   console.log(inInViewport);
+  // }, [inInViewport]);
 
   return (
     <Center w="100%" ref={ref}>

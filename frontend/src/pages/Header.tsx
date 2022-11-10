@@ -85,7 +85,7 @@ function Header() {
       zIndex="5"
       h="68px"
     >
-      <Center maxW="1200px" m="0 auto" w="100%" flex={1}>
+      <Center maxW="1200px" minW="900px" m="0 auto" w="100%" flex={1}>
         <Center p="14px">
           <Link as={ReactLink} to="/">
             <Image
