@@ -166,7 +166,7 @@ app.post("/problem/submit", (req, res) => {
     body: JSON.stringify({
       submitNo,
       userId,
-      problemId,
+      problemNo: problemId,
       code,
       lang,
     }),
@@ -182,7 +182,7 @@ io.on("connection", (socket) => {
     userInfos.set(bojId, { studyId, name, imageUrl, studyRole });
     socket.join(studyId);
     socket.to(studyId).emit("addParticipant", name, imageUrl, studyRole);
-    cb(await getUserList(studyId), !!getStudyInfo(studyId)?.startTime);
+    cb(await getUserList(studyId), !!studyInfos.get(studyId)?.startTime);
   });
 
   socket.on("disconnecting", () => {
