@@ -28,7 +28,7 @@ function ResultBar({
       fontSize="20px"
       mb="20px"
       pl="8px"
-      opacity={time ? 1 : 0.25}
+      opacity={time ? 1 : 0.55}
     >
       <Center borderRight="1px solid #b8b8b8" w="72px" h="64px" p="16px">
         {rank}위
