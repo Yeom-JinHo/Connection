@@ -124,7 +124,11 @@ function Header() {
             <Menu>
               <MenuButton>
                 <Image
-                  src={auth.information?.imageUrl}
+                  src={
+                    auth.information?.imageUrl
+                      ? auth.information?.imageUrl
+                      : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYS4ItI44R4hI66qjzhinqY5-Miyb30PelnQ&usqp=CAU" // 이미지 null일때 default img
+                  }
                   borderRadius="50px"
                   minW="35px"
                   w="35px"

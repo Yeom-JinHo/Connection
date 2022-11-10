@@ -50,8 +50,9 @@ function Main() {
         flexDir="column"
         position="relative"
         h="calc(100vh - 68px)"
-        justifyContent="space-around"
-        minH="300px"
+        justifyContent="space-between"
+        minH="550px"
+        py="30px"
       >
         <Flex w="100%" maxW="800px">
           <Center flexDir="column" flex="1" alignItems="">
@@ -261,7 +262,7 @@ function Main() {
           </Text>
         </Center>
       </Center>
-      <Box as="footer" h="300px" display="flex">
+      <Box as="footer" h="200px" display="flex">
         <Box maxW="800px" w="100%" m="0 auto">
           <Box
             display="flex"
