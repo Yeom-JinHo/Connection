@@ -40,6 +40,7 @@ function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
   const [code, setCode] = useState("");
   const AllModal = useDisclosure();
+  const TestModal = useDisclosure();
   const location = useLocation();
   const auth = useAppSelector(state => state.auth) as InitialStateType;
   const dispatch = useAppDispatch();
@@ -56,6 +57,7 @@ function Header() {
   }, []);
 
   useEffect(() => {
+    TestModal.onOpen();
     // 확장 프로그램 확인
     checkExtension(
       () => dispatch(updateExtension(true)),
@@ -172,6 +174,11 @@ function Header() {
                 <ExtensionModal onClose={AllModal.onClose} />
               ) : null
             }
+          />
+          <AuthModal
+            isOpen={TestModal.isOpen}
+            onClose={TestModal.onClose}
+            content={<BackjoonModal code={code} />}
           />
         </Center>
       </Center>
