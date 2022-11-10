@@ -51,30 +51,41 @@ function MemberTable({ members, onBanBtnClick, isBoss }: MemberTableProps) {
               </Text>
             )}
           </Flex>
-          <ReactApexChart
-            type="bar"
-            height={220}
-            width="100%"
-            options={chartOption}
-            series={[
-              {
-                name: "참여율",
-                data: [
-                  ...member.series.map(data => ({
-                    x: data.date.split("-")[1],
-                    y: Math.round((100 * data.count) / data.total),
-                    goals: [
-                      {
-                        name: "평균",
-                        value: (100 * data.avg) / data.total,
-                        strokeColor: "#775DD0"
-                      }
-                    ]
-                  }))
-                ]
-              }
-            ]}
-          />
+          {member.series.length === 0 ? (
+            <Flex
+              w="100%"
+              h="235px"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <Text>데이터가 없습니다.</Text>
+            </Flex>
+          ) : (
+            <ReactApexChart
+              type="bar"
+              height={220}
+              width="100%"
+              options={chartOption}
+              series={[
+                {
+                  name: "참여율",
+                  data: [
+                    ...member.series.map(data => ({
+                      x: data.date.split("-")[1],
+                      y: Math.round((100 * data.count) / data.total),
+                      goals: [
+                        {
+                          name: "평균",
+                          value: (100 * data.avg) / data.total,
+                          strokeColor: "#775DD0"
+                        }
+                      ]
+                    }))
+                  ]
+                }
+              ]}
+            />
+          )}
         </Box>
       ))}
     </Grid>
