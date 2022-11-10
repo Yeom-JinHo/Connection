@@ -131,9 +131,16 @@ app.post("/problem/submit", (req, res) => {
       }
     });
 
+    const studyInfo = getStudyInfo(studyId);
+    studyInfo?.users.forEach((user) => {
+      if (user.name === name) {
+        user.problem = cnt;
+      }
+    });
+
     const { problemList, isAllSol } = getSolvingInfo(studyId, userId);
     io.to(studyId).emit("solvedByExtension", userId, problemList, isAllSol);
-    const studyInfo = getStudyInfo(studyId);
+
     if (isAllSol) {
       if (studyInfo?.startTime) {
         studyInfo.users.forEach((user) => {
@@ -143,14 +150,7 @@ app.post("/problem/submit", (req, res) => {
         });
         io.to(studyId).emit("newResult", [...studyInfo.users]);
       }
-    } else {
-      studyInfo?.users.forEach((user) => {
-        if (user.name === name) {
-          user.problem = cnt;
-        }
-      });
     }
-    // }
   }
   fetch(`https://k7c202.p.ssafy.io/api/problem/submit/study`, {
     method: "POST",
