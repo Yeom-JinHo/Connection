@@ -38,7 +38,6 @@ function useToast() {
       description
     });
     toastQueue.push(newToastId);
-    console.log(toastQueue);
   }
 
   return addToast;
