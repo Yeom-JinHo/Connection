@@ -11,6 +11,8 @@ import JoinAccordionItem from "../components/study/JoinAccordionItem";
 import { updateUserInfo } from "../store/ducks/auth/authSlice";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 
+import Wave from "../asset/img/wave.png";
+
 type ErrorMsgType =
   | ""
   | "유효하지 않은 스터디 코드입니다."
@@ -95,8 +97,8 @@ function StudyJoin() {
     }
   };
   return (
-    <Center w="1200px" m="auto">
-      <Accordion w="640px" mt="160px" allowToggle defaultIndex={[0]}>
+    <Center w="1200px" h="calc(100vh - 68px)" m="auto" pb="400px">
+      <Accordion w="640px" mt="160px" allowToggle defaultIndex={[0]} zIndex={2}>
         <JoinAccordionItem
           title="스터디 참가하기"
           panelTitle="스터디 코드"
@@ -123,6 +125,15 @@ function StudyJoin() {
         studyName={studyName}
         isOpen={createChkModalIsOpen}
         onClose={createChkModalOnClose}
+      />
+      <Image
+        src={Wave}
+        alt="wave"
+        position="absolute"
+        bottom="0px"
+        zIndex="-1"
+        w="100%"
+        h="20%"
       />
     </Center>
   );
