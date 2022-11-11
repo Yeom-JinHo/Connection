@@ -18,7 +18,6 @@ type RankingProps = {
 function Ranking() {
   const id = useAppSelector(state => state.auth.information?.studyId);
   const [ranks, setRanks] = useState<RankingProps[]>([]);
-  const [loading, setLoading] = useState(false);
   const myStudyRef = useRef<null | HTMLDivElement>(null);
   const parentRef = useRef<null | HTMLDivElement>(null);
 
@@ -27,33 +26,21 @@ function Ranking() {
       data: { data }
     } = await getRank();
     setRanks(data);
-    setLoading(true);
   };
-  // useEffect(() => {
-  // }, []);
 
   useEffect(() => {
-    (async () => {
-      await getRanking();
-      console.log(myStudyRef);
-      if (myStudyRef.current && parentRef.current) {
-        const { scrollHeight } = myStudyRef.current;
-        const test = myStudyRef.current.offsetTop;
-        // 가운데로 포커싱하기 위해 빼주는 값
-        const centerHeight =
-          parentRef.current.clientHeight / 2 -
-          myStudyRef.current.clientHeight / 2;
-        // console.log(scrollHeight);
-        // console.log(test);
-        // console.log(centerHeight);
-        // console.log(test - centerHeight);
-        parentRef.current.scrollTo({
-          top: scrollHeight,
-          behavior: "smooth"
-        });
-      }
-    })();
+    getRanking();
   }, []);
+
+  useEffect(() => {
+    if (myStudyRef.current && parentRef.current) {
+      const { scrollHeight } = myStudyRef.current;
+      parentRef.current.scrollTo({
+        top: scrollHeight,
+        behavior: "smooth"
+      });
+    }
+  }, [ranks]);
 
   return (
     <Box
