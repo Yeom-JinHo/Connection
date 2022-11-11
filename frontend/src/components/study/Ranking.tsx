@@ -26,7 +26,7 @@ function Ranking() {
     const {
       data: { data }
     } = await getRank();
-    console.log(data);
+    // console.log(data);
     setRanks(data);
   };
 
