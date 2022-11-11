@@ -22,7 +22,7 @@ function AuthModal({ isOpen, onClose, content }: AuthModalProps) {
       isOpen={isOpen}
       onClose={onClose}
       closeOnOverlayClick={false}
-      onOverlayClick={() => overlayClick()}
+      onOverlayClick={overlayClick}
       closeOnEsc={false}
     >
       <ModalOverlay />

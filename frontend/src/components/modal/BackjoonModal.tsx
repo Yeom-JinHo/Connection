@@ -153,7 +153,7 @@ function BackjoonModal({ code }: BackjoonModalProps) {
                 _dark={{ color: "white" }}
                 boxSize="15px"
                 mx="3px"
-                onClick={() => onCopyEvent()}
+                onClick={onCopyEvent}
                 cursor="pointer"
               />
             </Flex>

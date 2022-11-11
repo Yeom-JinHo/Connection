@@ -140,7 +140,7 @@ function Header() {
               </MenuButton>
               <MenuList _dark={{ bg: "#121212" }}>
                 <MenuGroup title={`${auth.information?.name}님 반가워요😀`}>
-                  <MenuItem onClick={() => logout()}>로그아웃</MenuItem>
+                  <MenuItem onClick={logout}>로그아웃</MenuItem>
                 </MenuGroup>
               </MenuList>
             </Menu>
