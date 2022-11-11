@@ -43,7 +43,7 @@ function Challenge() {
       endDate={new Date(info?.endDate)}
       legendCellSize={12}
       legendRender={props => {
-        return <rect {...props} rx={5} pointerEvents="none" />;
+        return <rect {...props} rx={3} pointerEvents="none" />;
       }}
       monthLabels={[
         "1월",
