@@ -52,6 +52,7 @@ function Header() {
   ];
 
   useEffect(() => {
+    // onOpen();
     setCode(v4().substring(0, 6).toUpperCase());
   }, []);
 
@@ -165,6 +166,7 @@ function Header() {
             onClose={onClose}
             content={
               !auth.information.backjoonId ? (
+                // true ? (
                 <BackjoonModal code={code} />
               ) : !auth.information.ismember ? (
                 <GithubModal />
