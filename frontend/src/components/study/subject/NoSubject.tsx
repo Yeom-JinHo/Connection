@@ -7,6 +7,10 @@ type NoSubjectProps = {
 };
 
 function NoSubject({ studyRole }: NoSubjectProps) {
+  useEffect(() => {
+    console.log("no");
+  }, []);
+
   return (
     <Center w="100%" flex="none">
       {studyRole === "LEADER" ? (

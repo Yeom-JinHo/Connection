@@ -35,7 +35,7 @@ function SubjectkView() {
     const {
       data: { inProgress, subjects, leader }
     } = await getSubject();
-    // console.log(inProgress);
+    console.log(inProgress);
     // console.log(subjects);
     dispatch(updateUserInfo({ studyLeader: leader }));
     setIsProgress(inProgress);
@@ -47,24 +47,30 @@ function SubjectkView() {
     getSubjectApi();
   }, []);
 
-  if (len !== 0) {
-    return (
-      <SliderLayout total={len}>
-        {subjectList.map(subject => {
-          return (
-            <Subject
-              problems={subject.problems}
-              users={subject.users}
-              deadline={subject.deadline}
-              key={v4()}
-            />
-          );
-        })}
-        {!isProgress && <NoSubject studyRole={studyRole} />}
-      </SliderLayout>
-    );
-  }
-  return null;
+  useEffect(() => {
+    console.log(subjectList);
+    console.log(len);
+  }, [len, subjectList]);
+
+  useEffect(() => {
+    console.log(isProgress);
+  }, [isProgress]);
+
+  return (
+    <SliderLayout total={len}>
+      {subjectList.map(subject => {
+        return (
+          <Subject
+            problems={subject.problems}
+            users={subject.users}
+            deadline={subject.deadline}
+            key={v4()}
+          />
+        );
+      })}
+      {!isProgress && <NoSubject studyRole={studyRole} />}
+    </SliderLayout>
+  );
 }
 
 export default SubjectkView;
