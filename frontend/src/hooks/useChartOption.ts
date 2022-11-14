@@ -4,6 +4,7 @@ import { useMemo } from "react";
 
 function useChartOption() {
   const { colorMode } = useColorMode();
+
   const CHART_OPTIONS = useMemo(
     (): ApexOptions => ({
       chart: {
@@ -20,7 +21,8 @@ function useChartOption() {
             enabled: true,
             speed: 350
           }
-        }
+        },
+        background: "transparent"
       },
       colors: ["#88BFFF"],
       plotOptions: {
@@ -59,7 +61,9 @@ function useChartOption() {
           colors: [`${colorMode === "light" ? "#000" : "#fff"}`]
         }
       },
-      theme: { mode: colorMode === "light" ? "light" : "dark" }
+      theme: {
+        mode: colorMode === "light" ? "light" : "dark"
+      }
     }),
     [colorMode]
   );
