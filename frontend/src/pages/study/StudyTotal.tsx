@@ -103,21 +103,22 @@ function StudyTotal() {
             스터디 코드 : {info.studyCode}
             <CopyIcon mx="3px" onClick={() => onCopyEvent()} cursor="pointer" />
           </Text>
+          <Flex h="35px">
+            {users &&
+              users.map(user => (
+                <Tooltip key={v4()} label={user.name}>
+                  <Image
+                    m="5px 5px 0 0"
+                    src={user.imageUrl}
+                    borderRadius="50px"
+                    minW="30px"
+                    w="30px"
+                  />
+                </Tooltip>
+              ))}
+          </Flex>
         </Flex>
-        <Flex>
-          {users &&
-            users.map(user => (
-              <Tooltip key={v4()} label={user.name}>
-                <Image
-                  m="5px 5px 0 0"
-                  src={user.imageUrl}
-                  borderRadius="50px"
-                  minW="30px"
-                  w="30px"
-                />
-              </Tooltip>
-            ))}
-        </Flex>
+
         <Flex dir="row">
           <Link as={ReactLink} to="/study/collection">
             <Button bg="gra" mr="20px" _hover={{}}>
