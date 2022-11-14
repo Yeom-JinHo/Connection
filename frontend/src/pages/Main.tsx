@@ -54,8 +54,8 @@ function Main() {
         minH="550px"
         py="30px"
       >
-        <Flex>
-          <Center flexDir="column" flex="1" alignItems="">
+        <Flex h="60%">
+          <Center flexDir="column" alignItems="">
             <Box fontSize="32px" fontWeight="bold" flexDir="column" my="50px">
               <Text>
                 <Text as="span" color="main">
@@ -85,9 +85,9 @@ function Main() {
               시작하기
             </Button>
           </Center>
-          <Box flex="1">
+          <Flex alignItems="center">
             <Image src={MainImg} alt="main" w="430px" />
-          </Box>
+          </Flex>
         </Flex>
         <Center flexDir="column">
           <Center mb="10px">
@@ -273,12 +273,8 @@ function Main() {
               fontSize="12px"
             >
               <Text>connection by 우건공주와 다섯난쟁이</Text>
-              <Text color="dep_1" mb="60px">
-                김우건 김윤민 김준우 염진호 이기영 최진합
-              </Text>
-              <Text color="dep_1" mb="10px">
-                © 2022 connection All Rights Reserved
-              </Text>
+              <Text mb="60px">김우건 김윤민 김준우 염진호 이기영 최진합</Text>
+              <Text mb="10px">© 2022 connection All Rights Reserved</Text>
             </Box>
           </Box>
         </Box>
