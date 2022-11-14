@@ -79,6 +79,7 @@ function Main() {
             <Button
               bg="gra"
               width="200px"
+              minH="40px"
               _hover={{}}
               _active={{}}
               onClick={() => navigate("/recommend")}
