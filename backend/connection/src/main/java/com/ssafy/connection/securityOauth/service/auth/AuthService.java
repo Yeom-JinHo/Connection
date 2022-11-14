@@ -158,10 +158,13 @@ public class AuthService {
                     studyService.deleteStudy(user.get().getUserId()); // 스터디 관련 삭제(스터디, 문제집, 과제, 스터디원)
                 }
                 else {
-                    studyService.updateStudyReadme(StudyReadmeDto.builder()
-                            .studyId(connStudy.get().getStudy().getStudyId())
-                            .msg(user.get().getGithubId() + "has quit <connection/>")
-                            .build());
+                    try {
+                        studyService.updateStudyReadme(StudyReadmeDto.builder()
+                                .studyId(connStudy.get().getStudy().getStudyId())
+                                .msg(user.get().getGithubId() + "has quit <connection/>")
+                                .build());
+                    }
+                    catch (Exception e){}
                     connStudyRepository.delete(connStudy.get()); // 스터디원이면 스터디원 정보 삭제
                 }
             }
