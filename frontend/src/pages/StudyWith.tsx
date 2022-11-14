@@ -1,4 +1,4 @@
-import { Center, CircularProgress, Text } from "@chakra-ui/react";
+import { Center, CircularProgress, Text, Image } from "@chakra-ui/react";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
@@ -18,6 +18,7 @@ import {
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { reset } from "../store/ducks/selectedProblem/selectedProblemSlice";
 import WaitingView from "../components/studyWith/WaitingView";
+import Wave from "../asset/img/wave.png";
 
 function StudyWith() {
   const [socket] = useState<Socket<ServerToClientEvents, ClientToServerEvents>>(
@@ -51,7 +52,6 @@ function StudyWith() {
     []
   );
   const navigate = useNavigate();
-
   const bossView: React.FunctionComponentElement<undefined>[] = [
     // <NumberSetView
     //   key={PageViewState.NumberSet}
@@ -152,12 +152,21 @@ function StudyWith() {
           </Text>
         </Center>
       ) : (
-        <Center>
+        <Center zIndex={4}>
           {bossView.map((view, ind) => {
             return ind === step && view;
           })}
         </Center>
       )}
+      <Image
+        src={Wave}
+        alt="wave"
+        position="fixed"
+        zIndex={3}
+        bottom="0px"
+        w="100%"
+        h="20%"
+      />
     </Center>
   );
 }

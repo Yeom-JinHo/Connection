@@ -15,6 +15,11 @@ export const getUser = async () => {
   return res;
 };
 
+export const quitUser = async () => {
+  const res = await api.delete("/auth/");
+  return res;
+};
+
 // 백준 연동 확인
 export const postBJConfirm = async (payload: BjProps) => {
   const { data } = await api.post(`/auth/baekjoon`, payload);
@@ -30,8 +35,8 @@ export const getUserProblems = async (id: string, page: number) => {
 };
 
 // 백준에서 푼 문제 보내기
-export const postBJSolved = async (payload: SolvedProps) => {
-  const { data } = await api.post(`/problem/register`, payload);
+export const postBJSolved = async (id: string, payload: SolvedProps) => {
+  const { data } = await api.post(`/problem/register/${id}`, payload);
   return data;
 };
 
