@@ -165,6 +165,11 @@ public class AuthService {
                                 .build());
                     }
                     catch (Exception e){}
+
+                    Study study = connStudy.get().getStudy();
+                    study.setStudyPersonnel(study.getStudyPersonnel()-1);
+                    studyRepository.save(study);
+
                     connStudyRepository.delete(connStudy.get()); // 스터디원이면 스터디원 정보 삭제
                 }
             }
