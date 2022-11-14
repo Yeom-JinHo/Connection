@@ -66,15 +66,31 @@ function MemberTable({ members, onBanBtnClick, isBoss }: MemberTableProps) {
             options={chartOption}
             series={[
               {
-                name: "참여율",
+                name: "푼 과제",
                 data: [
                   ...member.series.map(data => ({
                     x: `${data.date.split("-")[1]}월`,
-                    y: Math.round((100 * data.count) / data.total),
+                    y: data.subjectCnt,
                     goals: [
                       {
-                        name: "평균",
-                        value: (100 * data.avg) / data.total,
+                        name: "스터디 평균",
+                        value: data.subjectAvgCnt,
+                        strokeColor: "#775DD0"
+                      }
+                    ]
+                  }))
+                ]
+              },
+              {
+                name: "푼 문제",
+                data: [
+                  ...member.series.map(data => ({
+                    x: `${data.date.split("-")[1]}월`,
+                    y: data.problemCnt,
+                    goals: [
+                      {
+                        name: "스터디 평균",
+                        value: data.problemAvgCnt,
                         strokeColor: "#775DD0"
                       }
                     ]

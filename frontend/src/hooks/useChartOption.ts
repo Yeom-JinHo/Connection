@@ -24,7 +24,7 @@ function useChartOption() {
         },
         background: "transparent"
       },
-      colors: ["#88BFFF"],
+      colors: ["#88BFFF", "#88bbBf"],
       plotOptions: {
         bar: {
           columnWidth: "60%"
@@ -47,15 +47,14 @@ function useChartOption() {
           style: {
             colors: [`${colorMode === "light" ? "#000" : "#fff"}`]
           }
-        },
-        max: 100
+        }
       },
       legend: {
         show: true,
         showForSingleSeries: true,
-        customLegendItems: ["참여율", "평균"],
+        customLegendItems: ["푼 문제", "푼 과제", "스터디 평균"],
         markers: {
-          fillColors: ["#88BFFF", "#775DD0"]
+          fillColors: ["#88BFFF", "#88bbBf", "#775DD0"]
         },
         labels: {
           colors: [`${colorMode === "light" ? "#000" : "#fff"}`]
