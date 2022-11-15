@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 import useToast from "hooks/useToast";
 import { InitialStateType } from "../../store/ducks/auth/auth.type";
@@ -13,8 +13,9 @@ export type PrivateRouteProps = {
 function PrivateRoute({ auth, outlet, study }: PrivateRouteProps) {
   const { check, extension, information } = auth;
   const toast = useToast();
+  const location = useLocation();
 
-  // 로그인x, 백준연동x, 깃허브 ismember x, extension x 인 경우 메인으로
+  // 로그인x, 백준연동x, 깃허브 ismember x, extension x
   if (
     !check ||
     !information.backjoonId ||
