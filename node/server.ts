@@ -162,20 +162,22 @@ app.post("/problem/submit", (req, res) => {
         io.to(studyId).emit("newResult", [...studyInfo.users]);
       }
     }
+    if (problems.includes(problemNo)) {
+      fetch(`https://k7c202.p.ssafy.io/api/problem/submit/study`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          submitNo,
+          userId,
+          problemNo: problemId,
+          code,
+          lang,
+        }),
+      }).then(() => console.log("백에 전송 성공"));
+    }
   }
-  fetch(`https://k7c202.p.ssafy.io/api/problem/submit/study`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      submitNo,
-      userId,
-      problemNo: problemId,
-      code,
-      lang,
-    }),
-  }).then(() => console.log("백에 전송 성공"));
 
   res.sendStatus(200);
 });
