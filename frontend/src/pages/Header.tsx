@@ -149,7 +149,11 @@ function Header() {
                 }
                 mr="50px"
                 key={v4()}
-                color={location.pathname === menu.link ? "main" : ""}
+                color={
+                  `/${location.pathname.split("/")[1]}` === menu.link
+                    ? "main"
+                    : ""
+                }
                 _hover={{}}
                 fontWeight="bold"
                 fontSize={18}
