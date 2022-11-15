@@ -14,15 +14,7 @@ interface ProblemListProps {
 function ProblemList({ problemList }: ProblemListProps) {
   const auth = useAppSelector(state => state.auth);
   const [myWorkbook, setMyWorkbook] = useState<Problem[]>([]);
-  const [btnTypes, setBtnTypes] = useState(
-    problemList.map(problem =>
-      myWorkbook.findIndex(
-        p => p.problemInfo.problemId === problem.problemInfo.problemId
-      ) >= 0
-        ? "delete"
-        : "add"
-    )
-  );
+  const [btnTypes, setBtnTypes] = useState<("delete" | "add")[]>([]);
 
   const toast = useToast();
 
@@ -58,6 +50,17 @@ function ProblemList({ problemList }: ProblemListProps) {
     };
     fetch();
   }, [problemList]);
+  useEffect(() => {
+    setBtnTypes(
+      problemList.map(problem =>
+        myWorkbook.findIndex(
+          p => p.problemInfo.problemId === problem.problemInfo.problemId
+        ) >= 0
+          ? "delete"
+          : "add"
+      )
+    );
+  }, [myWorkbook]);
 
   return (
     <Grid templateColumns="repeat(2,1fr)" gap="32px">
