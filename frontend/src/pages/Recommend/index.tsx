@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { Flex, keyframes, Spinner } from "@chakra-ui/react";
+import Filter from "components/recommend/Filter";
 import StudyLayout from "../../components/layout/StudyLayout";
 import SideComponent, {
   RECOMMEND_TAPS
@@ -59,6 +60,7 @@ function Recommend() {
       {RECOMMEND_TAPS[selectedTap].category === "weak" && (
         <Tooltip recommends={recommends} />
       )}
+      {RECOMMEND_TAPS[selectedTap].category === "popular" && <Filter />}
       {recommends ? (
         <ProblemList
           problemList={
