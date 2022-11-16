@@ -1,5 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Flex, Link, Text, Tooltip, Image } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Link,
+  Text,
+  Tooltip,
+  Image,
+  Center
+} from "@chakra-ui/react";
 import { v4 } from "uuid";
 import { getRank } from "../../api/study";
 import { useAppSelector } from "../../store/hooks";
@@ -86,19 +94,20 @@ function Ranking() {
                 p="8px 16px"
                 m="3px 0"
                 w="230px"
+                h="46px"
                 _dark={id === study.studyId ? {} : { bg: "dep_3" }}
               >
                 {study.ranking <= 3 ? (
                   <Image src={getMedalColor(study.ranking)} w="30px" mr="5px" />
                 ) : (
-                  <Text w="40px" color="main">
+                  <Center w="30px" h="30px" color="main" mr="5px">
                     {study.ranking}
-                  </Text>
+                  </Center>
                 )}
                 <Flex
-                  w="100%"
                   justifyContent="space-between"
                   alignItems="center"
+                  w="80%"
                 >
                   <Text
                     textOverflow="ellipsis"
