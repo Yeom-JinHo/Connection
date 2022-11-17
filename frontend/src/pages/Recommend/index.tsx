@@ -17,10 +17,10 @@ function Recommend() {
   const [pending, setPending] = useState(false);
   const [selectedTap, setSelectedTap] = useState(0);
 
-  const getAndSetRecommend = async () => {
+  const getAndSetRecommend = async (level?: string, tag?: string) => {
     if (pending) return;
     setPending(true);
-    const res1 = await getRecommend();
+    const res1 = await getRecommend(level, tag);
     setRecommends(res1.data);
     setPending(false);
   };
@@ -60,7 +60,9 @@ function Recommend() {
       {RECOMMEND_TAPS[selectedTap].category === "weak" && (
         <Tooltip recommends={recommends} />
       )}
-      {RECOMMEND_TAPS[selectedTap].category === "popular" && <Filter />}
+      {RECOMMEND_TAPS[selectedTap].category === "popular" && (
+        <Filter fetch={getAndSetRecommend} />
+      )}
       {recommends ? (
         <ProblemList
           problemList={

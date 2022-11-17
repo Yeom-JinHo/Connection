@@ -22,8 +22,10 @@ const animation = keyframes`
     transform: translateY(0%);
 }
 `;
-
-function Filter() {
+interface Iprops {
+  fetch: (level?: string, tag?: string) => Promise<void>;
+}
+function Filter({ fetch }: Iprops) {
   const [open, setOpen] = useState(false);
   const [selectedTag, setSelectedTag] = useState("");
   const [selectedLevel, setSelectedLevel] = useState("");
@@ -53,7 +55,6 @@ function Filter() {
       else openFilter();
     }
   };
-  console.log(selectedLevel);
   return (
     <Box>
       <Flex
@@ -101,7 +102,9 @@ function Filter() {
                 <Select
                   placeholder="상관없음"
                   borderColor="dep_3"
+                  value={selectedTag}
                   onChange={e => setSelectedTag(e.target.value)}
+                  w="160px"
                 >
                   {TAG.map(({ key, ko, text }) => (
                     <option key={key} value={ko}>
@@ -119,6 +122,7 @@ function Filter() {
                   borderColor="dep_3"
                   value={selectedLevel}
                   onChange={e => setSelectedLevel(e.target.value)}
+                  w="160px"
                 >
                   {Object.entries(DIFFICULTY)
                     .filter(([idx, text]) => idx !== "0")
@@ -134,7 +138,14 @@ function Filter() {
               <Button onClick={closeFilter} bg="dep_3">
                 닫기
               </Button>
-              <Button bg="dep_3">적용</Button>
+              <Button
+                bg="dep_3"
+                onClick={() => {
+                  fetch(selectedLevel, selectedTag);
+                }}
+              >
+                적용
+              </Button>
             </Flex>
           </Flex>
         )}
