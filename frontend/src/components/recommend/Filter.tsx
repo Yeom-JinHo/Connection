@@ -10,6 +10,9 @@ import {
 } from "@chakra-ui/react";
 import React, { useState, useRef } from "react";
 
+import DIFFICULTY from "utils/DIFFICULTY";
+import TAG from "utils/TAG";
+
 const animation = keyframes`
 0%{
   transform: translateY(-10%);
@@ -22,6 +25,8 @@ const animation = keyframes`
 
 function Filter() {
   const [open, setOpen] = useState(false);
+  const [selectedTag, setSelectedTag] = useState("");
+  const [selectedLevel, setSelectedLevel] = useState("");
   const ref = useRef<HTMLDivElement>(null);
   const closeFilter = () => {
     ref.current?.animate(
@@ -30,13 +35,13 @@ function Filter() {
         { transform: "translateY(-10%)", opacity: 0 }
       ],
       {
-        duration: 500,
+        duration: 300,
         easing: "ease-out"
       }
     );
     setTimeout(() => {
       setOpen(prev => false);
-    }, 500);
+    }, 300);
   };
   const openFilter = () => {
     setOpen(true);
@@ -48,6 +53,7 @@ function Filter() {
       else openFilter();
     }
   };
+  console.log(selectedLevel);
   return (
     <Box>
       <Flex
@@ -86,22 +92,45 @@ function Filter() {
             zIndex="1"
             cursor="default"
             shadow="2px 4px 4px rgba(0, 0, 0, 0.25)"
-            animation={`${animation} 1s`}
+            animation={`${animation} .5s`}
             ref={ref}
           >
-            <Flex alignItems="center" justifyContent="space-around">
+            <Flex alignItems="center" justifyContent="space-between">
               <Text>태그</Text>
               <Stack>
-                <Select placeholder="상관없음" borderColor="dep_3" />
+                <Select
+                  placeholder="상관없음"
+                  borderColor="dep_3"
+                  onChange={e => setSelectedTag(e.target.value)}
+                >
+                  {TAG.map(({ key, ko, text }) => (
+                    <option key={key} value={ko}>
+                      {text}
+                    </option>
+                  ))}
+                </Select>
               </Stack>
             </Flex>
-            <Flex alignItems="center" justifyContent="space-around">
+            <Flex alignItems="center" justifyContent="space-between">
               <Text>레벨</Text>
               <Stack>
-                <Select placeholder="상관없음" borderColor="dep_3" />
+                <Select
+                  placeholder="상관없음"
+                  borderColor="dep_3"
+                  value={selectedLevel}
+                  onChange={e => setSelectedLevel(e.target.value)}
+                >
+                  {Object.entries(DIFFICULTY)
+                    .filter(([idx, text]) => idx !== "0")
+                    .map(([idx, text]) => (
+                      <option key={idx} value={idx}>
+                        {text}
+                      </option>
+                    ))}
+                </Select>
               </Stack>
             </Flex>
-            <Flex justifyContent="space-around">
+            <Flex justifyContent="flex-end" gap={4}>
               <Button onClick={closeFilter} bg="dep_3">
                 닫기
               </Button>
