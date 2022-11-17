@@ -53,7 +53,7 @@ function Recommend() {
       description={RECOMMEND_TAPS[selectedTap].msg}
     >
       <Style.StyledIcon
-        onClick={getAndSetRecommend}
+        onClick={() => getAndSetRecommend()}
         animation={pending ? `${animation} ease-in-out infinite 1s` : "none"}
         _hover={{ transform: pending ? "none" : "rotate(90deg)" }}
       />
