@@ -94,7 +94,6 @@ function Collection() {
       <SearchModal
         isOpen={isOpen}
         onClose={onClose}
-        maxCnt={10}
         workbook={workbook}
         deleteProblem={deleteProblem}
         addProblem={addProblem}
