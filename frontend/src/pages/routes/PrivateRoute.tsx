@@ -1,18 +1,47 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Navigate, useLocation } from "react-router-dom";
+
+import useToast from "hooks/useToast";
+import { InitialStateType } from "../../store/ducks/auth/auth.type";
 
 export type PrivateRouteProps = {
-  isAuth: boolean;
-  isBJ: boolean;
+  auth: InitialStateType;
   outlet: JSX.Element;
+  study?: boolean;
 };
 
-function PrivateRoute({ isAuth, isBJ, outlet }: PrivateRouteProps) {
-  // 로그인시 true, 백준 연동시 true
-  if (isAuth && isBJ) {
-    return outlet;
+function PrivateRoute({ auth, outlet, study }: PrivateRouteProps) {
+  const { check, extension, information } = auth;
+  const toast = useToast();
+  const location = useLocation();
+
+  // 로그인x, 백준연동x, 깃허브 ismember x, extension x
+  if (
+    !check ||
+    !information.backjoonId ||
+    !information.ismember ||
+    !extension
+  ) {
+    if (!check) {
+      toast({ title: "로그인 해주세요!", position: "top", duration: 1000 });
+      window.location.href = `${process.env.REACT_APP_API_URL}/oauth2/authorize/github?redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URL}`;
+    }
+    return <Navigate to="/" />;
   }
-  // mode 비로그인인 경우 0 , 백준 미 등록인 경우 1
-  return <Navigate to="/" state={{ mode: !isAuth ? 0 : 1 }} />;
+  if (study && !information.studyName) {
+    toast({
+      title: "스터디가 있어야  사용할 수 있는 서비스 입니다.",
+      position: "top",
+      duration: 1000
+    });
+    return <Navigate to="/study/join" />;
+  }
+
+  return outlet;
 }
+
+PrivateRoute.defaultProps = {
+  study: true
+};
+
 export default PrivateRoute;

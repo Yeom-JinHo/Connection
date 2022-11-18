@@ -8,13 +8,15 @@ export interface UserInfoType {
   tier: number;
   role: string;
   studyId: number;
-  studyRole: string;
+  studyRole: "USER" | "LEADER" | "MEMBER";
   studyName: string;
   studyRepository: string;
   studyCode: string;
+  studyLeader: string;
   ismember: boolean;
 }
 export interface InitialStateType {
   check: boolean;
+  extension: boolean;
   information: UserInfoType;
 }

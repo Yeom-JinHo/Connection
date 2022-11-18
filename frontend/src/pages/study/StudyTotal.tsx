@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link as ReactLink, Navigate } from "react-router-dom";
-import { CopyIcon } from "@chakra-ui/icons";
+import { Link as ReactLink, useNavigate } from "react-router-dom";
+import { CopyIcon, QuestionIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -10,26 +10,57 @@ import {
   Image,
   Link,
   Text,
-  Toast,
+  Tooltip,
   useClipboard,
-  useColorMode,
-  useToast
+  useColorMode
 } from "@chakra-ui/react";
+
+import useToast from "hooks/useToast";
+import { getMemberList } from "api/study";
+import { v4 } from "uuid";
+import { getUserInfo } from "store/ducks/auth/authThunk";
+import axios from "axios";
 import TotalLayout from "../../components/layout/TotalLayout";
-import Homework from "../../components/study/Homework";
 import Ranking from "../../components/study/Ranking";
 import GithubL from "../../asset/img/githubL.svg";
 import GithubD from "../../asset/img/githubD.svg";
 import MyActivity from "../../components/study/MyActivity";
 import Challenge from "../../components/study/Challenge";
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { UserInfoType } from "../../store/ducks/auth/auth.type";
+import SubjectView from "../../components/study/subject/SubjectView";
+
+export type UserListProps = Pick<
+  UserInfoType,
+  "name" | "userId" | "imageUrl" | "githubId"
+>;
+
+function RankInfo() {
+  return (
+    <Tooltip
+      label={
+        <div>
+          과제점수 : 스터디장이 등록한 과제 문제
+          <br />
+          문제풀이 점수 : 스터디원들과 같이 문제 풀이
+          <br />
+          보너스 점수 : 꾸준함에 따른 점수 <br />
+        </div>
+      }
+    >
+      <QuestionIcon w={6} h={6} cursor="help" />
+    </Tooltip>
+  );
+}
 
 function StudyTotal() {
+  const [users, setUsers] = useState<UserListProps[]>([]);
   const { colorMode } = useColorMode();
   const info: UserInfoType = useAppSelector(state => state.auth.information);
   const { onCopy } = useClipboard(info.studyCode);
   const toast = useToast();
+  const navigator = useNavigate();
+  const dispatch = useAppDispatch();
 
   function onCopyEvent() {
     onCopy();
@@ -41,6 +72,29 @@ function StudyTotal() {
     });
   }
 
+  const getUserList = async () => {
+    const res = await getMemberList();
+    if (axios.isAxiosError(res)) {
+      if (res.response?.status === 409) {
+        toast({
+          title: "스터디에서 추방당했습니다.",
+          status: "error",
+          duration: 1000,
+          position: "top",
+          isClosable: true
+        });
+        navigator("/");
+        dispatch(getUserInfo());
+      }
+    } else {
+      setUsers(res.data);
+    }
+  };
+
+  useEffect(() => {
+    getUserList();
+  }, []);
+
   return (
     <Box
       bg="dep_1"
@@ -50,12 +104,12 @@ function StudyTotal() {
       width="800px"
     >
       <Center
-        height="80px"
+        height="110px"
         justifyContent="space-between"
         borderBottom="1px solid #BFBFBF"
       >
         <Flex direction="column" ml="20px">
-          <Flex mb="5px">
+          <Flex mb="5px" alignItems="center">
             <Heading fontSize="20px" fontWeight="bold" mr="5px">
               {info.studyName}
             </Heading>
@@ -67,7 +121,22 @@ function StudyTotal() {
             스터디 코드 : {info.studyCode}
             <CopyIcon mx="3px" onClick={() => onCopyEvent()} cursor="pointer" />
           </Text>
+          <Flex h="35px">
+            {users &&
+              users.map(user => (
+                <Tooltip key={v4()} label={user.name}>
+                  <Image
+                    m="5px 5px 0 0"
+                    src={user.imageUrl}
+                    borderRadius="50px"
+                    minW="30px"
+                    w="30px"
+                  />
+                </Tooltip>
+              ))}
+          </Flex>
         </Flex>
+
         <Flex dir="row">
           <Link as={ReactLink} to="/study/collection">
             <Button bg="gra" mr="20px" _hover={{}}>
@@ -81,7 +150,7 @@ function StudyTotal() {
           </Link>
         </Flex>
       </Center>
-      <Box p="40px 20px">
+      <Box p="20px">
         <Flex>
           <TotalLayout
             title="챌린지"
@@ -92,12 +161,17 @@ function StudyTotal() {
           >
             <Challenge />
           </TotalLayout>
-          <TotalLayout title="랭킹" flex="2" height="200px">
+          <TotalLayout
+            title="랭킹"
+            flex="2"
+            height="200px"
+            RankInfo={<RankInfo />}
+          >
             <Ranking />
           </TotalLayout>
         </Flex>
-        <TotalLayout title="진행중인 과제" height="300px">
-          <Homework />
+        <TotalLayout title="과제 현황" height="300px">
+          <SubjectView />
         </TotalLayout>
         <TotalLayout title="내 풀이 현황" height="300px">
           <MyActivity />

@@ -1,5 +1,7 @@
 import React, { ReactNode, useEffect, useState } from "react";
-import { Box, Flex, Grid, useToast } from "@chakra-ui/react";
+import { Box, Flex, Grid } from "@chakra-ui/react";
+
+import useToast from "hooks/useToast";
 import ProblemCard from "../ProblemCard";
 import SelectedProblem from "./SelectedProblem";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
@@ -100,7 +102,13 @@ function ProblemSelect({ maxCnt }: ProblemSelectProps) {
           <Tab selected={selectedTab === 0} onClick={() => setSelectedTap(0)}>
             추천 문제
           </Tab>
-          <Tab selected={selectedTab === 1} onClick={() => setSelectedTap(1)}>
+          <Tab
+            selected={selectedTab === 1}
+            onClick={() => {
+              setSelectedTap(1);
+              dispatch(getMyWorkbook());
+            }}
+          >
             문제집
           </Tab>
         </Flex>
@@ -126,17 +134,11 @@ function ProblemSelect({ maxCnt }: ProblemSelectProps) {
                       toast({
                         title: `선택할 수 있는 최대 갯수는 ${maxCnt}개 입니다!`,
                         position: "top",
-                        isClosable: true
+                        isClosable: true,
+                        status: "error"
                       });
                       return;
                     }
-                    // setRecommends(prev => [
-                    //   ...prev.filter(
-                    //     p =>
-                    //       p.problemInfo.problemId !==
-                    //       problem.problemInfo.problemId
-                    //   )
-                    // ]);
                     dispatch(addProblem(problem));
                   }}
                 />
@@ -152,17 +154,11 @@ function ProblemSelect({ maxCnt }: ProblemSelectProps) {
                       toast({
                         title: `선택할 수 있는 최대 갯수는 ${maxCnt}개 입니다!`,
                         position: "top",
-                        isClosable: true
+                        isClosable: true,
+                        status: "error"
                       });
                       return;
                     }
-                    // setMyWorkbook(prev => [
-                    //   ...prev.filter(
-                    //     p =>
-                    //       p.problemInfo.problemId !==
-                    //       problem.problemInfo.problemId
-                    //   )
-                    // ]);
                     dispatch(addProblem(problem));
                   }}
                 />

@@ -9,7 +9,7 @@ import Recommend from "../Recommend";
 import StudyJoin from "../StudyJoin";
 import Header from "../Header";
 import StudyWith from "../StudyWith";
-import Collection from "../study/Collecetion";
+import Collection from "../study/Collection.tsx";
 import StudyTotal from "../study/StudyTotal";
 import Assignment from "../study/Assignment";
 import Management from "../study/Management";
@@ -22,8 +22,7 @@ export default function Routes() {
   const auth = useAppSelector(state => state.auth);
 
   const defaultPrivateRouteProps: Omit<PrivateRouteProps, "outlet"> = {
-    isAuth: auth.check,
-    isBJ: !!auth.information?.backjoonId
+    auth
   };
 
   return (
@@ -31,7 +30,7 @@ export default function Routes() {
       <Header />
       <ReactRouterRoutes>
         <Route path="/" element={<Main />} />
-        <Route path="/recommend" element={<Recommend />} />
+        {/* <Route path="/recommend" element={<Recommend />} />
         <Route path="/study">
           <Route index element={<StudyTotal />} />
           <Route path="join" element={<StudyJoin />} />
@@ -40,13 +39,14 @@ export default function Routes() {
           <Route path="management" element={<Management />} />
         </Route>
         <Route path="/study-with" element={<StudyWith />} />
-        <Route path="/oauth2/redirect" element={<Callback />} />
+        <Route path="/oauth2/redirect" element={<Callback />} /> */}
 
-        {/* <Route
+        <Route
           path="/recommend"
           element={
             <PrivateRoute
               {...defaultPrivateRouteProps}
+              study={false}
               outlet={<Recommend />}
             />
           }
@@ -61,10 +61,43 @@ export default function Routes() {
               />
             }
           />
-          <Route path="join" element={<StudyJoin />} />
-          <Route path="collection" element={<Collection />} />
-          <Route path="assignment" element={<Assignment />} />
-          <Route path="management" element={<Management />} />
+          <Route
+            path="join"
+            element={
+              <PrivateRoute
+                {...defaultPrivateRouteProps}
+                study={false}
+                outlet={<StudyJoin />}
+              />
+            }
+          />
+          <Route
+            path="collection"
+            element={
+              <PrivateRoute
+                {...defaultPrivateRouteProps}
+                outlet={<Collection />}
+              />
+            }
+          />
+          <Route
+            path="assignment"
+            element={
+              <PrivateRoute
+                {...defaultPrivateRouteProps}
+                outlet={<Assignment />}
+              />
+            }
+          />
+          <Route
+            path="management"
+            element={
+              <PrivateRoute
+                {...defaultPrivateRouteProps}
+                outlet={<Management />}
+              />
+            }
+          />
         </Route>
         <Route
           path="/study-with"
@@ -75,7 +108,7 @@ export default function Routes() {
             />
           }
         />
-        <Route path="/oauth2/redirect" element={<Callback />} /> */}
+        <Route path="/oauth2/redirect" element={<Callback />} />
       </ReactRouterRoutes>
     </BrowserRouter>
   );

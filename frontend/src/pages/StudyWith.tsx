@@ -1,23 +1,27 @@
-import { Center, CircularProgress } from "@chakra-ui/react";
+import { Center, CircularProgress, Text, Image } from "@chakra-ui/react";
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { v4 } from "uuid";
 import { io, Socket } from "socket.io-client";
-import NumberSetView from "../components/studyWith/NumberSetView";
-import ProblemSetView from "../components/studyWith/ProblemSetView";
-import ResultView from "../components/studyWith/ResultView";
-import ReviewView from "../components/studyWith/ReviewView";
-import SolvingView from "../components/studyWith/SolvingView";
-import TimeSetView from "../components/studyWith/TimeSetView";
+import { useNavigate } from "react-router-dom";
+import NumberSetView from "../components/studyWith/NumberSet/NumberSetView";
+import ProblemSetView from "../components/studyWith/ProblemSet/ProblemSetView";
+import ResultView from "../components/studyWith/Result/ResultView";
+import ReviewView from "../components/studyWith/Review/ReviewView";
+import SolvingView from "../components/studyWith/Solving/SolvingView";
+import TimeSetView from "../components/studyWith/TimeSet/TimeSetView";
 import {
   ClientToServerEvents,
   PageViewState,
-  ServerToClientEvents
+  ServerProblemType,
+  ServerToClientEvents,
+  UserProfileType
 } from "../asset/data/socket.type";
-import { useAppSelector } from "../store/hooks";
-import { UserInfoType } from "../store/ducks/auth/auth.type";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { reset } from "../store/ducks/selectedProblem/selectedProblemSlice";
+import WaitingView from "../components/studyWith/WaitingView";
+import Wave from "../asset/img/wave.png";
 
 function StudyWith() {
-  const socket: Socket<ServerToClientEvents, ClientToServerEvents> =
+  const [socket] = useState<Socket<ServerToClientEvents, ClientToServerEvents>>(
     process.env.NODE_ENV === "development"
       ? io("ws://localhost:8000", {
           autoConnect: false,
@@ -33,47 +37,86 @@ function StudyWith() {
           reconnectionDelayMax: 5000,
           reconnectionAttempts: 3,
           transports: ["websocket"]
-        });
-  const { studyId, name, imageUrl } = useAppSelector(
+        })
+  );
+
+  const { studyId, name, imageUrl, backjoonId, studyRole } = useAppSelector(
     ({ auth: { information } }) => information
   );
 
-  const [step, setStep] = useState(1);
+  const dispatch = useAppDispatch();
+  const [step, setStep] = useState(PageViewState.Waiting);
   const [isLoading, setIsLoading] = useState(false);
-  const [isBoss, setIsBoss] = useState(false);
-  const [participants, setPartcipants] = useState<
-    Pick<UserInfoType, "name" | "imageUrl">[]
-  >([{ name, imageUrl }]);
-
+  const [participants, setPartcipants] = useState<UserProfileType[]>([]);
+  const [solvingProblmes, setSolvingProblems] = useState<ServerProblemType[]>(
+    []
+  );
+  const navigate = useNavigate();
   const bossView: React.FunctionComponentElement<undefined>[] = [
-    <NumberSetView
-      key={v4()}
-      onBtnClick={() => setStep(PageViewState.ProblemSet)}
-    />,
+    // <NumberSetView
+    //   key={PageViewState.NumberSet}
+    //   onBtnClick={() => setStep(PageViewState.ProblemSet)}
+    // />,
+    <WaitingView participants={participants} key={PageViewState.Waiting} />,
     <ProblemSetView
-      key={v4()}
+      key={PageViewState.ProblemSet}
       onBtnClick={() => setStep(PageViewState.TimeSet)}
       participants={participants}
     />,
     <TimeSetView
-      key={v4()}
+      key={PageViewState.TimeSet}
       onBtnClick={() => setStep(PageViewState.Solving)}
       onPrevBtnClick={() => setStep(PageViewState.ProblemSet)}
       participants={participants}
+      socket={socket}
     />,
-    <SolvingView key={v4()} onBtnClick={() => setStep(PageViewState.Result)} />,
-    <ResultView key={v4()} onBtnClick={() => setStep(PageViewState.Review)} />,
-    <ReviewView key={v4()} onBtnClick={() => setStep(1)} />
+    <SolvingView
+      key={PageViewState.Solving}
+      onBtnClick={() => setStep(PageViewState.Result)}
+      socket={socket}
+      solvingProblmes={solvingProblmes}
+      setSolvingProblems={(problems: ServerProblemType[]) =>
+        setSolvingProblems(problems)
+      }
+    />,
+    <ResultView
+      key={PageViewState.Result}
+      onBtnClick={() => setStep(PageViewState.Review)}
+      socket={socket}
+    />,
+    <ReviewView
+      key={PageViewState.Review}
+      solvingProblmes={solvingProblmes}
+      onBtnClick={() => navigate("/study", { replace: true })}
+    />
   ];
 
   useEffect(() => {
     socket.connect();
-    socket.emit("enter", studyId, name, imageUrl);
+    socket.emit(
+      "enter",
+      `${studyId}`,
+      name,
+      imageUrl,
+      backjoonId as string,
+      studyRole as "MEMBER" | "LEADER",
+      (userList: UserProfileType[], isStudying: boolean) => {
+        setPartcipants(userList);
+        if (isStudying) {
+          setStep(PageViewState.Solving);
+        } else if (studyRole === "MEMBER") {
+          setStep(PageViewState.Waiting);
+        } else {
+          setStep(PageViewState.ProblemSet);
+        }
+        setIsLoading(true);
+      }
+    );
 
-    socket.on("addParticipant", (newName, newImageUrl) => {
+    socket.on("addParticipant", (newName, newImageUrl, newStudyRole) => {
       setPartcipants(prev => [
         ...prev,
-        { name: newName, imageUrl: newImageUrl }
+        { name: newName, imageUrl: newImageUrl, studyRole: newStudyRole }
       ]);
     });
 
@@ -81,26 +124,49 @@ function StudyWith() {
       setPartcipants(prev => prev.filter(user => user.name !== targetName));
     });
 
+    socket.on("endStudy", () => {
+      setStep(PageViewState.Result);
+    });
+
+    socket.on("startSolve", () => {
+      setStep(PageViewState.Solving);
+    });
     return () => {
+      dispatch(reset());
       socket.disconnect();
     };
   }, []);
 
-  const test = (e: ChangeEvent<HTMLInputElement>) => {
-    socket.emit("chat", e.target.value);
-  };
   return (
     <Center>
-      <input onChange={test} />
-      {isLoading ? (
-        <CircularProgress size="120px" mt="30vh" isIndeterminate color="main" />
+      {!isLoading ? (
+        <Center flexDir="column">
+          <CircularProgress
+            size="120px"
+            mt="30vh"
+            isIndeterminate
+            color="main"
+          />
+          <Text fontSize="36px" mt="40px">
+            서버와 연결중입니다.. 잠시만 기다려주세요
+          </Text>
+        </Center>
       ) : (
-        <Center>
+        <Center zIndex={4}>
           {bossView.map((view, ind) => {
             return ind === step && view;
           })}
         </Center>
       )}
+      <Image
+        src={Wave}
+        alt="wave"
+        position="fixed"
+        zIndex={3}
+        bottom="0px"
+        w="100%"
+        h="20%"
+      />
     </Center>
   );
 }

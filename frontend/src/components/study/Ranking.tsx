@@ -1,46 +1,59 @@
-import { Box, Center, Flex, Link, Text, Tooltip } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
+import {
+  Box,
+  Flex,
+  Link,
+  Text,
+  Tooltip,
+  Image,
+  Center
+} from "@chakra-ui/react";
 import { v4 } from "uuid";
 import { getRank } from "../../api/study";
 import { useAppSelector } from "../../store/hooks";
+import getMedalColor from "../../utils/getMedalColor";
 
 type RankingProps = {
-  homeworkScore: number;
+  bonusScore: number;
   ranking: number;
   studyId: number;
   studyName: string;
-  studyScore: number;
-  totalScore: number;
   studyRepository: string;
+  studyScore: number;
+  subjectScore: number;
+  totalScore: number;
 };
 
 function Ranking() {
   const id = useAppSelector(state => state.auth.information?.studyId);
   const [ranks, setRanks] = useState<RankingProps[]>([]);
-  const myStudyRef = useRef<null | HTMLDivElement>(null);
+  const myStudyRef = useRef<null | HTMLAnchorElement>(null);
   const parentRef = useRef<null | HTMLDivElement>(null);
 
   const getRanking = async () => {
     const {
       data: { data }
     } = await getRank();
+    console.log(data);
     setRanks(data);
   };
 
   useEffect(() => {
     getRanking();
-    if (myStudyRef.current && parentRef.current) {
-      const test = myStudyRef.current.offsetTop;
-      // 가운데로 포커싱하기 위해 빼주는 값
-      const centerHeight =
-        parentRef.current.clientHeight / 2 -
-        myStudyRef.current.clientHeight / 2;
-      parentRef.current.scrollTo({
-        top: test - centerHeight,
-        behavior: "smooth"
-      });
-    }
-  }, [parentRef.current]);
+  }, []);
+
+  useEffect(() => {
+    ranks.forEach((study, idx) => {
+      if (study.studyId === id && parentRef.current && myStudyRef.current) {
+        const myHeight = myStudyRef.current.clientHeight;
+        const parentHeight = parentRef.current.clientHeight;
+        parentRef.current.scrollTo({
+          top: 10 + idx * myHeight - parentHeight / 2 + myHeight / 2,
+          behavior: "smooth"
+        });
+      }
+    });
+  }, [ranks]);
 
   return (
     <Box
@@ -50,19 +63,26 @@ function Ranking() {
       display="flex"
       flexDir="column"
       alignItems="center"
-      p="26px 0 10px"
+      p="10px 0 10px"
       ref={parentRef}
+      // onScroll={get}
     >
       {ranks.map(study => {
         return (
-          <Link href={study.studyRepository} key={v4()} _hover={{}}>
+          <Link
+            href={study.studyRepository}
+            key={v4()}
+            _hover={{}}
+            ref={id === study.studyId ? myStudyRef : null}
+          >
             <Tooltip
               label={
                 <div>
                   {study.studyName}
                   <br />
-                  과제 점수 : {study.homeworkScore} <br />
-                  문제 풀이 점수 : {study.studyScore} <br /> 총 점수 :
+                  과제 점수 : {study.subjectScore} <br />
+                  문제 풀이 점수 : {study.studyScore} <br />
+                  보너스 점수 : {study.bonusScore} <br />총 점수 :{" "}
                   {study.totalScore}
                 </div>
               }
@@ -73,18 +93,31 @@ function Ranking() {
                 boxShadow="md"
                 p="8px 16px"
                 m="3px 0"
-                w="200px"
+                w="230px"
+                h="46px"
                 _dark={id === study.studyId ? {} : { bg: "dep_3" }}
-                ref={id === study.studyId ? myStudyRef : null}
               >
-                <Text w="40px">{study.ranking}</Text>
-                <Text
-                  textOverflow="ellipsis"
-                  overflow="hidden"
-                  whiteSpace="nowrap"
+                {study.ranking <= 3 ? (
+                  <Image src={getMedalColor(study.ranking)} w="30px" mr="5px" />
+                ) : (
+                  <Center w="30px" h="30px" color="main" mr="5px">
+                    {study.ranking}
+                  </Center>
+                )}
+                <Flex
+                  justifyContent="space-between"
+                  alignItems="center"
+                  w="80%"
                 >
-                  {study.studyName}
-                </Text>
+                  <Text
+                    textOverflow="ellipsis"
+                    overflow="hidden"
+                    whiteSpace="nowrap"
+                  >
+                    {study.studyName}
+                  </Text>
+                  <Text fontSize="14px">{study.totalScore}</Text>
+                </Flex>
               </Flex>
             </Tooltip>
           </Link>

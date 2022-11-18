@@ -18,17 +18,17 @@ function StudyLayout({
   children
 }: StudyLayoutProps) {
   return (
-    <Container marginTop="80px" maxW="1200px">
-      <Flex justifyContent="center">
-        <Flex
-          width="180px"
-          top="40px"
-          position="relative"
-          direction="column"
-          gap={4}
-        >
-          {sideComponent}
-        </Flex>
+    <Container marginY="40px" maxW="1200px" position="relative">
+      <Flex
+        width="180px"
+        top="20px"
+        position="absolute"
+        direction="column"
+        gap={4}
+      >
+        {sideComponent}
+      </Flex>
+      <Flex justifyContent="center" position="relative" maxW="880px" mx="auto">
         <Box
           borderRadius="20px"
           bg={bg}
@@ -40,7 +40,7 @@ function StudyLayout({
           position="relative"
         >
           <Box mb="40px">
-            <Text fontSize="3xl" fontWeight="bold" mt="20px" mb="20px">
+            <Text fontSize="3xl" fontWeight="bold" mb="20px">
               {title}
             </Text>
             {description.split("/").map(text => (

@@ -1,19 +1,24 @@
 import {
   Box,
+  Flex,
   Grid,
+  Icon,
   Input,
   Modal,
   ModalBody,
+  ModalCloseButton,
   ModalContent,
-  ModalOverlay
+  ModalOverlay,
+  Text
 } from "@chakra-ui/react";
 import { Search2Icon } from "@chakra-ui/icons";
 import React, { useEffect, useState } from "react";
+import { AiFillFolderOpen } from "react-icons/ai";
 
 import ProblemCard from "../common/ProblemCard";
 import useDebounce from "../../hooks/useDebounce";
 import { searchProblem } from "../../api/problem";
-import { Problem } from "../../pages/Recommend";
+import { Problem } from "../../@types/Problem";
 
 interface SearchModalTypes {
   isOpen: boolean;
@@ -40,7 +45,7 @@ function SearchModal({
     const fetch = async () => {
       const res = await searchProblem(debouncedKeyword);
       console.log(res);
-      setProblemList(res.data);
+      setProblemList(res.data.slice(0, 10));
     };
     fetch();
   }, [debouncedKeyword]);
@@ -48,51 +53,71 @@ function SearchModal({
     <Modal isOpen={isOpen} onClose={onClose} size="5xl">
       <ModalOverlay />
       <ModalContent p={8} bg="dep_1">
-        <Box mb={8} position="relative">
-          <Search2Icon
-            position="absolute"
-            zIndex={100}
-            w={5}
-            h={5}
-            transform="translateX(50%) translateY(50%)"
-          />
-          <Input
-            focusBorderColor="#1581FF"
-            bg="dep_2"
-            fontSize="xl"
-            placeholder="검색어를 입력하세요"
-            paddingLeft={10}
-            value={keyword}
-            onChange={e => setKeyword(e.target.value)}
-          />
-        </Box>
-        <Grid
-          templateColumns="repeat(2,1fr)"
-          gap="32px"
-          height="500px"
-          overflowY="scroll"
-          p={4}
-        >
-          {problemList.map(problem => {
-            const exist =
-              workbook.findIndex(
-                p => p.problemInfo.problemId === problem.problemInfo.problemId
-              ) >= 0;
-            return (
-              <ProblemCard
-                bg="dep_2"
-                key={problem.problemInfo.problemId}
-                problem={problem}
-                btnType={exist ? "delete" : "add"}
-                onBtnClick={() => {
-                  console.log(exist);
-                  if (exist) deleteProblem(problem.problemInfo.problemId);
-                  else addProblem(problem);
-                }}
-              />
-            );
-          })}
-        </Grid>
+        <Search2Icon
+          position="absolute"
+          zIndex={100}
+          w={5}
+          h={5}
+          left="25%"
+          transform="translateX(125%) translateY(50%)"
+        />
+        <Input
+          focusBorderColor="#1581FF"
+          bg="dep_2"
+          fontSize="xl"
+          placeholder="검색어를 입력하세요"
+          paddingLeft={10}
+          value={keyword}
+          onChange={e => setKeyword(e.target.value)}
+          w="50%"
+          marginX="auto"
+        />
+        <ModalCloseButton />
+        {problemList.length > 0 ? (
+          <Grid
+            templateColumns="repeat(2,1fr)"
+            gridTemplateRows="auto minmax(auto,300px)"
+            gap="32px"
+            height="500px"
+            overflowY="scroll"
+            mt={8}
+            p={4}
+          >
+            {problemList.map(problem => {
+              const exist =
+                workbook.findIndex(
+                  p => p.problemInfo.problemId === problem.problemInfo.problemId
+                ) >= 0;
+              return (
+                <ProblemCard
+                  bg="dep_2"
+                  key={problem.problemInfo.problemId}
+                  problem={problem}
+                  btnType={exist ? "delete" : "add"}
+                  onBtnClick={() => {
+                    console.log(exist);
+                    if (exist) deleteProblem(problem.problemInfo.problemId);
+                    else addProblem(problem);
+                  }}
+                />
+              );
+            })}
+          </Grid>
+        ) : (
+          <Flex
+            height="500px"
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            gap={4}
+            fontSize="2xl"
+            fontWeight="bold"
+          >
+            <Icon w="50px" h="50px" as={AiFillFolderOpen} />
+            <Text>검색 결과가 없어요</Text>
+          </Flex>
+        )}
+
         <ModalBody />
       </ModalContent>
     </Modal>
