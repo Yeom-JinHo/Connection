@@ -80,11 +80,12 @@ function Header() {
     );
     const { information, extension, check } = auth;
     if (check) {
-      if (!information.backjoonId || !information.ismember || !extension) {
-        onOpen();
-      } else {
-        onClose();
-      }
+      onOpen();
+      // if (!information.backjoonId || !information.ismember || !extension) {
+      //   onOpen();
+      // } else {
+      //   onClose();
+      // }
     }
   }, [auth, location]);
 
@@ -222,7 +223,8 @@ function Header() {
             isOpen={isOpen}
             onClose={onClose}
             content={
-              !auth.information.backjoonId ? (
+              // !auth.information.backjoonId ? (
+              true ? (
                 <BackjoonModal code={code} />
               ) : !auth.information.ismember ? (
                 <GithubModal />
