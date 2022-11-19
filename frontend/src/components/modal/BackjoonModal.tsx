@@ -68,13 +68,11 @@ function BackjoonModal({ code }: BackjoonModalProps) {
   const onConfirmUser = async () => {
     try {
       await axios.get(`https://solved.ac/api/v3/user/show?handle=${id}`);
-      // console.log(data);
       setVisible(true);
       setUserMsg("");
     } catch (error) {
       setVisible(false);
       setUserMsg("해당 사용자가 존재하지 않습니다.");
-      // console.log(error);
     }
     setConfirmMsg("");
   };

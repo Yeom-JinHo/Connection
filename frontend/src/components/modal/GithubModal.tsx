@@ -20,7 +20,7 @@ function GithubModal() {
   const dispatch = useAppDispatch();
   const confirmGithub = async () => {
     try {
-      const { data } = await postGithubConfirm();
+      await postGithubConfirm();
       toast({
         title: "connection의 멤버가 된 걸 환영합니다😊",
         position: "top",
