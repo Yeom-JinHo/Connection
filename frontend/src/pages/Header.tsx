@@ -226,9 +226,11 @@ function Header() {
               // !auth.information.backjoonId ? (
               true ? (
                 <BackjoonModal code={code} />
-              ) : !auth.information.ismember ? (
+              ) : // !auth.information.ismember ? (
+              true ? (
                 <GithubModal />
               ) : !auth.extension ? (
+                // true ? (
                 <ExtensionModal onClose={onClose} />
               ) : null
             }
